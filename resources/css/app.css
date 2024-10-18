@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.submenu {
+    z-index: 50; /* Certifique-se de que este valor seja maior do que o z-index dos cards */
+    position: relative; /* Isso garante que o z-index funcione corretamente */
+}
+
+
