@@ -69,18 +69,17 @@ class MovieController extends Controller
         );*/
 
         // Obtendo a lista de filmes da API
-    $movies = $this->tmdbService->getPopularMovies(); // Assumindo que existe esse método na TMDBService
+    $movies = $this->tmdbService->getPopularMovies();
 
-    
-    // Decodificando a resposta JSON
+
     $movies = json_decode(json_encode($movies), true);
 
-    // Verificando se houve erro na resposta
+
     if (isset($movies['success']) && !$movies['success']) {
         return view('movies.index')->with('error', $movies['status_message']);
     }
 
-    // Verificando se a lista de filmes está vazia
+    
     if (empty($movies['results'])) {
         return view('movies.index')->with('error', 'No movies found.');
     }

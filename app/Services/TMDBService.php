@@ -19,7 +19,7 @@ class TMDBService
     {
         $response = Http::get("{$this->baseUrl}/movie/{$movieId}", [
             'api_key' => $this->apiKey,
-            'language' => 'en-EN', // ou a língua desejada
+            'language' => 'en-EN', 
         ]);
 
         return $response->json();
@@ -32,7 +32,7 @@ class TMDBService
             'page' => 1
         ]);
 
-        return $response->json(); 
+        return $response->json();
     }
 
 
