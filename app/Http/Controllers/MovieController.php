@@ -11,16 +11,21 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\Services\TMDBService;
+
 
 class MovieController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $tmdbService;
+
+    public function __construct(TMDBService $tmdbService)
+    {
+        $this->tmdbService = $tmdbService;
+    }
 
     public function index(Request $request): View
     {
-
+        /*
         $genres = DB::table('genres')->get();
 
         $today = Carbon::today();
@@ -61,7 +66,26 @@ class MovieController extends Controller
         return view(
             'movies.index',
             compact('movies', 'filterByGenre', 'filterByTitle', 'filterBySynopsis', 'genres')
-        );
+        );*/
+
+        // Obtendo a lista de filmes da API
+    $movies = $this->tmdbService->getPopularMovies(); // Assumindo que existe esse método na TMDBService
+
+    
+    // Decodificando a resposta JSON
+    $movies = json_decode(json_encode($movies), true);
+
+    // Verificando se houve erro na resposta
+    if (isset($movies['success']) && !$movies['success']) {
+        return view('movies.index')->with('error', $movies['status_message']);
+    }
+
+    // Verificando se a lista de filmes está vazia
+    if (empty($movies['results'])) {
+        return view('movies.index')->with('error', 'No movies found.');
+    }
+
+    return view('movies.index', ['movies' => $movies['results']]);
     }
 
 
@@ -84,11 +108,13 @@ class MovieController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Movie $movie): View
+    public function show($movieId): View
     {
-        $genres = DB::table('genres')->get();
-        return view('movies.show')->with(['movie'=> $movie, 'genres' => $genres]);
+    $movie = $this->tmdbService->getMovie($movieId);
+    $genres = DB::table('genres')->get();
+    return view('movies.show')->with(['movie' => $movie, 'genres' => $genres]);
     }
+
 
     public function showScreenings(Movie $movie): View
     {
