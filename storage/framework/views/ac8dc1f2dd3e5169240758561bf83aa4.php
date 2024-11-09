@@ -27,7 +27,7 @@ $views = collect($views)->reverse();
 <?php $__env->startComponent('telescope-toolbar::item', ['name' => 'views', 'link' => '#views']); ?>
 
     <?php $__env->slot('icon'); ?>
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('views') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('views') . '.svg'); ?>
 
         <span class="sf-toolbar-value"><?php echo e($total); ?></span>
 
@@ -75,4 +75,4 @@ $views = collect($views)->reverse();
 
 
 <?php echo $__env->renderComponent(); ?>
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/views.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/views.blade.php ENDPATH**/ ?>

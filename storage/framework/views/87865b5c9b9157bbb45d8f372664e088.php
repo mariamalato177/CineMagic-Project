@@ -8,7 +8,7 @@
 <?php $__env->startComponent('telescope-toolbar::item', ['name' => 'exceptions', 'link' => true, 'status' => 'red']); ?>
 
     <?php $__env->slot('icon'); ?>
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('exceptions') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('exceptions') . '.svg'); ?>
 
         <span class="sf-toolbar-value"><?php echo e($entries->count()); ?></span>
 
@@ -47,4 +47,4 @@
         </div>
     <?php $__env->endSlot(); ?>
 
-<?php echo $__env->renderComponent(); ?><?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/exceptions.blade.php ENDPATH**/ ?>
+<?php echo $__env->renderComponent(); ?><?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/exceptions.blade.php ENDPATH**/ ?>

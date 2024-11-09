@@ -8,7 +8,7 @@ $data = $entries->first()->content['user'] ?? [];
 
     <?php $__env->slot('icon'); ?>
 
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('user') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('user') . '.svg'); ?>
 
         <span class="sf-toolbar-value"><?php echo e($data['email'] ?? 'n/a'); ?></span>
     <?php $__env->endSlot(); ?>
@@ -28,4 +28,4 @@ $data = $entries->first()->content['user'] ?? [];
         <?php endif; ?>
     <?php $__env->endSlot(); ?>
 
-<?php echo $__env->renderComponent(); ?><?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/user.blade.php ENDPATH**/ ?>
+<?php echo $__env->renderComponent(); ?><?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/user.blade.php ENDPATH**/ ?>

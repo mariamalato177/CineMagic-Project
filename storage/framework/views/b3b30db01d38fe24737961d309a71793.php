@@ -34,4 +34,4 @@
         </a>
     <?php endif; ?>
 </div>
-<?php /**PATH /var/www/html/resources/views/components/menus/menu-item.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\resources\views/components/menus/menu-item.blade.php ENDPATH**/ ?>

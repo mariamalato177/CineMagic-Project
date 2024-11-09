@@ -19,7 +19,7 @@ if ($memory > 50) {
 
     <?php $__env->slot('icon'); ?>
 
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('memory') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('memory') . '.svg'); ?>
 
         <span class="sf-toolbar-value"><?php echo e($memory); ?></span>
         <span class="sf-toolbar-label">MB</span>
@@ -35,4 +35,4 @@ if ($memory > 50) {
     <?php $__env->endSlot(); ?>
 
 
-<?php echo $__env->renderComponent(); ?><?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/memory.blade.php ENDPATH**/ ?>
+<?php echo $__env->renderComponent(); ?><?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/memory.blade.php ENDPATH**/ ?>

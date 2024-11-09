@@ -7,4 +7,4 @@
   })();
 /*]]>*/</script>
 <!-- End of Telescope Toolbar widget !-->
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/widget.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/widget.blade.php ENDPATH**/ ?>

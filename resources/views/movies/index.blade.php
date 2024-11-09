@@ -1,10 +1,10 @@
 @extends('layouts.main')
-@section('header-title', 'List of Movies')
 
+@section('header-title', 'List of Movies')
 
 @section('main')
 <div class="container">
-    <h1>Popular Movies</h1>
+    <h1>Movies List</h1>
 
     @if(session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
@@ -30,5 +30,3 @@
     @endif
 </div>
 @endsection
-
-

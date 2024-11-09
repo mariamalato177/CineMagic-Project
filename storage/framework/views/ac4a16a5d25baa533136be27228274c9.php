@@ -14,4 +14,4 @@
     })();
     /*]]>*/</script>
 <!-- End of Telescope Toolbar assets !-->
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/head.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/head.blade.php ENDPATH**/ ?>

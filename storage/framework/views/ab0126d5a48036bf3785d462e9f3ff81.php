@@ -1,9 +1,8 @@
 <?php $__env->startSection('header-title', 'List of Movies'); ?>
 
-
 <?php $__env->startSection('main'); ?>
 <div class="container">
-    <h1>Popular Movies</h1>
+    <h1>Movies List</h1>
 
     <?php if(session('error')): ?>
         <div class="alert alert-danger"><?php echo e(session('error')); ?></div>
@@ -30,6 +29,4 @@
 </div>
 <?php $__env->stopSection(); ?>
 
-
-
-<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/resources/views/movies/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\projeto\resources\views/movies/index.blade.php ENDPATH**/ ?>

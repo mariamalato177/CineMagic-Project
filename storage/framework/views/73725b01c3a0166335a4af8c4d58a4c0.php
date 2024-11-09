@@ -8,7 +8,7 @@ $data = $entries->first()->content;
 
     <?php $__env->slot('icon'); ?>
 
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('time') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('time') . '.svg'); ?>
 
         <span class="sf-toolbar-value"><?php echo e($data['duration']); ?></span>
         <span class="sf-toolbar-label">ms</span>
@@ -29,4 +29,4 @@ $data = $entries->first()->content;
     <?php $__env->endSlot(); ?>
 
 <?php echo $__env->renderComponent(); ?>
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/time.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/time.blade.php ENDPATH**/ ?>

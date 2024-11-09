@@ -14,4 +14,4 @@
         <?php if(isset($link) && $link): ?></a><?php endif; ?>
     <div class="sf-toolbar-info"><?php echo e($text ?? ''); ?></div>
 </div>
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/item.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/item.blade.php ENDPATH**/ ?>

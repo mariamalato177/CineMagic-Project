@@ -497,4 +497,4 @@
 </body>
 
 </html>
-<?php /**PATH /var/www/html/resources/views/layouts/main.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\resources\views/layouts/main.blade.php ENDPATH**/ ?>
