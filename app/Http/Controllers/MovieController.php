@@ -16,11 +16,15 @@ class MovieController extends Controller
 {
     public function index(Request $request): View
     {
-        // Get movies from the TMDB API
-        $response = Http::get('https://api.themoviedb.org/3/movie/popular', [
-            'api_key' => env('TMDB_API_KEY'), // Your TMDB API key here
+        // Get the page number from the request (default to 1 if not provided)
+        $page = $request->get('page', 1);
+
+        // Get movies from the TMDB API using the discover endpoint with additional filters
+        $response = Http::get('https://api.themoviedb.org/3/discover/movie', [
+            'api_key' => env('TMDB_API_KEY'),
             'language' => 'en-US',
-            'page' => 1, // Change the page number for pagination if needed
+            'page' => $page,
+            'sort_by' => 'vote_count.desc',
         ]);
 
         // Check if the response is successful
@@ -36,8 +40,14 @@ class MovieController extends Controller
             return view('movies.index')->with('error', 'No movies found.');
         }
 
-        // Return the view with movies data
-        return view('movies.index', ['movies' => $movies]);
+        // If it's an AJAX request, return the movie HTML and the next page
+        if ($request->ajax()) {
+            $moviesHtml = view('movies.index', ['movies' => $movies, 'current_page' => $page])->render();
+            return response()->json(['movies_html' => $moviesHtml, 'next_page' => $page + 1]);
+        }
+
+        // Return the initial view with movies data
+        return view('movies.index', ['movies' => $movies, 'current_page' => $page]);
     }
 
     public function create(): View
