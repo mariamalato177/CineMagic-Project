@@ -2,41 +2,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Screening;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
-use DB;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Buscar próximas exibições
-        $upcomingScreenings = Screening::where('date', '>=', Carbon::now())
-            ->orderBy('date', 'asc')
-            ->take(10)
-            ->get();
+        // Buscar filmes em exibição ("Now Playing") da API TMDB para "Upcoming Screenings"
+        $upcomingScreeningsResponse = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
+            'api_key' => env('TMDB_API_KEY'),
+            'language' => 'en-US',
+            'region' => 'hr',
+            'page' => 1,
+        ]);
 
-        // Buscar exibições mais vendidas com base nos tickets
-        $mostSoldScreenings = Screening::with('movieRef')
-            ->join('tickets', 'screenings.id', '=', 'tickets.screening_id')
-            ->select('screenings.*', DB::raw('COUNT(tickets.id) as total_tickets_sold'))
-            ->groupBy('screenings.id')
-            ->orderBy('total_tickets_sold', 'desc')
-            ->take(10)
-            ->get();
+        // Verificar se a resposta foi bem-sucedida e extrair os filmes para "Upcoming Screenings"
+        $upcomingScreenings = $upcomingScreeningsResponse->successful() ? $upcomingScreeningsResponse->json()['results'] : [];
 
         // Buscar filmes populares da API TMDB
-        $response = Http::get('https://api.themoviedb.org/3/movie/popular', [
-            'api_key' => env('TMDB_API_KEY'), // Adicione sua chave de API TMDB no arquivo .env
+        $popularMoviesResponse = Http::get('https://api.themoviedb.org/3/movie/popular', [
+            'api_key' => env('TMDB_API_KEY'),
             'language' => 'en-US',
+            'region' => 'hr',
+            'page' => 1,
+        ]);
+
+        // Buscar filmes em exibição ("Now Playing") da API TMDB
+        $nowPlayingResponse = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
+            'api_key' => env('TMDB_API_KEY'),
+            'language' => 'en-US',
+             'region' => 'hr',
             'page' => 1,
         ]);
 
         // Verificar se a resposta foi bem-sucedida e extrair os filmes
-        $popularMovies = $response->successful() ? $response->json()['results'] : [];
+        $popularMovies = $popularMoviesResponse->successful() ? $popularMoviesResponse->json()['results'] : [];
+        $nowPlayingMovies = $nowPlayingResponse->successful() ? $nowPlayingResponse->json()['results'] : [];
 
-        // Passar as três variáveis para a `view`
-        return view('home', compact('upcomingScreenings', 'mostSoldScreenings', 'popularMovies'));
+        // Passar as variáveis para a view
+        return view('home', compact('upcomingScreenings', 'nowPlayingMovies', 'popularMovies'));
     }
 }

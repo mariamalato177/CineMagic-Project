@@ -172,18 +172,36 @@ public function getPopularMovies()
     return $response->json()['results'] ?? [];
 }
 
+public function getNowPlayingMovies()
+{
+    // Faz a chamada à API para obter filmes em exibição
+    $response = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
+        'api_key' => env('TMDB_API_KEY'),
+        'language' => 'en-US',
+        'page' => 1,
+    ]);
+
+    // Verifica se a resposta é bem-sucedida
+    if ($response->failed()) {
+        return []; // Retorna uma lista vazia em caso de falha
+    }
+
+    // Retorna apenas os resultados
+    return $response->json()['results'] ?? [];
+}
+
 public function home(): View
 {
     // Busca os filmes populares para a homepage
     $popularMovies = $this->getPopularMovies();
     $upcomingScreenings = []; // Coloque aqui a lógica para buscar as sessões futuras, se necessário
-    $mostSoldScreenings = []; // Coloque aqui a lógica para buscar as sessões mais vendidas, se necessário
+    $nowPlayingMovies = $this->getNowPlayingMovies(); // Coloque aqui a lógica para buscar as sessões mais vendidas, se necessário
 
     // Retorna a view 'home' com os dados
     return view('home', [
         'popularMovies' => $popularMovies,
         'upcomingScreenings' => $upcomingScreenings,
-        'mostSoldScreenings' => $mostSoldScreenings,
+        'nowPlayingMovies' => $nowPlayingMovies,
     ]);
 }
 

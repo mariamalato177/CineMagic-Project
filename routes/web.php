@@ -21,6 +21,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
 
+
 // Verified users:
 Route::middleware('auth', 'verified')->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
@@ -34,9 +35,13 @@ Route::middleware('auth', 'verified')->group(function () {
 
     Route::middleware('can:admin')->group(function () {
 
+        
         Route::resource('genres', GenreController::class);
 
         Route::get('purchases/index', [PurchaseController::class, 'management'])->name('purchases.index');
+
+        Route::get('/screenings/generate-random', [ScreeningController::class, 'generateRandomScreenings'])->name('screenings.generateRandom');
+
 
         Route::get('users/customers', [UserController::class, 'list'])->name('users.list');
         Route::post('users/create', [UserController::class, 'storeNewUser'])->name('users.storeNewUser');
@@ -49,6 +54,7 @@ Route::middleware('auth', 'verified')->group(function () {
         Route::put('movies/{movie}/poster/deletePoster', [MovieController::class, 'deletePoster'])->name('movies.posterDelete');
         Route::resource('movies', MovieController::class)->except(['index', 'show']);
         Route::resource('screenings', ScreeningController::class)->except(['index', 'show']);
+        
         Route::resource('theaters', TheaterController::class)->except(['index', 'show']);
 
 
