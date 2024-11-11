@@ -24,6 +24,10 @@
                     </div>
                 @endforeach
             </div>
+
+            <div class="mt-6">
+        {{ $movies->links() }}
+    </div>
     @else
         <div class="alert alert-warning">No movies found.</div>
     @endif

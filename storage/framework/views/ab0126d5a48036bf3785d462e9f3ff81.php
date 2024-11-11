@@ -22,6 +22,11 @@
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
+
+            <div class="mt-6">
+        <?php echo e($movies->links()); ?>
+
+    </div>
     <?php else: ?>
         <div class="alert alert-warning">No movies found.</div>
     <?php endif; ?>

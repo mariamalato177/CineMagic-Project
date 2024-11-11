@@ -11,44 +11,46 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieController extends Controller
 {
     public function index(Request $request): View
-    {
-        // Get the page number from the request (default to 1 if not provided)
-        $page = $request->get('page', 1);
+{
+    // Set the page number from the request, but limit it to a maximum of 500
+    $page = min($request->get('page', 1), 500);
 
-        // Get movies from the TMDB API using the discover endpoint with additional filters
-        $response = Http::get('https://api.themoviedb.org/3/discover/movie', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'page' => $page,
-            'sort_by' => 'vote_count.desc',
-        ]);
+    // Get movies for the current page from the TMDB API
+    $response = Http::get('https://api.themoviedb.org/3/discover/movie', [
+        'api_key' => env('TMDB_API_KEY'),
+        'language' => 'en-US',
+        'page' => $page,
+        'sort_by' => 'vote_count.desc',
+    ]);
 
-        // Check if the response is successful
-        if ($response->failed()) {
-            return view('movies.index')->with('error', 'Unable to fetch movies from TMDB.');
-        }
-
-        // Get the results of movies
-        $movies = $response->json()['results'] ?? [];
-
-        // Check if no movies were returned
-        if (empty($movies)) {
-            return view('movies.index')->with('error', 'No movies found.');
-        }
-
-        // If it's an AJAX request, return the movie HTML and the next page
-        if ($request->ajax()) {
-            $moviesHtml = view('movies.index', ['movies' => $movies, 'current_page' => $page])->render();
-            return response()->json(['movies_html' => $moviesHtml, 'next_page' => $page + 1]);
-        }
-
-        // Return the initial view with movies data
-        return view('movies.index', ['movies' => $movies, 'current_page' => $page]);
+    // Check if the response failed
+    if ($response->failed()) {
+        return view('movies.index')->with('error', 'Unable to fetch movies from TMDB.');
     }
+
+    // Get the movie results, total results, and cap total pages to 500
+    $movies = $response->json()['results'] ?? [];
+    $totalResults = min($response->json()['total_results'] ?? 0, 500 * 20); // Limit results to 500 pages worth of items
+    $totalPages = min($response->json()['total_pages'] ?? 1, 500);
+
+    // Create a LengthAwarePaginator instance for pagination
+    $moviesPaginator = new LengthAwarePaginator(
+        $movies,
+        $totalResults,
+        count($movies),  // Items per page (based on TMDB's response)
+        $page,
+        ['path' => $request->url(), 'query' => $request->query()]
+    );
+
+    // Pass the paginated movies to the view
+    return view('movies.index', ['movies' => $moviesPaginator]);
+}
+
 
     public function create(): View
     {
