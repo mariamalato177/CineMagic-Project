@@ -3,7 +3,7 @@
 @section('header-title', 'List of Movies')
 
 @section('main')
-<div class="container" style="padding-left: 50px; padding-right: 50px;">
+<div style="padding-left: 50px; padding-right: 50px;">
     <!-- Session Error -->
     @if(session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>

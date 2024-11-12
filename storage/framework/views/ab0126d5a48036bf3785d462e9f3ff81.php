@@ -1,7 +1,7 @@
 <?php $__env->startSection('header-title', 'List of Movies'); ?>
 
 <?php $__env->startSection('main'); ?>
-<div class="container" style="padding-left: 50px; padding-right: 50px;">
+<div style="padding-left: 50px; padding-right: 50px;">
     <!-- Session Error -->
     <?php if(session('error')): ?>
         <div class="alert alert-danger"><?php echo e(session('error')); ?></div>
