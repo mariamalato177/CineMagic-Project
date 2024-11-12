@@ -43,7 +43,7 @@
     <!-- Modal -->
     <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden transition-opacity duration-300">
         <div class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-3xl w-full p-6 relative flex flex-col md:flex-row items-start">
-            <button id="close-modal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-300">&times;</button>
+        <button id="close-modal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-4xl p-2">&times;</button>
             
             <!-- Poster Image -->
             <div class="w-full md:w-1/3">
