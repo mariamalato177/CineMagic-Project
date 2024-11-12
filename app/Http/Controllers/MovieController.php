@@ -16,52 +16,56 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class MovieController extends Controller
 {
     public function index(Request $request): View
-{
-    $page = min($request->get('page', 1), 500);
-    $apiKey = env('TMDB_API_KEY');
+    {
+        $page = min($request->get('page', 1), 500);
+        $apiKey = env('TMDB_API_KEY');
 
-    // Fetch movies for the current page
-    $response = Http::get('https://api.themoviedb.org/3/discover/movie', [
-        'api_key' => $apiKey,
-        'language' => 'en-US',
-        'page' => $page,
-        'sort_by' => 'vote_count.desc',
-    ]);
+        // Fetch movies for the current page
+        $response = Http::get('https://api.themoviedb.org/3/discover/movie', [
+            'api_key' => $apiKey,
+            'language' => 'en-US',
+            'page' => $page,
+            'sort_by' => 'vote_count.desc',
+        ]);
 
-    if ($response->failed()) {
-        return view('movies.index')->with('error', 'Unable to fetch movies from TMDB.');
+        if ($response->failed()) {
+            return view('movies.index')->with('error', 'Unable to fetch movies from TMDB.');
+        }
+
+        // Get movies and pagination info
+        $movies = $response->json()['results'] ?? [];
+        $totalResults = min($response->json()['total_results'] ?? 0, 500 * 20);
+        $totalPages = min($response->json()['total_pages'] ?? 1, 500);
+
+        // Fetch genres and cache them if not already cached
+        $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
+            $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
+                'api_key' => $apiKey,
+                'language' => 'en-US',
+            ]);
+            return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
+        });
+
+        // Attach genre names to each movie
+        foreach ($movies as &$movie) {
+            $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
+                ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
+                ->join(', ');
+        }
+
+        // Pagination
+        $moviesPaginator = new LengthAwarePaginator(
+            $movies,
+            $totalResults,
+            count($movies),
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('movies.index', ['movies' => $moviesPaginator]);
     }
 
-    // Get movies and pagination info
-    $movies = $response->json()['results'] ?? [];
-    $totalResults = min($response->json()['total_results'] ?? 0, 500 * 20);
-    $totalPages = min($response->json()['total_pages'] ?? 1, 500);
 
-    // Fetch genres from TMDB and map them by ID
-    $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
-        'api_key' => $apiKey,
-        'language' => 'en-US',
-    ]);
-
-    $genres = collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
-
-    // Attach genre names to each movie
-    foreach ($movies as &$movie) {
-        $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
-            ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
-            ->join(', ');
-    }
-
-    $moviesPaginator = new LengthAwarePaginator(
-        $movies,
-        $totalResults,
-        count($movies),
-        $page,
-        ['path' => $request->url(), 'query' => $request->query()]
-    );
-
-    return view('movies.index', ['movies' => $moviesPaginator]);
-}
 
 
     public function create(): View
@@ -71,18 +75,61 @@ class MovieController extends Controller
         return view('movies.create')->with(['movie' => $newMovie, 'genres' => $genres]);
     }
 
-    public function show($movieId): View
+    public function show($movieId)
     {
-        $response = Http::get("https://api.themoviedb.org/3/movie/{$movieId}", [
-            'api_key' => env('TMDB_API_KEY'),
+        $apiKey = env('TMDB_API_KEY');
+
+        // Fetch and cache movie details, including genres
+        $movie = cache()->remember("movie_$movieId", 60 * 60, function () use ($movieId, $apiKey) {
+            $response = Http::get("https://api.themoviedb.org/3/movie/{$movieId}", [
+                'api_key' => $apiKey,
+                'language' => 'en-US',
+            ]);
+
+            return $response->successful() ? $response->json() : [];
+        });
+
+        // Fetch genres from cache (or from TMDB if not cached)
+        $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
+            $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
+                'api_key' => $apiKey,
+                'language' => 'en-US',
+            ]);
+            return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
+        });
+
+        // Map genre IDs to names
+        $movie['genre_names'] = collect($movie['genres'] ?? [])
+            ->map(fn($genre) => $genres->get($genre['id'])['name'] ?? 'Unknown genre')
+            ->join(', ');
+
+        // Paginate reviews
+        $page = request()->get('page', 1);
+        $reviewsResponse = Http::get("https://api.themoviedb.org/3/movie/{$movieId}/reviews", [
+            'api_key' => $apiKey,
             'language' => 'en-US',
+            'page' => $page,
         ]);
 
-        $movie = $response->json();
-        $genres = DB::table('genres')->get();
+        $reviewsData = $reviewsResponse->json();
+        $reviews = $reviewsData['results'] ?? [];
+        $totalReviews = $reviewsData['total_results'] ?? 0;
 
-        return view('movies.show')->with(['movie' => $movie, 'genres' => $genres]);
+        $reviewsPaginator = new LengthAwarePaginator(
+            $reviews,
+            $totalReviews,
+            5, // Reviews per page
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        return view('movies.show', [
+            'movie' => $movie,
+            'reviews' => $reviewsPaginator,
+        ]);
     }
+
+
 
     public function showScreenings(Movie $movie): View
     {
