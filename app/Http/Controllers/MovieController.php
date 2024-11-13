@@ -61,7 +61,6 @@ class MovieController extends Controller
             $page,
             ['path' => $request->url(), 'query' => $request->query()]
         );
-
         return view('movies.index', ['movies' => $moviesPaginator]);
     }
 

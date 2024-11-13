@@ -19,20 +19,20 @@ class TMDBService
     {
         $response = Http::get("{$this->baseUrl}/movie/{$movieId}", [
             'api_key' => $this->apiKey,
-            'language' => 'en-EN', // ou a língua desejada
+            'language' => 'en-EN',
         ]);
 
         return $response->json();
     }
     public function getPopularMovies()
     {
-        $response = Http::get("https://api.themoviedb.org/3/movie/popular", [
+        $response = Http::get("{$this->baseUrl}/movie/popular", [
             'api_key' => $this->apiKey,
             'language' => 'en-US',
             'page' => 1
         ]);
 
-        return $response->json(); 
+        return $response->json();
     }
 
 
