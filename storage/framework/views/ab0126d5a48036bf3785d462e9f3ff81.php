@@ -68,7 +68,7 @@
 
                 <!-- Actions -->
                 <div class="flex justify-start">
-                    <a class="text-blue-500 font-bold cursor-pointer" id="modal-more-reviews" href="">View More Reviews</a>
+                    <a class="text-blue-500 font-bold cursor-pointer<!--  -->" id="modal-more-reviews" href="">View More Reviews</a>
                 </div>
                 <div class="mt-4">
                     <a id="modal-trailer" href="" target="_blank" class="text-blue-500 hover:text-blue-300">Watch Trailer</a>
