@@ -28,6 +28,13 @@ class HomeController extends Controller
             'page' => 1,
         ]);
 
+        $upcomingMoviesResponse = Http::get('https://api.themoviedb.org/3/movie/upcoming', [
+            'api_key' => env('TMDB_API_KEY'),
+            'language' => 'en-US',
+            'region' => 'hr',
+            'page' => 1,
+        ]);
+
         // Buscar filmes em exibição ("Now Playing") da API TMDB
         $nowPlayingResponse = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
             'api_key' => env('TMDB_API_KEY'),
@@ -37,10 +44,11 @@ class HomeController extends Controller
         ]);
 
         // Verificar se a resposta foi bem-sucedida e extrair os filmes
-        $popularMovies = $popularMoviesResponse->successful() ? $popularMoviesResponse->json()['results'] : [];
+        //$popularMovies = $popularMoviesResponse->successful() ? $popularMoviesResponse->json()['results'] : [];
         $nowPlayingMovies = $nowPlayingResponse->successful() ? $nowPlayingResponse->json()['results'] : [];
+        $upcomingMovies = $upcomingMoviesResponse->successful() ? $upcomingMoviesResponse->json()['results'] : [];
 
         // Passar as variáveis para a view
-        return view('home', compact('upcomingScreenings', 'nowPlayingMovies', 'popularMovies'));
+        return view('home', compact('upcomingScreenings', 'nowPlayingMovies', 'upcomingMovies'));
     }
 }

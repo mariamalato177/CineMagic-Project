@@ -17,12 +17,12 @@
             </h3>
         </div>
 
-        <!-- Popular Movies Carousel -->
+        <!-- Upcoming Movies Carousel -->
         <div class="my-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">Popular Movies</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Upcoming Movies</h2>
             <div x-data="{
                 currentSlide: 0,
-                totalSlides: <?php echo e(count($popularMovies)); ?>,
+                totalSlides: <?php echo e(count($upcomingMovies)); ?>,
                 slidesToShow: 4,
                 nextSlide() {
                     this.currentSlide = (this.currentSlide + 1) % (this.totalSlides - this.slidesToShow + 1);
@@ -33,7 +33,7 @@
             }" class="relative">
                 <!-- Carousel Wrapper -->
                 <div class="flex overflow-hidden space-x-4">
-                    <template x-for="(movie, index) in <?php echo \Illuminate\Support\Js::from($popularMovies)->toHtml() ?>" :key="index">
+                    <template x-for="(movie, index) in <?php echo \Illuminate\Support\Js::from($upcomingMovies)->toHtml() ?>" :key="index">
                         <div x-show="currentSlide <= index && index < currentSlide + slidesToShow" 
                              class="w-full sm:w-1/4 flex-shrink-0 transition-all duration-500 ease-in-out">
                             <div class="bg-white rounded-lg shadow-lg overflow-hidden">

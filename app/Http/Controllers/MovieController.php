@@ -154,7 +154,7 @@ class MovieController extends Controller
             ->with('alert-type', $alertType)
             ->with('alert-msg', $alertMsg);
     }
-public function getPopularMovies()
+/*public function getPopularMovies()
     {
     // Faz a chamada à API para obter filmes populares
     $response = Http::get('https://api.themoviedb.org/3/movie/popular', [
@@ -170,12 +170,30 @@ public function getPopularMovies()
 
     // Retorna apenas os resultados
     return $response->json()['results'] ?? [];
-}
+}*/
 
 public function getNowPlayingMovies()
 {
     // Faz a chamada à API para obter filmes em exibição
     $response = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
+        'api_key' => env('TMDB_API_KEY'),
+        'language' => 'en-US',
+        'page' => 1,
+    ]);
+
+    // Verifica se a resposta é bem-sucedida
+    if ($response->failed()) {
+        return []; // Retorna uma lista vazia em caso de falha
+    }
+
+    // Retorna apenas os resultados
+    return $response->json()['results'] ?? [];
+}
+
+public function getUpcomingMovies()
+{
+    // Faz a chamada à API para obter filmes em exibição
+    $response = Http::get('https://api.themoviedb.org/3/movie/upcoming', [
         'api_key' => env('TMDB_API_KEY'),
         'language' => 'en-US',
         'page' => 1,
