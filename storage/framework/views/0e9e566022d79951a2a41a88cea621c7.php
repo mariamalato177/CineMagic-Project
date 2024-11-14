@@ -2,7 +2,6 @@
 
 <?php $__env->startSection('main'); ?>
 <div style="padding-left: 50px; padding-right: 50px;">
-    <!-- Movie Details Section -->
     <div class="bg-white rounded-lg shadow-lg p-6 mb-8 max-w-2xl mx-auto">
         <div class="flex items-center justify-center mb-4">
             <img src="https://image.tmdb.org/t/p/w500<?php echo e($movie['poster_path']); ?>" 
@@ -24,7 +23,6 @@
         </div>
     </div>
 
-    <!-- Reviews Section -->
     <div class="bg-white rounded-lg shadow-lg p-6 max-w-3xl mx-auto">
         <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Reviews</h3>
         
@@ -37,12 +35,10 @@
             <p class="text-center text-gray-600">No reviews available for this movie.</p>
         <?php endif; ?>
 
-        <!-- Pagination -->
         <?php if($reviews->isNotEmpty() || !$reviews->onFirstPage()): ?>
             <div class="mt-6">
                 <div class="flex justify-center">
                     <div class="flex items-center">
-                        <!-- Previous Button -->
                         <?php if($reviews->onFirstPage()): ?>
                             <button class="px-4 py-2 bg-gray-200 text-gray-600 rounded-md cursor-not-allowed" disabled>
                                 &laquo; Previous
@@ -53,13 +49,11 @@
                             </a>
                         <?php endif; ?>
 
-                        <!-- Page Numbers -->
                         <span class="mx-2 text-sm text-gray-600">
                             Page <?php echo e($reviews->currentPage()); ?> of <?php echo e($reviews->lastPage()); ?>
 
                         </span>
 
-                        <!-- Next Button -->
                         <?php if($reviews->isNotEmpty() && $reviews->hasMorePages()): ?>
                             <a href="<?php echo e($reviews->nextPageUrl()); ?>" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-400 transition">
                                 Next &raquo;
