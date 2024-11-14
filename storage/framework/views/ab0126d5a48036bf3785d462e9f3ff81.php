@@ -88,8 +88,6 @@
     }
 </style>
 
-<!-- JavaScript to Handle Modal Opening -->
-// JavaScript to Handle Modal Opening
 <script>
     // Cache for reviews to avoid repeated API calls
     const reviewCache = {};
