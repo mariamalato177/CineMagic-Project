@@ -4,12 +4,10 @@
 
 @section('main')
 <div style="padding-left: 50px; padding-right: 50px;">
-    <!-- Session Error -->
     @if(session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    <!-- Movies List -->
     @if(!empty($movies))
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-16 gap-y-12 mt-12">
             @foreach($movies as $movie)
@@ -31,7 +29,6 @@
             @endforeach
         </div>
 
-        <!-- Pagination -->
         <div class="mt-6">
             {{ $movies->links() }}
         </div>
@@ -40,36 +37,30 @@
         <div class="alert alert-warning">No movies found.</div>
     @endif
 
-    <!-- Modal -->
     <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden transition-opacity duration-300">
         <div class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-3xl w-full p-6 relative flex flex-col md:flex-row items-start">
             <button id="close-modal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-4xl p-2">&times;</button>
             
-            <!-- Poster Image -->
             <div class="w-full md:w-1/3">
                 <img id="modal-poster" class="rounded-lg shadow-md" src="" alt="Movie Poster">
             </div>
             
-            <!-- Movie Details -->
             <div class="flex-1 ml-0 md:ml-6 mt-4 md:mt-0">
                 <h2 id="modal-title" class="text-2xl font-semibold text-white mb-2"></h2>
                 <p id="modal-overview" class="text-gray-300 text-sm mb-4"></p>
 
-                <!-- Additional Info -->
                 <div class="mt-4 text-sm">
                     <p><span class="font-semibold">Genre:</span> <span id="modal-genre" class="text-gray-400"></span></p>
                     <p><span class="font-semibold">Release Year:</span> <span id="modal-year" class="text-gray-400"></span></p>
                 </div>
 
-                <!-- Review -->
                 <div class="mt-4">
                     <h3 class="text-lg font-semibold text-white">Review:</h3>
                     <p id="modal-review" class="text-gray-300 text-sm italic"></p>
                 </div>
 
-                <!-- Actions -->
                 <div class="flex justify-start">
-                    <a class="text-blue-500 font-bold cursor-pointer<!--  -->" id="modal-more-reviews" href="">View More Reviews</a>
+                    <a class="text-blue-500 font-bold cursor-pointer" id="modal-more-reviews" href="">View More Reviews</a>
                 </div>
                 <div class="mt-4">
                     <a id="modal-trailer" href="" target="_blank" class="text-blue-500 hover:text-blue-300">Watch Trailer</a>
@@ -79,7 +70,6 @@
     </div>
 </div>
 
-<!-- Custom Styles -->
 <style>
     .modal {
         display: none;
@@ -90,7 +80,6 @@
 </style>
 
 <script>
-    // Cache for reviews to avoid repeated API calls
     const reviewCache = {};
 
     async function openModal(event) {
@@ -105,13 +94,11 @@
         document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
 
         const trailerLink = document.getElementById('modal-trailer');
-        trailerLink.classList.add('hidden'); // Hide by default
+        trailerLink.classList.add('hidden');
 
-        // Set "View More Reviews" link
         const moreReviewsLink = document.getElementById('modal-more-reviews');
         moreReviewsLink.href = `/movies/${movie.id}`;
 
-        // Fetch and show trailer and review details
         try {
             const response = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6`);
             const data = await response.json();
@@ -144,12 +131,10 @@
             }
         }
 
-        // Show the modal
         const modal = document.getElementById('modal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
-
 
     document.getElementById('close-modal').addEventListener('click', function () {
         const modal = document.getElementById('modal');
@@ -157,6 +142,5 @@
         modal.classList.remove('flex');
     });
 </script>
-
 
 @endsection
