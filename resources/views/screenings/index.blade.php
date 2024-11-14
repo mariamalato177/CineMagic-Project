@@ -4,15 +4,15 @@
 
 @section('main')
 
-    <header class="bg-white dark:bg-gray-900 shadow">
+    <header class="bg-white ">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800  leading-tight">
                 @yield('header-title')
             </h2>
             <br>
             <form action="{{ route('screenings.index') }}" method="GET"
                 class="flex flex-wrap items-center space-y-4 md:space-y-0 md:space-x-4">
-                <label for="search" class="text-black dark:text-white">Search:</label>
+                <label for="search" class="text-black ">Search:</label>
                 <div class="flex flex-col space-y-2">
 
                     <input type="text" id="search" name="search" value="{{ $searchQuery ?? '' }}"
@@ -34,7 +34,7 @@
     </header>
     <div class="flex justify-center">
         <div
-            class="my-4 p-6 bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg text-gray-900 dark:text-gray-50 w-full max-w-7xl">
+            class="my-4 p-6 bg-white  overflow-hidden shadow-sm sm:rounded-lg text-gray-900  w-full max-w-7xl">
 
             @can('create', App\Models\Screening::class)
                 <div class="flex items-center gap-4 mb-4">
@@ -44,7 +44,7 @@
 
 
 
-            <div class="font-base text-sm text-gray-700 dark:text-gray-300">
+            <div class="font-base text-sm text-gray-700 ">
 
                 @can('update', App\Models\Screening::class)
                     <x-screenings.table :screenings="$screenings" :showMovie="true" :showView="true" :showEdit="true"

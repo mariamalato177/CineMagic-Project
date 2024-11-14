@@ -18,7 +18,7 @@
     <div class="min-h-screen bg-cover bg-center bg-gray-200">
 
         <!-- Navigation Menu -->
-        <nav class="bg-white dark:bg-gray-900 border-b border-coral-100 dark:border-gray-800">
+        <nav class="bg-white border-b border-coral-100 ">
             <!-- Navigation Menu Full Container -->
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!-- Logo + Menu Items + Hamburger -->
@@ -27,7 +27,7 @@
                     <div class="shrink-0 -ms-4">
                         <a href="{{ route('home') }}">
                             <div
-                                class="h-20 w-40 bg-cover bg-[url('../img/logotipo.png')] dark:bg-[url('../img/logotipo.png')]">
+                                class="h-20 w-40 bg-cover bg-[url('../img/logotipo.png')] ">
                             </div>
                         </a>
                     </div>
@@ -42,8 +42,10 @@
                         <x-menus.menu-item content="Screenings" href="{{ route('screenings.index') }}"
                             selected="{{ Route::currentRouteName() == 'screenings.index' }}" />
 
-                        <x-menus.menu-item content="Theaters" href="{{ route('theaters.index') }}" selected="0" />
 
+                        <!-- Menu Item: Theaters -->
+                        <x-menus.menu-item content="Theaters" href="{{ route('theaters.index') }}"
+                        selected="{{ Route::currentRouteName() == 'theaters.index' }}" />
 
                         @auth
                             @if (Auth::user()->type == 'A')
@@ -125,12 +127,12 @@
                                 </form>
                                 <a class="px-3 py-4 border-b-2 border-transparent
                                         text-sm font-medium leading-5 inline-flex h-auto
-                                        text-gray-500 dark:text-gray-400
-                                        hover:text-gray-700 dark:hover:text-gray-300
-                                        hover:bg-gray-100 dark:hover:bg-gray-800
+                                        text-gray-500
+                                        hover:text-gray-700
+                                        hover:bg-gray-100
                                         focus:outline-none
-                                        focus:text-gray-700 dark:focus:text-gray-300
-                                        focus:bg-gray-100 dark:focus:bg-gray-800"
+                                        focus:text-gray-700
+                                        focus:bg-gray-100 "
                                     href="#"
                                     onclick="event.preventDefault();
                                     document.getElementById('form_to_logout_from_menu').submit();">
@@ -147,7 +149,7 @@
                         @endauth
                     </div>
                     <!-- Hamburger -->
-                    <div class="absolute right-0 top-0 flex sm:hidden pt-3 pe-3 text-black dark:text-gray-50">
+                    <div class="absolute right-0 top-0 flex sm:hidden pt-3 pe-3 text-black ">
                         <button id="hamburger_btn">
                             <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path id="hamburger_btn_open" stroke-linecap="round" stroke-linejoin="round"

@@ -5,7 +5,7 @@
 @section('main')
     <div class="flex justify-center">
         <div
-            class="my-4 p-6 bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg text-gray-900 dark:text-gray-50 w-full max-w-6xl">
+            class="my-4 p-6 bg-white  overflow-hidden shadow-sm sm:rounded-lg text-gray-900  w-full max-w-6xl">
                 <div class="flex items-center justify-between mb-4">
                     @can('create', App\Models\Theater::class)
                         <div class="flex items-center gap-4 mb-4">

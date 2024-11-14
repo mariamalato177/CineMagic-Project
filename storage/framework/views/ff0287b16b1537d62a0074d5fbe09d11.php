@@ -1,8 +1,8 @@
 <?php $__env->startSection('header-title', 'Welcome back to CineMagic!'); ?>
 
 <?php $__env->startSection('main'); ?>
-    <div class="min-h-screen flex flex-col justify-start items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-        <div class="w-full sm:max-w-xl mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+    <div class="min-h-screen flex flex-col justify-start items-center pt-6 sm:pt-0 bg-gray-100 ">
+        <div class="w-full sm:max-w-xl mt-6 px-6 py-4 bg-white  shadow-md overflow-hidden sm:rounded-lg">
             <h2 class="text-xl my-6">Login</h2>
             <!-- Session Status -->
             <?php if (isset($component)) { $__componentOriginal7c1bf3a9346f208f66ee83b06b607fb5 = $component; } ?>
@@ -162,14 +162,14 @@
                 <!-- Remember Me -->
                 <div class="block mt-4">
                     <label for="remember_me" class="inline-flex items-center">
-                        <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                        <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"><?php echo e(__('Remember me')); ?></span>
+                        <input id="remember_me" type="checkbox" class="rounded  border-gray-300  text-indigo-600 shadow-sm focus:ring-indigo-500  " name="remember">
+                        <span class="ms-2 text-sm text-gray-600 "><?php echo e(__('Remember me')); ?></span>
                     </label>
                 </div>
 
                 <div class="flex items-center justify-end mt-4">
                     <?php if(Route::has('password.request')): ?>
-                        <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="<?php echo e(route('password.request')); ?>">
+                        <a class="underline text-sm text-gray-600  hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="<?php echo e(route('password.request')); ?>">
                             <?php echo e(__('Forgot your password?')); ?>
 
                         </a>

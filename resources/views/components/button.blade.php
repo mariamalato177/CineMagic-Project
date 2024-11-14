@@ -10,48 +10,48 @@
 --}}
 @php
     $colors = match($type) {
-        'primary' => 'text-white dark:text-gray-900
-                        bg-blue-600 dark:bg-blue-400
-                        hover:bg-blue-700 dark:hover:bg-blue-300
-                        focus:bg-blue-700 dark:focus:bg-blue-300
-                        active:bg-blue-800 dark:active:bg-blue-200',
-        'secondary' => 'text-white dark:text-gray-700
-                        bg-gray-500 dark:bg-gray-400
-                        hover:bg-gray-600 dark:hover:bg-gray-300
-                        focus:bg-gray-600 dark:focus:bg-gray-300
-                        active:bg-gray-700 dark:active:bg-gray-200',
-        'success' => 'text-white dark:text-gray-900
-                        bg-green-700 dark:bg-green-200
-                        hover:bg-green-800 dark:hover:bg-green-100
-                        focus:bg-green-800 dark:focus:bg-green-100
-                        active:bg-green-900 dark:active:bg-green-100',
-        'danger' => 'text-white dark:text-gray-900
-                        bg-red-600 dark:bg-red-200
-                        hover:bg-red-700 dark:hover:bg-red-100
-                        focus:bg-red-700 dark:focus:bg-red-100
-                        active:bg-red-800 dark:active:bg-red-100',
-        'warning' => 'text-gray-900 dark:text-gray-200
-                        bg-amber-400 dark:bg-amber-600
-                        hover:bg-amber-300 dark:hover:bg-amber-700
-                        focus:bg-amber-300 dark:focus:bg-amber-700
-                        active:bg-amber-300 dark:active:bg-amber-700',
-        'info' => 'text-gray-900 dark:text-gray-200
-                        bg-cyan-400 dark:bg-cyan-600
-                        hover:bg-cyan-300 dark:hover:bg-cyan-700
-                        focus:bg-cyan-300 dark:focus:bg-cyan-700
-                        active:bg-cyan-300 dark:active:bg-cyan-700',
-        'light' => 'text-gray-900 dark:text-gray-200
-                        bg-slate-50 dark:bg-slate-600
-                        hover:bg-slate-200 dark:hover:bg-slate-700
-                        focus:bg-slate-200 dark:focus:bg-slate-700
-                        active:bg-slate-200 dark:active:bg-slate-700',
+        'primary' => 'text-white
+                        bg-blue-600
+                        hover:bg-blue-700
+                        focus:bg-blue-700
+                        active:bg-blue-800',
+        'secondary' => 'text-white
+                        bg-gray-500
+                        hover:bg-gray-600
+                        focus:bg-gray-600
+                        active:bg-gray-700 ',
+        'success' => 'text-white
+                        bg-green-700
+                        hover:bg-green-800
+                        focus:bg-green-800
+                        active:bg-green-900',
+        'danger' => 'text-white
+                        bg-red-600
+                        hover:bg-red-700
+                        focus:bg-red-700
+                        active:bg-red-800 ',
+        'warning' => 'text-gray-900
+                        bg-amber-400
+                        hover:bg-amber-300
+                        focus:bg-amber-300
+                        active:bg-amber-300',
+        'info' => 'text-gray-900
+                        bg-cyan-400
+                        hover:bg-cyan-300
+                        focus:bg-cyan-300
+                        active:bg-cyan-300 ',
+        'light' => 'text-gray-900
+                        bg-slate-50
+                        hover:bg-slate-200
+                        focus:bg-slate-200
+                        active:bg-slate-200 ',
         'link' => 'text-blue-500
                         border-gray-200',
-        default => 'text-white dark:text-gray-900
-                        bg-gray-800 dark:bg-gray-200
-                        hover:bg-gray-900 dark:hover:bg-gray-100
-                        focus:bg-gray-900 dark:focus:bg-gray-100
-                        active:bg-gray-950 dark:active:bg-gray-50',
+        default => 'text-white
+                        bg-gray-800
+                        hover:bg-gray-900
+                        focus:bg-gray-900
+                        active:bg-gray-950',
     }
 @endphp
 <div {{ $attributes }}>
@@ -60,7 +60,7 @@
             class="px-4 py-2 inline-block border border-transparent rounded-md
                     font-medium text-sm tracking-widest
                     focus:outline-none focus:ring-2
-                    focus:ring-indigo-500 dark:focus:ring-indigo-400
+                    focus:ring-indigo-500
                     focus:ring-offset-2 transition ease-in-out duration-150 {{ $colors }}">
             {{ $text }}
         </a>
@@ -69,7 +69,7 @@
             class="px-4 py-2 inline-block border border-transparent rounded-md
                     font-medium text-sm tracking-widest
                     focus:outline-none focus:ring-2
-                    focus:ring-indigo-500 dark:focus:ring-indigo-400
+                    focus:ring-indigo-500
                     focus:ring-offset-2 transition ease-in-out duration-150 {{ $colors }}">
             {{ $text }}
         </button>
