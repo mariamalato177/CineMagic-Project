@@ -4,6 +4,32 @@
 
 @section('main')
 <div style="padding-left: 50px; padding-right: 50px;">
+
+    <header class="bg-white dark:bg-gray-900 shadow" style="padding-right: 0px;"!important>
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            @yield('header-title')
+        </h2>
+        <br>
+        <form action="{{ route('movies.index') }}" method="GET"
+            class="flex flex-wrap items-center space-y-4 md:space-y-0 md:space-x-4">
+            <label for="search" class="text-black dark:text-white">Search:</label>
+            <div class="flex flex-col space-y-2">
+
+                <input type="text" id="search" name="query" value="{{ request('query') }}"
+                    placeholder="Movie Title" class="bg-white text-black p-2 rounded shadow-sm">
+
+            </div>
+            <div class="flex">
+                <button type="submit" class="bg-coral text-white px-6 py-2 rounded shadow-sm hover:bg-coral-dark">Search</button>
+            </div>
+            <div>
+                <a href="{{ route('movies.index') }}" class="bg-gray-200 text-black px-6 py-3 rounded shadow-sm hover:bg-gray-300">Reset</a>
+            </div>
+        </form>
+    </div>
+</header>
+
     @if(session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif

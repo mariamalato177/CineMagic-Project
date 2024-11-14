@@ -16,53 +16,70 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class MovieController extends Controller
 {
     public function index(Request $request): View
-    {
-        $page = min($request->get('page', 1), 500);
-        $apiKey = env('TMDB_API_KEY');
+{
+    $page = min($request->get('page', 1), 500);
+    $apiKey = env('TMDB_API_KEY');
+    $query = $request->get('query');
+    
+    // Choose URL based on whether a search query is provided
+    $url = $query ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/discover/movie';
+    $params = [
+        'api_key' => $apiKey,
+        'language' => 'en-US',
+        'page' => $page,
+    ];
+    if ($query) {
+        $params['query'] = $query;
+    } else {
+        $params['sort_by'] = 'vote_count.desc';
+    }
 
-        // Fetch movies for the current page
-        $response = Http::get('https://api.themoviedb.org/3/discover/movie', [
+    // Fetch movies from the API
+    try {
+        $response = Http::get($url, $params);
+        if ($response->failed()) {
+            throw new \Exception('Failed to fetch movies from TMDB API.');
+        }
+    } catch (\Exception $e) {
+        return view('movies.index')->with('error', 'Error: ' . $e->getMessage());
+    }
+
+    // Get movies data from API response
+    $movies = $response->json()['results'] ?? [];
+    if (empty($movies)) {
+        // Create an empty paginator for "no results"
+        $moviesPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
+        return view('movies.index', ['movies' => $moviesPaginator, 'error' => 'No movies found for the search: ' . $query]);
+    }
+
+    // Cache movie genres
+    $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
+        $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
             'api_key' => $apiKey,
             'language' => 'en-US',
-            'page' => $page,
-            'sort_by' => 'vote_count.desc',
         ]);
+        return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
+    });
 
-        if ($response->failed()) {
-            return view('movies.index')->with('error', 'Unable to fetch movies from TMDB.');
-        }
-
-        // Get movies and pagination info
-        $movies = $response->json()['results'] ?? [];
-        $totalResults = min($response->json()['total_results'] ?? 0, 500 * 20);
-        $totalPages = min($response->json()['total_pages'] ?? 1, 500);
-
-        // Fetch genres and cache them if not already cached
-        $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
-            $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
-                'api_key' => $apiKey,
-                'language' => 'en-US',
-            ]);
-            return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
-        });
-
-        // Attach genre names to each movie
-        foreach ($movies as &$movie) {
-            $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
-                ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
-                ->join(', ');
-        }
-
-        // Pagination
-        $moviesPaginator = new LengthAwarePaginator(
-            $movies,
-            $totalResults,
-            count($movies),
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-        return view('movies.index', ['movies' => $moviesPaginator]);
+    // Add genre names to movies
+    foreach ($movies as &$movie) {
+        $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
+            ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
+            ->join(', ');
     }
+
+    // Paginate movies
+    $moviesPaginator = new LengthAwarePaginator(
+        $movies,
+        min($response->json()['total_results'] ?? 0, 500 * 20), // Total number of results (max 500)
+        count($movies),
+        $page,
+        ['path' => $request->url(), 'query' => $request->query()]
+    );
+
+    return view('movies.index', ['movies' => $moviesPaginator]);
+}
+
 
 
 
