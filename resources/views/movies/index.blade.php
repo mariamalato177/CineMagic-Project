@@ -3,55 +3,59 @@
 @section('header-title', 'List of Movies')
 
 @section('main')
-<div style="padding-left: 50px; padding-right: 50px;">
 
-    <header class="bg-white dark:bg-gray-900 shadow" style="padding-right: 0px;"!important>
+<header class="bg-white dark:bg-gray-900 shadow">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             @yield('header-title')
         </h2>
         <br>
-        <form action="{{ route('movies.index') }}" method="GET"
-            class="flex flex-wrap items-center space-y-4 md:space-y-0 md:space-x-4">
+        <form action="{{ route('movies.index') }}" method="GET" class="flex flex-wrap items-center gap-4 md:gap-8">
             <label for="search" class="text-black dark:text-white">Search:</label>
             <div class="flex flex-col space-y-2">
-
-                <input type="text" id="search" name="query" value="{{ request('query') }}"
-                    placeholder="Movie Title" class="bg-white text-black p-2 rounded shadow-sm">
-
+                <input type="text" id="search" name="query" value="{{ request('query') }}" placeholder="Movie Title" class="bg-white text-black p-3 rounded shadow-sm min-w-[200px]">
             </div>
-            <div class="flex">
-                <button type="submit" class="bg-coral text-white px-6 py-2 rounded shadow-sm hover:bg-coral-dark">Search</button>
+            <div class="flex flex-col space-y-2">
+                <select name="genre" id="genre" class="bg-white text-black p-3 rounded shadow-sm min-w-[200px]">
+                    <option value="">Select Genre</option>
+                    @foreach($genres as $genre)
+                    <option value="{{ $genre['id'] }}" {{ request('genre') == $genre['id'] ? 'selected' : '' }}>
+                        {{ $genre['name'] }}
+                    </option>
+                    @endforeach
+                </select>
             </div>
             <div>
-                <a href="{{ route('movies.index') }}" class="bg-gray-200 text-black px-6 py-3 rounded shadow-sm hover:bg-gray-300">Reset</a>
+                <button type="submit" class="bg-coral text-white px-6 py-3 rounded shadow-sm hover:bg-orange-500 min-w-[100px]">Search</button>
+            </div>
+            <div>
+                <a href="{{ route('movies.index') }}" class="bg-gray-200 text-black px-6 py-3 rounded shadow-sm hover:bg-gray-300 min-w-[200px]">Reset</a>
             </div>
         </form>
     </div>
 </header>
-
+<div>
     @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
+    <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
-
-    @if(!empty($movies))
+    <div class="px-[50px]">
+        @if(!empty($movies))
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-16 gap-y-12 mt-12">
             @foreach($movies as $movie)
-                <div class="col-md-3">
-                    <div class="card mb-4">
-                        <img 
-                            class="rounded-lg shadow-md ease-in-out duration-300 hover:opacity-50 cursor-pointer" 
-                            src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}" 
-                            alt="{{ $movie['title'] }}"
-                            data-movie="{{ json_encode($movie) }}"
-                            onclick="openModal(event)"
-                        >
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <img
+                        class="rounded-lg shadow-md ease-in-out duration-300 hover:opacity-50 cursor-pointer"
+                        src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}"
+                        alt="{{ $movie['title'] }}"
+                        data-movie="{{ json_encode($movie) }}"
+                        onclick="openModal(event)">
 
-                        <div class="text-center">
-                            <h5 class="card-title mt-2">{{ $movie['title'] }}</h5>
-                        </div>
+                    <div class="text-center">
+                        <h5 class="card-title mt-2">{{ $movie['title'] }}</h5>
                     </div>
                 </div>
+            </div>
             @endforeach
         </div>
 
@@ -59,18 +63,20 @@
             {{ $movies->links() }}
         </div>
 
-    @else
+        @else
         <div class="alert alert-warning">No movies found.</div>
-    @endif
+        @endif
+    </div>
+
 
     <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden transition-opacity duration-300">
         <div class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-3xl w-full p-6 relative flex flex-col md:flex-row items-start">
             <button id="close-modal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-4xl p-2">&times;</button>
-            
+
             <div class="w-full md:w-1/3">
                 <img id="modal-poster" class="rounded-lg shadow-md" src="" alt="Movie Poster">
             </div>
-            
+
             <div class="flex-1 ml-0 md:ml-6 mt-4 md:mt-0">
                 <h2 id="modal-title" class="text-2xl font-semibold text-white mb-2"></h2>
                 <p id="modal-overview" class="text-gray-300 text-sm mb-4"></p>
@@ -100,6 +106,7 @@
     .modal {
         display: none;
     }
+
     .modal.open {
         display: flex;
     }
@@ -129,7 +136,7 @@
             const response = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6`);
             const data = await response.json();
             const trailer = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
-            
+
             if (trailer) {
                 trailerLink.href = `https://www.youtube.com/watch?v=${trailer.key}`;
                 trailerLink.classList.remove('hidden');
@@ -162,7 +169,7 @@
         modal.classList.add('flex');
     }
 
-    document.getElementById('close-modal').addEventListener('click', function () {
+    document.getElementById('close-modal').addEventListener('click', function() {
         const modal = document.getElementById('modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');

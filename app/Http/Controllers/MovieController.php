@@ -20,18 +20,25 @@ class MovieController extends Controller
     $page = min($request->get('page', 1), 500);
     $apiKey = env('TMDB_API_KEY');
     $query = $request->get('query');
-    
-    // Choose URL based on whether a search query is provided
+    $genreFilter = $request->get('genre');
+
+    // Base URL for fetching movies
     $url = $query ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/discover/movie';
     $params = [
         'api_key' => $apiKey,
         'language' => 'en-US',
         'page' => $page,
     ];
+
+    // Apply search query or genre filter
     if ($query) {
         $params['query'] = $query;
     } else {
         $params['sort_by'] = 'vote_count.desc';
+    }
+
+    if ($genreFilter) {
+        $params['with_genres'] = $genreFilter;
     }
 
     // Fetch movies from the API
@@ -41,7 +48,8 @@ class MovieController extends Controller
             throw new \Exception('Failed to fetch movies from TMDB API.');
         }
     } catch (\Exception $e) {
-        return view('movies.index')->with('error', 'Error: ' . $e->getMessage());
+        return view('movies.index')->with('error', 'Error: ' . $e->getMessage())
+                                    ->with('genres', collect([])); // Ensure genres is always passed
     }
 
     // Get movies data from API response
@@ -49,7 +57,7 @@ class MovieController extends Controller
     if (empty($movies)) {
         // Create an empty paginator for "no results"
         $moviesPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
-        return view('movies.index', ['movies' => $moviesPaginator, 'error' => 'No movies found for the search: ' . $query]);
+        return view('movies.index', ['movies' => $moviesPaginator, 'error' => 'No movies found for the search: ' . $query, 'genres' => collect([])]);
     }
 
     // Cache movie genres
@@ -77,12 +85,8 @@ class MovieController extends Controller
         ['path' => $request->url(), 'query' => $request->query()]
     );
 
-    return view('movies.index', ['movies' => $moviesPaginator]);
+    return view('movies.index', ['movies' => $moviesPaginator, 'genres' => $genres]);
 }
-
-
-
-
 
     public function create(): View
     {
