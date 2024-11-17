@@ -17,7 +17,7 @@ class MovieController extends Controller
 {
     public function index(Request $request): View
 {
-    $page = min($request->get('page', 1), 500);
+    $page = max(1, min((int) $request->get('page', 1), 500));
     $apiKey = env('TMDB_API_KEY');
     $query = $request->get('query');
     $genreFilter = $request->get('genre');
@@ -51,13 +51,24 @@ class MovieController extends Controller
         return view('movies.index')->with('error', 'Error: ' . $e->getMessage())
                                     ->with('genres', collect([])); // Ensure genres is always passed
     }
+    $moviesData = $response->json();
+    $movies = $moviesData['results'] ?? [];
+    $totalResults = $moviesData['total_results'] ?? 0;
 
-    // Get movies data from API response
-    $movies = $response->json()['results'] ?? [];
+    
     if (empty($movies)) {
         // Create an empty paginator for "no results"
-        $moviesPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
-        return view('movies.index', ['movies' => $moviesPaginator, 'error' => 'No movies found for the search: ' . $query, 'genres' => collect([])]);
+        $emptyPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
+        return view('movies.index', [
+            'movies' => $emptyPaginator, 
+            'error' => 'No movies found for the search: ' . $query, 
+            'genres' => collect([])]);
+    }
+
+    $maxPages = min(500, (int) ceil($totalResults / 20));
+
+    if ($page > $maxPages) {
+        return redirect()->route('movies.index', array_merge($request->query(), ['page' => $maxPages]));
     }
 
     // Cache movie genres
@@ -79,8 +90,8 @@ class MovieController extends Controller
     // Paginate movies
     $moviesPaginator = new LengthAwarePaginator(
         $movies,
-        min($response->json()['total_results'] ?? 0, 500 * 20), // Total number of results (max 500)
-        count($movies),
+        min($totalResults, 500 * 20),
+        20,
         $page,
         ['path' => $request->url(), 'query' => $request->query()]
     );
