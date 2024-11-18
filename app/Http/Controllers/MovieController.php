@@ -33,11 +33,8 @@ class MovieController extends Controller
     // Apply search query or genre filter
     if ($query) {
         $params['query'] = $query;
-    } else {
-        $params['sort_by'] = 'vote_count.desc';
     }
-
-    if ($genreFilter) {
+    if (!$query && $genreFilter) {
         $params['with_genres'] = $genreFilter;
     }
 
@@ -49,27 +46,46 @@ class MovieController extends Controller
         }
     } catch (\Exception $e) {
         return view('movies.index')->with('error', 'Error: ' . $e->getMessage())
-                                    ->with('genres', collect([])); // Ensure genres is always passed
+                                    ->with('genres', collect([]));
     }
+
     $moviesData = $response->json();
     $movies = $moviesData['results'] ?? [];
     $totalResults = $moviesData['total_results'] ?? 0;
 
-    
+
     if (empty($movies)) {
-        // Create an empty paginator for "no results"
         $emptyPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
         return view('movies.index', [
-            'movies' => $emptyPaginator, 
-            'error' => 'No movies found for the search: ' . $query, 
-            'genres' => collect([])]);
+            'movies' => $emptyPaginator,
+            'genres' => $genres,
+            'error' => "No movies found for the given filters or search.",
+        ]);
     }
+
+
+    if ($query && $genreFilter) {
+        $movies = collect($movies)->filter(function ($movie) use ($genreFilter) {
+            return in_array($genreFilter, $movie['genre_ids'] ?? []);
+        })->values();
+
+        $totalResults = $movies->count();
+
+        $movies = $movies->slice(($page - 1) * 20, 20);
+    }
+
 
     $maxPages = min(500, (int) ceil($totalResults / 20));
 
     if ($page > $maxPages) {
-        return redirect()->route('movies.index', array_merge($request->query(), ['page' => $maxPages]));
+        $moviesPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
+        return view('movies.index', [
+            'movies' => $moviesPaginator,
+            'genres' => $genres,
+            'error' => "The requested page number exceeds the maximum pages available.",
+        ]);
     }
+
 
     // Cache movie genres
     $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
@@ -90,11 +106,12 @@ class MovieController extends Controller
     // Paginate movies
     $moviesPaginator = new LengthAwarePaginator(
         $movies,
-        min($totalResults, 500 * 20),
+        $totalResults,
         20,
         $page,
         ['path' => $request->url(), 'query' => $request->query()]
     );
+    //dd($movies, $genres, $totalResults, $response->json());
 
     return view('movies.index', ['movies' => $moviesPaginator, 'genres' => $genres]);
 }

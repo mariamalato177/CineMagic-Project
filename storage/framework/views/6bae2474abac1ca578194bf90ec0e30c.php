@@ -1,71 +1,71 @@
-@extends('layouts.main')
+<?php $__env->startSection('header-title', 'List of Movies'); ?>
 
-@section('header-title', 'List of Movies')
-
-@section('main')
+<?php $__env->startSection('main'); ?>
 
 <header class="bg-white ">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <h2 class="font-semibold text-xl text-gray-800  leading-tight">
-            @yield('header-title')
+            <?php echo $__env->yieldContent('header-title'); ?>
         </h2>
         <br>
-        <form action="{{ route('movies.index') }}" method="GET" class="flex flex-wrap items-center gap-4 md:gap-8">
+        <form action="<?php echo e(route('movies.index')); ?>" method="GET" class="flex flex-wrap items-center gap-4 md:gap-8">
             <label for="search" class="text-black">Search:</label>
             <div class="flex flex-col space-y-2">
-                <input type="text" id="search" name="query" value="{{ request('query') }}" placeholder="Movie Title" class="bg-white text-black p-3 rounded shadow-sm min-w-[200px]">
+                <input type="text" id="search" name="query" value="<?php echo e(request('query')); ?>" placeholder="Movie Title" class="bg-white text-black p-3 rounded shadow-sm min-w-[200px]">
             </div>
             <div class="flex flex-col space-y-2">
                 <select name="genre" id="genre" class="bg-white text-black p-3 rounded shadow-sm min-w-[200px]">
                     <option value="">Select Genre</option>
-                    @foreach($genres as $genre)
-                    <option value="{{ $genre['id'] }}" {{ request('genre') == $genre['id'] ? 'selected' : '' }}>
-                        {{ $genre['name'] }}
+                    <?php $__currentLoopData = $genres; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $genre): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($genre['id']); ?>" <?php echo e(request('genre') == $genre['id'] ? 'selected' : ''); ?>>
+                        <?php echo e($genre['name']); ?>
+
                     </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
             <div>
                 <button type="submit" class="bg-coral text-white px-6 py-3 rounded shadow-sm hover:bg-orange-500 min-w-[100px]">Search</button>
             </div>
             <div>
-                <a href="{{ route('movies.index') }}" class="bg-gray-200 text-black px-6 py-3 rounded shadow-sm hover:bg-gray-300 min-w-[200px]">Reset</a>
+                <a href="<?php echo e(route('movies.index')); ?>" class="bg-gray-200 text-black px-6 py-3 rounded shadow-sm hover:bg-gray-300 min-w-[200px]">Reset</a>
             </div>
         </form>
     </div>
 </header>
 <div>
-    @if(session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+    <?php if(session('error')): ?>
+    <div class="alert alert-danger"><?php echo e(session('error')); ?></div>
+    <?php endif; ?>
     <div class="px-[50px]">
-        @if(!empty($movies))
+        <?php if(!empty($movies)): ?>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-16 gap-y-12 mt-12">
-            @foreach($movies as $movie)
+            <?php $__currentLoopData = $movies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $movie): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="col-md-3">
                 <div class="card mb-4">
                     <img
                         class="rounded-lg shadow-md ease-in-out duration-300 hover:opacity-50 cursor-pointer"
-                        src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}"
-                        alt="{{ $movie['title'] }}"
-                        data-movie="{{ json_encode($movie) }}"
+                        src="https://image.tmdb.org/t/p/w500<?php echo e($movie['poster_path']); ?>"
+                        alt="<?php echo e($movie['title']); ?>"
+                        data-movie="<?php echo e(json_encode($movie)); ?>"
                         onclick="openModal(event)">
 
                     <div class="text-center">
-                        <h5 class="card-title mt-2">{{ $movie['title'] }}</h5>
+                        <h5 class="card-title mt-2"><?php echo e($movie['title']); ?></h5>
                     </div>
                 </div>
             </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
 
         <div class="mt-6">
-            {{ $movies->links() }}
+            <?php echo e($movies->links()); ?>
+
         </div>
 
-        @else
+        <?php else: ?>
         <div class="alert alert-warning">No movies found.</div>
-        @endif
+        <?php endif; ?>
     </div>
 
     <!--Pop up of the details -->
@@ -176,4 +176,6 @@
     });
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/resources/views/movies/index.blade.php ENDPATH**/ ?>
