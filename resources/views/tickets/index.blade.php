@@ -3,16 +3,16 @@
 @section('header-title', 'Tickets')
 
 @section('main')
-    <header class="bg-white dark:bg-gray-900 shadow">
+    <header class="bg-white  shadow">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800  leading-tight">
                 @yield('header-title')
             </h2>
             <div class="flex justify-start">
                 <form action="{{ route('screenings.showTickets', ['screening' => $screening]) }}" method="GET"
                     class="flex flex-wrap items-center space-y-4 md:space-y-0 md:space-x-4">
                     <div class="flex flex-col space-y-2">
-                        <label for="search" class="text-black dark:text-white">Search by Ticket ID:</label>
+                        <label for="search" class="text-black ">Search by Ticket ID:</label>
                         <input type="text" id="search" name="search" value="{{ $searchQuery ?? '' }}"
                             placeholder="Enter Ticket ID" class="bg-white text-black p-2 rounded">
                     </div>
@@ -30,35 +30,35 @@
 
     <div class="flex justify-center flex-wrap">
         <div
-            class="w-full my-4 p-6 bg-white dark:bg-gray-900 overflow-hidden sm:rounded-lg text-gray-900 dark:text-gray-50">
+            class="w-full my-4 p-6 bg-white  overflow-hidden sm:rounded-lg text-gray-900 0">
             <div class="overflow-x-auto">
-                <table class="min-w-full border-collapse border border-gray-200 dark:border-gray-700">
-                    <thead class="bg-gray-100 dark:bg-gray-800">
+                <table class="min-w-full border-collapse border border-gray-200 ">
+                    <thead class="bg-gray-100">
                         <tr>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500  uppercase tracking-wider">
                                 Id</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500  uppercase tracking-wider">
                                 Seat</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500  uppercase tracking-wider">
                                 Name of Customer</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500  uppercase tracking-wider">
                                 Price (€)</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500  uppercase tracking-wider">
                                 Status</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500  uppercase tracking-wider">
                                 QR Code</th>
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody class="divide-y divide-gray-200 ">
                         @foreach ($tickets->sortByDesc('id') as $ticket)
-                            <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <tr class="transition-colors hover:bg-gray-50 ">
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $ticket->id }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     {{ $ticket->seatRef->row }}{{ $ticket->seatRef->seat_number }}</td>

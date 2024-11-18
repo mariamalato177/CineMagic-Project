@@ -29,7 +29,7 @@
 @endphp
 <div {{ $attributes->merge(['class' => "$widthClass"]) }}>
     <input name="{{ $name }}" type="hidden" value="">
-    <label class="block font-medium text-sm text-gray-700 dark:text-gray-300">
+    <label class="block font-medium text-sm text-gray-700 ">
         {{ $label }}
     </label>
     <div class="flex flex-wrap ps-2">
@@ -39,15 +39,15 @@
                     {{ $value == $key ? 'checked' : '' }}
                     class="appearance-none
                         mt-0.5 w-6 h-6
-                        bg-white dark:bg-gray-900
-                        text-black dark:text-gray-50
+                        bg-white
+                        text-black
                         @error($name)
-                            border-red-500 dark:border-red-500
+                            border-red-500
                         @else
-                            border-gray-300 dark:border-gray-700
+                            border-gray-300
                         @enderror
-                        focus:border-indigo-500 dark:focus:border-indigo-400
-                        focus:ring-indigo-500 dark:focus:ring-indigo-400
+                        focus:border-indigo-500
+                        focus:ring-indigo-500
                         rounded-full shadow-sm
                         disabled:text-gray-500
                         disabled:shadow-none
@@ -57,7 +57,7 @@
                         @disabled($readonly)
                         autofocus="autofocus"
                     >
-                <label class="ml-2 font-normal text-base text-black dark:text-gray-50" for="id_{{ $name }}_{{$key}}">
+                <label class="ml-2 font-normal text-base text-black " for="id_{{ $name }}_{{$key}}">
                     {{ $optionText }}
                 </label>
             </div>
