@@ -50,6 +50,7 @@
                     <div class="mt-4 text-sm">
                         <p><span class="font-semibold">Genre:</span> <span id="modal-genre" class="text-gray-400">Genre Name</span></p>
                         <p><span class="font-semibold">Release Year:</span> <span id="modal-year" class="text-gray-400">Year</span></p>
+                        <p><span class="font-semibold">Rating:</span> <span id="modal-rating" class="text-gray-400">N/A</span></p>
                     </div>
                     <div class="mt-4">
                         <h3 class="text-lg font-semibold text-white">Review:</h3>
@@ -69,7 +70,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <style>
@@ -95,6 +95,8 @@
         document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
         document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
 
+        document.getElementById('modal-rating').textContent = movie.vote_average ? `${movie.vote_average}/10` : "N/A";
+
         const trailerLink = document.getElementById('modal-trailer');
         trailerLink.classList.add('hidden');
 
@@ -105,7 +107,7 @@
             const response = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6`);
             const data = await response.json();
             const trailer = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
-            
+
             if (trailer) {
                 trailerLink.href = `https://www.youtube.com/watch?v=${trailer.key}`;
                 trailerLink.classList.remove('hidden');
@@ -144,5 +146,4 @@
         modal.classList.remove('flex');
     });
 </script>
-
 @endsection
