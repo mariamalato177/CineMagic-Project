@@ -18,7 +18,7 @@
                 <strong>Genre:</strong> {{ $movie['genre_names'] ?? 'Unknown genre' }}
             </p>
             <p class="text-gray-600 mb-2">
-                <strong>Rating:</strong> {{ $movie['vote_average'] ? $movie['vote_average'] . '/10' : 'N/A' }}
+                <strong>Rating:</strong> {{ $movie['vote_average'] ? number_format($movie['vote_average'], 1) . '/10' : 'N/A' }}
             </p>
             <p class="text-gray-600">
                 <strong>Release Year:</strong> {{ $movie['release_date'] ? \Carbon\Carbon::parse($movie['release_date'])->year : 'N/A' }}

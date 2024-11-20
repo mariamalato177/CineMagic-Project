@@ -17,7 +17,7 @@
 
             </p>
             <p class="text-gray-600 mb-2">
-                <strong>Rating:</strong> <?php echo e($movie['vote_average'] ? $movie['vote_average'] . '/10' : 'N/A'); ?>
+                <strong>Rating:</strong> <?php echo e($movie['vote_average'] ? number_format($movie['vote_average'], 1) . '/10' : 'N/A'); ?>
 
             </p>
             <p class="text-gray-600">

@@ -94,7 +94,7 @@
         document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
         document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
 
-        document.getElementById('modal-rating').textContent = movie.vote_average ? `${movie.vote_average}/10` : "N/A";
+        document.getElementById('modal-rating').textContent = movie.vote_average ? `${movie.vote_average.toFixed(1)}/10` : "N/A";
 
         const trailerLink = document.getElementById('modal-trailer');
         trailerLink.classList.add('hidden');
