@@ -1,44 +1,60 @@
-<div <?php echo e($attributes); ?>>
-    <?php $__currentLoopData = $screenings->groupBy('movie_id'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $movieId => $movieScreenings): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <?php
-            $movie = $movieScreenings->first()->movieRef;
-        ?>
+<div>
+    <?php
+        // Group screenings by a custom attribute (e.g., tmdbId)
+        $groupedScreenings = $screenings->groupBy('custom');
+    ?>
+
+    <?php $__currentLoopData = $groupedScreenings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tmdbId => $screeningsGroup): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <div class="mb-8">
-            <h1 class="text-2xl font-bold mb-4 text-gray-900 ">Movie: <?php echo e($movie->title); ?></h1>
-            <div class="flex items-start">
-                <div class="w-1/4 h-full overflow-hidden flex justify-center items-center mb-4">
-                    <a href="<?php echo e(route('movies.show', ['movie' => $movie])); ?>">
-                        <img src="<?php echo e($movie->image_url ? $movie->image_url : asset('storage/posters/_no_poster_2.png')); ?>"
-                            alt="<?php echo e($movie->title); ?>" class="w-full h-auto object-contain rounded-lg">
-                    </a>
-                </div>
-                <div class="w-3/4 pl-4">
-                    <?php $__currentLoopData = $movieScreenings->groupBy('theater_id'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $theaterId => $theaterScreenings): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <?php
-                            $theater = $theaterScreenings->first()->theaterRef;
-                        ?>
-                        <div class="mb-4">
-                            <a href="<?php echo e(route('theaters.show', ['theater' => $theater])); ?>">
-                                <h2 class="text-xl font-semibold mb-2 text-gray-900 ">Theater:
-                                    <?php echo e($theater->name); ?> </h2>
-                            </a>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <?php $__currentLoopData = $theaterScreenings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $screening): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <div
-                                        class="session-card bg-white  shadow-md rounded-lg p-4 relative">
-                                        <div class="movie-info text-gray-700 ">
-                                            <p class="text-xl"><strong>Date:</strong> <?php echo e($screening->date); ?></p>
-                                            <p class="text-xl"><strong>Start Time:</strong> <?php echo e($screening->start_time); ?>
+            <?php
+                // Get the movie data for the current tmdbId
+                $movie = $movieData[$tmdbId] ?? null;
+            ?>
+
+            <?php if($movie): ?>
+                <h1 class="text-2xl font-bold mb-4 text-gray-900">
+                    Movie: <?php echo e($movie['title'] ?? 'Unknown Title'); ?>
+
+                </h1>
+                <div class="flex items-start">
+                    <div class="w-1/4 h-full overflow-hidden flex justify-center items-center mb-4">
+                        <a href="#">
+                            <img src="<?php echo e($movie['poster_path'] ? 'https://image.tmdb.org/t/p/w500' . $movie['poster_path'] : asset('storage/posters/_no_poster_2.png')); ?>"
+                                 alt="<?php echo e($movie['title'] ?? 'No Poster'); ?>"
+                                 class="w-full h-auto object-contain rounded-lg">
+                        </a>
+                    </div>
+                    <div class="w-3/4 pl-4">
+                        <?php $__currentLoopData = $screeningsGroup; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $screening): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
+                                $theater = $screening->theaterRef;
+                            ?>
+                            <div class="mb-4">
+                                <a href="<?php echo e(route('theaters.show', ['theater' => $theater])); ?>">
+                                    <h2 class="text-xl font-semibold mb-2 text-gray-900">
+                                        Theater: <?php echo e($theater->name); ?>
+
+                                    </h2>
+                                </a>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div class="session-card bg-white shadow-md rounded-lg p-4 relative">
+                                        <div class="movie-info text-gray-700">
+                                            <p class="text-xl">
+                                                <strong>Date:</strong> <?php echo e($screening->date); ?>
+
+                                            </p>
+                                            <p class="text-xl">
+                                                <strong>Start Time:</strong> <?php echo e($screening->start_time); ?>
 
                                             </p>
                                         </div>
                                         <div class="actions mt-4 flex justify-end gap-2">
                                             <?php if($showView): ?>
                                                 <a class="px-2 py-1 bg-yellow-400 text-white text-sm font-semibold rounded-full flex items-center"
-                                                    href="<?php echo e(route('screenings.showTickets', ['screening' => $screening])); ?>">
+                                                   href="<?php echo e(route('screenings.showTickets', ['screening' => $screening])); ?>">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
                                                         <path d="M20 3H4c-1.1 0-2 .9-2 2v3.5c1.11 0 2 .89 2 2s-.89 2-2 2V19c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-3.5c-1.11 0-2-.89-2-2s.89-2 2-2V5c0-1.1-.9-2-2-2zm-5 10H9v-2h6v2zm0-4H9V7h6v2z"/>
-                                                      </svg>
+                                                    </svg>
                                                 </a>
                                             <?php endif; ?>
                                             <?php if($showEdit): ?>
@@ -89,44 +105,38 @@
                                                 <div class="absolute top-2 right-2">
                                                     <span
                                                         class="px-2 py-1 bg-red-500 text-white text-sm font-semibold rounded-full">Unavailable</span>
-
                                                 </div>
                                             <?php else: ?>
                                                 <?php if(!$screening->isSoldOut($screening)): ?>
                                                     <a href="<?php echo e(route('screenings.show', $screening)); ?>"
-                                                        rel="noopener noreferrer"
-                                                        class="px-2 py-1 font-semibold rounded-full"
-                                                        style="background-color: coral; color: white; transition: background-color 0.3s ease-in-out;">
-                                                        <?php if(auth()->check() && auth()->user()->type !== 'C'): ?>
-                                                            See Info
-                                                        <?php else: ?>
-                                                            Buy Ticket
-                                                        <?php endif; ?>
+                                                       class="px-2 py-1 font-semibold rounded-full"
+                                                       style="background-color: coral; color: white;">
+                                                        <?php echo e(auth()->check() && auth()->user()->type !== 'C' ? 'See Info' : 'Buy Ticket'); ?>
+
                                                     </a>
                                                 <?php else: ?>
                                                     <?php if(auth()->check() && auth()->user()->type !== 'A'): ?>
                                                         <a href="<?php echo e(route('screenings.show', $screening)); ?>"
-                                                            rel="noopener noreferrer"
-                                                            class="px-2 py-1 font-semibold rounded-full"
-                                                            style="background-color: coral; color: white; transition: background-color 0.3s ease-in-out;">
-                                                            See Info
+                                                           class="px-2 py-1 font-semibold rounded-full"
+                                                           style="background-color: coral; color: white;">
+                                                           See Info
                                                         </a>
                                                         <div class="absolute top-2 right-2">
-                                                            <span
-                                                                class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
-                                                                Out</span>
+                                                            <span class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold Out</span>
                                                         </div>
                                                     <?php endif; ?>
                                                 <?php endif; ?>
                                             <?php endif; ?>
                                         </div>
                                     </div>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
                             </div>
-                        </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
                 </div>
-            </div>
+            <?php else: ?>
+                <p>No movie data available</p>
+            <?php endif; ?>
         </div>
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </div>
