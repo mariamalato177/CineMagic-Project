@@ -4,7 +4,7 @@
             $movie = $movieScreenings->first()->movieRef;
         @endphp
         <div class="mb-8">
-            <h1 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-50">Movie: {{ $movie->title }}</h1>
+            <h1 class="text-2xl font-bold mb-4 text-gray-900 ">Movie: {{ $movie->title }}</h1>
             <div class="flex items-start">
                 <div class="w-1/4 h-full overflow-hidden flex justify-center items-center mb-4">
                     <a href="{{ route('movies.show', ['movie' => $movie]) }}">
@@ -19,14 +19,14 @@
                         @endphp
                         <div class="mb-4">
                             <a href="{{ route('theaters.show', ['theater' => $theater]) }}">
-                                <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-50">Theater:
+                                <h2 class="text-xl font-semibold mb-2 text-gray-900 ">Theater:
                                     {{ $theater->name }} </h2>
                             </a>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 @foreach ($theaterScreenings as $screening)
                                     <div
-                                        class="session-card bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 relative">
-                                        <div class="movie-info text-gray-700 dark:text-gray-300">
+                                        class="session-card bg-white  shadow-md rounded-lg p-4 relative">
+                                        <div class="movie-info text-gray-700 ">
                                             <p class="text-xl"><strong>Date:</strong> {{ $screening->date }}</p>
                                             <p class="text-xl"><strong>Start Time:</strong> {{ $screening->start_time }}
                                             </p>

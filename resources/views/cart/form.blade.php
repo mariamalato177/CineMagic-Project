@@ -7,10 +7,10 @@
 $user = auth()->user();
 @endphp
 <div class="flex justify-center mt-10 space-x-8">
-    <div class="w-full max-w-2xl p-8 bg-white dark:bg-gray-900 shadow-md rounded-lg text-gray-900 dark:text-gray-50">
+    <div class="w-full max-w-2xl p-8 bg-white shadow-md rounded-lg text-gray-900 ">
         <h3 class="mb-6 text-2xl font-bold">Customer Information</h3>
         <div class="flex justify-center mt-2">
-            <div class="w-full max-w-2xl p-8 bg-white dark:bg-gray-900 shadow-md rounded-lg text-gray-900 dark:text-gray-50">
+            <div class="w-full max-w-2xl p-8 bg-white  shadow-md rounded-lg text-gray-900 ">
                 <form action="{{ route('cart.confirm') }}" method="POST" id="checkoutForm">
                     @csrf
                     <div class="mb-4">
@@ -94,14 +94,14 @@ $user = auth()->user();
         </div>
     </div>
 
-    <div class="w-full max-w-4xl p-8 bg-white dark:bg-gray-900 shadow-md rounded-lg text-gray-900 dark:text-gray-50">
+    <div class="w-full max-w-4xl p-8 bg-white  shadow-md rounded-lg text-gray-900 ">
         @empty($cart)
         <h3 class="text-2xl text-center">Cart is Empty</h3>
         @else
         <div>
             <h3 class="mb-6 text-2xl font-bold">Shopping Cart Confirmation</h3>
             @foreach ($cart as $item)
-            <div class="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <div class="mb-6 p-4 bg-gray-100  rounded-lg">
                 <p><strong>Seat ID:</strong> {{ $item['seatId'] }}</p>
                 <p><strong>Screening ID:</strong> {{ $item['screeningId'] }}</p>
                 <p><strong>Price:</strong> {{ $item['price'] }}€</p>

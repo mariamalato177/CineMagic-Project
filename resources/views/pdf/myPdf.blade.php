@@ -3,9 +3,9 @@
 @section('header-title', 'My Purchases')
 
 @section('main')
-<header class="bg-white dark:bg-gray-900 shadow">
+<header class="bg-white  shadow">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800  leading-tight">
             @yield('header-title')
         </h2>
     </div>
@@ -14,8 +14,8 @@
         @foreach ($purchases as $purchase)
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($purchases as $purchase)
-                <div class="px-6 py-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 flex flex-col justify-between relative">
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-50 truncate"> Date {{ $purchase->date }}</h3>
+                <div class="px-6 py-4 bg-white  rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 flex flex-col justify-between relative">
+                    <h3 class="text-xl font-bold text-gray-900  truncate"> Date {{ $purchase->date }}</h3>
                     <p><strong>Id:</strong> {{ $purchase->id }}</p>
                     <p> <strong> Price: </strong> {{$purchase->total_price}} €</p>
                     @if ($purchase->receipt_pdf_filename)

@@ -4,7 +4,7 @@
             $movie = $movieScreenings->first()->movieRef;
         ?>
         <div class="mb-8">
-            <h1 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-50">Movie: <?php echo e($movie->title); ?></h1>
+            <h1 class="text-2xl font-bold mb-4 text-gray-900 ">Movie: <?php echo e($movie->title); ?></h1>
             <div class="flex items-start">
                 <div class="w-1/4 h-full overflow-hidden flex justify-center items-center mb-4">
                     <a href="<?php echo e(route('movies.show', ['movie' => $movie])); ?>">
@@ -19,14 +19,14 @@
                         ?>
                         <div class="mb-4">
                             <a href="<?php echo e(route('theaters.show', ['theater' => $theater])); ?>">
-                                <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-50">Theater:
+                                <h2 class="text-xl font-semibold mb-2 text-gray-900 ">Theater:
                                     <?php echo e($theater->name); ?> </h2>
                             </a>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <?php $__currentLoopData = $theaterScreenings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $screening): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <div
-                                        class="session-card bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 relative">
-                                        <div class="movie-info text-gray-700 dark:text-gray-300">
+                                        class="session-card bg-white  shadow-md rounded-lg p-4 relative">
+                                        <div class="movie-info text-gray-700 ">
                                             <p class="text-xl"><strong>Date:</strong> <?php echo e($screening->date); ?></p>
                                             <p class="text-xl"><strong>Start Time:</strong> <?php echo e($screening->start_time); ?>
 

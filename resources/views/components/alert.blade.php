@@ -10,30 +10,30 @@
 --}}
 @php
     $colors = match($type) {
-        'primary' => 'text-blue-900 dark:text-blue-500
-                        bg-blue-200 dark:bg-gray-800
-                        border-blue-500 dark:border-blue-800',
-        'secondary' => 'text-gray-900 dark:text-gray-400
-                    bg-gray-200 dark:bg-gray-800
-                    border-gray-500 dark:border-gray-600',
-        'success' => 'text-green-800 dark:text-green-300
-                        border-green-300 dark:border-green-700
-                        bg-green-50 dark:bg-gray-800',
-        'danger' => 'text-red-800 dark:text-red-400
-                        border-red-300 dark:border-red-700
-                        bg-red-50 dark:bg-gray-800',
-        'warning' => 'text-yellow-800 dark:text-yellow-500
-                        border-yellow-300 dark:border-yellow-600
-                        bg-yellow-50 dark:bg-gray-800',
-        'info' => 'text-blue-800 dark:text-blue-400
-                        bg-blue-50 dark:bg-gray-800
-                        border-blue-300 dark:border-blue-900',
-        'light' => 'text-gray-500 dark:text-gray-600
-                bg-gray-50 dark:bg-gray-800
-                border-gray-300 dark:border-gray-700',
-            default => 'text-white dark:text-gray-900
-                        bg-gray-800 dark:bg-gray-200
-                        border-gray-950 dark:border-gray-50',
+        'primary' => 'text-blue-900
+                        bg-blue-200
+                        border-blue-500 ',
+        'secondary' => 'text-gray-900
+                    bg-gray-200
+                    border-gray-500 ',
+        'success' => 'text-green-800
+                        border-green-300
+                        bg-green-50',
+        'danger' => 'text-red-800
+                        border-red-300
+                        bg-red-50',
+        'warning' => 'text-yellow-800
+                        border-yellow-300
+                        bg-yellow-50 ',
+        'info' => 'text-blue-800
+                        bg-blue-50
+                        border-blue-300 ',
+        'light' => 'text-gray-500
+                bg-gray-50
+                border-gray-300',
+            default => 'text-white
+                        bg-gray-800
+                        border-gray-950',
     }
 @endphp
 

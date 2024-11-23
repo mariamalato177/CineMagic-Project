@@ -50,21 +50,21 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => "$widthClass"]) }}>
-    <label class="block font-medium text-sm text-gray-700 dark:text-gray-300" for="id_{{ $name }}">
+    <label class="block font-medium text-sm text-gray-700 " for="id_{{ $name }}">
         {{ $label }}
     </label>
     <input id="id_{{ $name }}" name="{{ $name }}" type="time" value="{{ $value }}"
         class="appearance-none block
             mt-1 w-full
-            bg-white dark:bg-gray-900
-            text-black dark:text-gray-50
+            bg-white
+            text-black
             @error($name)
-                border-red-500 dark:border-red-500
+                border-red-500
             @else
-                border-gray-300 dark:border-gray-700
+                border-gray-300
             @enderror
-            focus:border-indigo-500 dark:focus:border-indigo-400
-            focus:ring-indigo-500 dark:focus:ring-indigo-400
+            focus:border-indigo-500
+            focus:ring-indigo-500
             rounded-md shadow-sm
             disabled:rounded-none disabled:shadow-none
             disabled:border-t-transparent disabled:border-x-transparent
