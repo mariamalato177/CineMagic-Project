@@ -65,37 +65,37 @@
 
         <?php else: ?>
         <div class="alert alert-warning">No movies found.</div>
-        <?php endif; ?>
-    </div>
+    <?php endif; ?>
 
-    <!--Pop up of the details -->
-    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden transition-opacity duration-300">
-        <div class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-3xl w-full p-6 relative flex flex-col md:flex-row items-start">
-            <button id="close-modal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-4xl p-2">&times;</button>
-
-            <div class="w-full md:w-1/3">
-                <img id="modal-poster" class="rounded-lg shadow-md" src="" alt="Movie Poster">
-            </div>
-
-            <div class="flex-1 ml-0 md:ml-6 mt-4 md:mt-0">
-                <h2 id="modal-title" class="text-2xl font-semibold text-white mb-2"></h2>
-                <p id="modal-overview" class="text-gray-300 text-sm mb-4"></p>
-
-                <div class="mt-4 text-sm">
-                    <p><span class="font-semibold">Genre:</span> <span id="modal-genre" class="text-gray-400"></span></p>
-                    <p><span class="font-semibold">Release Year:</span> <span id="modal-year" class="text-gray-400"></span></p>
+    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden">
+        <div class="relative bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-4xl w-full p-6">
+            <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-300 text-4xl">&times;</button>
+            <div class="flex flex-col md:flex-row items-start">
+                <div class="w-full md:w-1/3">
+                    <img id="modal-poster" class="rounded-lg shadow-md" src="" alt="Movie Poster">
                 </div>
-
-                <div class="mt-4">
-                    <h3 class="text-lg font-semibold text-white">Review:</h3>
-                    <p id="modal-review" class="text-gray-300 text-sm italic"></p>
-                </div>
-
-                <div class="flex justify-start">
-                    <a class="text-blue-500 font-bold cursor-pointer" id="modal-more-reviews" href="">View More Reviews</a>
-                </div>
-                <div class="mt-4">
-                    <a id="modal-trailer" href="" target="_blank" class="text-blue-500 hover:text-blue-300">Watch Trailer</a>
+                <div class="flex-1 md:ml-6 mt-4 md:mt-0">
+                    <h2 id="modal-title" class="text-2xl font-semibold text-white mb-4 mt-2">Movie Title</h2>
+                    <p id="modal-overview" class="text-gray-300 text-sm mb-4">Movie synopsis goes here...</p>
+                    <div class="mt-4 text-sm">
+                        <p><span class="font-semibold">Genre:</span> <span id="modal-genre" class="text-gray-400">Genre Name</span></p>
+                        <p><span class="font-semibold">Release Year:</span> <span id="modal-year" class="text-gray-400">Year</span></p>
+                        <p><span class="font-semibold">Rating:</span> <span id="modal-rating" class="text-gray-400">N/A</span></p>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold text-white">Review:</h3>
+                        <p id="modal-review" class="text-gray-300 text-sm italic">Review content here...</p>
+                    </div>
+                    <div class="flex justify-start mt-4">
+                        <a id="modal-more-reviews" href="#" class="text-blue-500 font-bold cursor-pointer">
+                            View More Reviews
+                        </a>
+                    </div>
+                    <div class="mt-4">
+                        <a id="modal-trailer" href="#" target="_blank" class="text-blue-500 hover:text-blue-300">
+                            Watch Trailer
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -125,6 +125,8 @@
         document.getElementById('modal-overview').textContent = movie.overview || "No synopsis available.";
         document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
         document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
+
+        document.getElementById('modal-rating').textContent = movie.vote_average ? `${movie.vote_average.toFixed(1)}/10` : "N/A";
 
         const trailerLink = document.getElementById('modal-trailer');
         trailerLink.classList.add('hidden');
@@ -175,7 +177,6 @@
         modal.classList.remove('flex');
     });
 </script>
-
 <?php $__env->stopSection(); ?>
 
 
