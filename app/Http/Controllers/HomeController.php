@@ -2,53 +2,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Buscar filmes em exibição ("Now Playing") da API TMDB para "Upcoming Screenings"
-        $upcomingScreeningsResponse = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'region' => 'hr',
-            'page' => 1,
-        ]);
+        // Definir os parâmetros comuns para a API TMDB
+        $apiKey = env('TMDB_API_KEY');
+        $language = 'en-US';
+        $region = 'hr';
 
-        // Verificar se a resposta foi bem-sucedida e extrair os filmes para "Upcoming Screenings"
-        $upcomingScreenings = $upcomingScreeningsResponse->successful() ? $upcomingScreeningsResponse->json()['results'] : [];
+        // Buscar filmes em exibição ("Now Playing") da API TMDB para "Upcoming Screenings"
+        $upcomingScreenings = $this->getMoviesFromApi('now_playing', $apiKey, $language, $region);
 
         // Buscar filmes populares da API TMDB
-        $popularMoviesResponse = Http::get('https://api.themoviedb.org/3/movie/popular', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'region' => 'hr',
-            'page' => 1,
+        $popularMovies = $this->getMoviesFromApi('popular', $apiKey, $language, $region);
+
+        // Buscar filmes que serão lançados ("Upcoming") da API TMDB
+        $upcomingMovies = $this->getMoviesFromApi('upcoming', $apiKey, $language, $region);
+
+        // Buscar filmes que estão atualmente em exibição ("Now Playing") da API TMDB
+        $nowPlayingMovies = $this->getMoviesFromApi('now_playing', $apiKey, $language, $region);
+
+        // Passar os filmes para a view
+        return view('home', compact('upcomingScreenings', 'popularMovies', 'upcomingMovies', 'nowPlayingMovies'));
+    }
+
+    // Método auxiliar para obter filmes da API TMDB com base no tipo de filme
+    private function getMoviesFromApi($type, $apiKey, $language, $region)
+    {
+        // Fazer a requisição para a API TMDB
+        $response = Http::get("https://api.themoviedb.org/3/movie/{$type}", [
+            'api_key' => $apiKey,
+            'language' => $language,
+            'region' => $region,
+            'page' => 1, // Página 1 para o primeiro lote de resultados
         ]);
 
-        $upcomingMoviesResponse = Http::get('https://api.themoviedb.org/3/movie/upcoming', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'region' => 'hr',
-            'page' => 1,
-        ]);
-
-        // Buscar filmes em exibição ("Now Playing") da API TMDB
-        $nowPlayingResponse = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-             'region' => 'hr',
-            'page' => 1,
-        ]);
-
-        // Verificar se a resposta foi bem-sucedida e extrair os filmes
-        //$popularMovies = $popularMoviesResponse->successful() ? $popularMoviesResponse->json()['results'] : [];
-        $nowPlayingMovies = $nowPlayingResponse->successful() ? $nowPlayingResponse->json()['results'] : [];
-        $upcomingMovies = $upcomingMoviesResponse->successful() ? $upcomingMoviesResponse->json()['results'] : [];
-
-        // Passar as variáveis para a view
-        return view('home', compact('upcomingScreenings', 'nowPlayingMovies', 'upcomingMovies'));
+        // Retornar os resultados se a requisição for bem-sucedida, caso contrário, retornar um array vazio
+        return $response->successful() ? $response->json()['results'] : [];
     }
 }
