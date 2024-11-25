@@ -22,7 +22,16 @@ class MovieController extends Controller
     $query = $request->get('query');
     $genreFilter = $request->get('genre');
 
-    // Base URL for fetching movies
+    // Cache e carregar os gêneros primeiro
+    $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
+        $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
+            'api_key' => $apiKey,
+            'language' => 'en-US',
+        ]);
+        return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
+    });
+
+    // URL base para busca
     $url = $query ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/discover/movie';
     $params = [
         'api_key' => $apiKey,
@@ -30,15 +39,14 @@ class MovieController extends Controller
         'page' => $page,
     ];
 
-    // Apply search query or genre filter
     if ($query) {
         $params['query'] = $query;
     }
-    if (!$query && $genreFilter) {
+    if ($genreFilter) {
         $params['with_genres'] = $genreFilter;
     }
 
-    // Fetch movies from the API
+    // Fazer a requisição para a API
     try {
         $response = Http::get($url, $params);
         if ($response->failed()) {
@@ -46,14 +54,15 @@ class MovieController extends Controller
         }
     } catch (\Exception $e) {
         return view('movies.index')->with('error', 'Error: ' . $e->getMessage())
-                                    ->with('genres', collect([]));
+            ->with('genres', $genres);
     }
 
+    // Processar os dados retornados
     $moviesData = $response->json();
     $movies = $moviesData['results'] ?? [];
     $totalResults = $moviesData['total_results'] ?? 0;
 
-
+    // Verificar se não há filmes
     if (empty($movies)) {
         $emptyPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
         return view('movies.index', [
@@ -63,17 +72,20 @@ class MovieController extends Controller
         ]);
     }
 
-
-    if ($query && $genreFilter) {
-        $movies = collect($movies)->filter(function ($movie) use ($genreFilter) {
-            return in_array($genreFilter, $movie['genre_ids'] ?? []);
-        })->values();
-
-        $totalResults = $movies->count();
-
-        $movies = $movies->slice(($page - 1) * 20, 20);
+    // Adicionar nomes de gêneros aos filmes antes de filtrar
+    foreach ($movies as &$movie) {
+        $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
+            ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
+            ->join(', ');
     }
 
+    // Filtrar os filmes por query e gênero
+    if ($query && $genreFilter) {
+        $movies = collect($movies)->filter(function ($movie) use ($query, $genreFilter) {
+            return stripos($movie['title'], $query) !== false &&
+                in_array($genreFilter, $movie['genre_ids'] ?? []);
+        })->values();
+    }
 
     $maxPages = min(500, (int) ceil($totalResults / 20));
 
@@ -86,35 +98,18 @@ class MovieController extends Controller
         ]);
     }
 
-
-    // Cache movie genres
-    $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
-        $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
-            'api_key' => $apiKey,
-            'language' => 'en-US',
-        ]);
-        return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
-    });
-
-    // Add genre names to movies
-    foreach ($movies as &$movie) {
-        $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
-            ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
-            ->join(', ');
-    }
-
-    // Paginate movies
+    // Paginar os filmes
     $moviesPaginator = new LengthAwarePaginator(
         $movies,
-        $totalResults,
+        min(500 * 20, $totalResults),
         20,
         $page,
         ['path' => $request->url(), 'query' => $request->query()]
     );
-    //dd($movies, $genres, $totalResults, $response->json());
 
     return view('movies.index', ['movies' => $moviesPaginator, 'genres' => $genres]);
 }
+
 
     public function create(): View
     {

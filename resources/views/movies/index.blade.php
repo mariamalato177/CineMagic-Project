@@ -35,9 +35,10 @@
     </div>
 </header>
 <div>
-    @if(session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+@if(!empty($error))
+    <div class="alert alert-warning">{{ $error }}</div>
+@endif
+
     <div class="px-[50px]">
         @if(!empty($movies))
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-16 gap-y-12 mt-12">
