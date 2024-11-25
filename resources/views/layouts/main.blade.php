@@ -95,10 +95,10 @@
                                     <div class="pe-1">
                                         @if (Auth::user()->photoFullUrl)
                                             <img src="{{ Auth::user()->photoFullUrl }}"
-                                                class="w-11 h-11 min-w-11 min-h-11 rounded-full">
+                                                class="w-11 h-11 min-w-11 min-h-11 rounded-full"
+                                                onError="this.onerror=null;this.src='{{ asset('storage/photos/no-photo-icon-22.png') }}';">
                                         @else
-                                            <span
-                                                class="w-11 h-11 min-w-11 min-h-11 flex items-center justify-center bg-gray-200 rounded-full">
+                                            <span class="w-11 h-11 min-w-11 min-h-11 flex items-center justify-center bg-gray-200 rounded-full">
                                                 {{ substr(Auth::user()->name, 0, 1) }}
                                             </span>
                                         @endif
