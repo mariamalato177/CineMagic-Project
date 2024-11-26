@@ -59,9 +59,9 @@ class ScreeningController extends Controller
             ->paginate(70)
             ->withQueryString();
 
+
         $movieData = [];
         foreach ($screenings as $screening) {
-
             $tmdbId = $screening->custom;
             if ($tmdbId) {
                 $movieData[$tmdbId] = $this->tmdbService->getMovieByID($tmdbId);
