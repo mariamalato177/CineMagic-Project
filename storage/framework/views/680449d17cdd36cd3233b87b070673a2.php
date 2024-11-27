@@ -144,29 +144,49 @@
 <?php unset($__componentOriginald16d466b6de69a6c808277f1bfc3f4f2); ?>
 <?php endif; ?>
                                                             <?php else: ?>
-                                                                <?php if(!auth()->check() || (auth()->check() && !in_array(auth()->user()->type, ['E', 'A']))): ?>
+                                                                <?php if(!$screening->isSoldOut($screening)): ?>
                                                                     <div class="mt-4 flex justify-end">
-                                                                        <a href="#"
-                                                                            class="px-4 py-2 bg-coral text-white rounded-full">Buy
-                                                                            Tickets</a>
+                                                                        <a href="<?php echo e(route('screenings.show', $screening)); ?>"
+                                                                            class="px-4 py-2 bg-coral text-white rounded-full"
+                                                                            style=" color: white; transition: background-color 0.3s ease-in-out;">
+                                                                            <?php if(auth()->check() && auth()->user()->type !== 'C'): ?>
+                                                                                See info
+                                                                            <?php else: ?>
+                                                                                Buy Tickets
+                                                                            <?php endif; ?>
+                                                                        </a>
                                                                     </div>
+                                                                <?php else: ?>
+                                                                <?php if(auth()->check() && auth()->user()->type !== 'A'): ?>
+                                                                    <a href="<?php echo e(route('screenings.show', $screening)); ?>"
+                                                                    rel="noopener noreferrer"
+                                                                    class="px-2 py-1 font-semibold rounded-full bg-coral"
+                                                                    style="color: white; transition: background-color 0.3s ease-in-out;">
+                                                                    See Info
+                                                                </a>
+                                                                <div class="absolute top-2 right-2">
+                                                                    <span
+                                                                        class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
+                                                                        Out</span>
+                                                                </div>
                                                                 <?php endif; ?>
                                                             <?php endif; ?>
-                                                        </div>
-                                                    </div>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
                             </div>
-                        </div>
-                    <?php else: ?>
-                        <p>No movie data available</p>
-                    <?php endif; ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
+    </div>
+<?php else: ?>
+    <p>No movie data available</p>
+    <?php endif; ?>
+    </div>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    </div>
     </div>
 
 

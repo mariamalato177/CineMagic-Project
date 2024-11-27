@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('header-title', 'Select seat for screening "' . $screening->movieRef->title . '"' . ' at ' .
+@section('header-title', 'Select seat for screening "' . $movieData['title'] . '"' . ' at ' .
     $screening->theaterRef->name . ' on ' . $screening->date . ' ' . $screening->start_time)
 
 @section('main')

@@ -3,6 +3,8 @@
 @section('header-title', 'Shopping Cart')
 
 @section('main')
+
+
 <header class="bg-white  shadow">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <h2 class="font-semibold text-xl text-gray-800  leading-tight">
@@ -18,15 +20,22 @@
         @else
             <div class="grid grid-cols-1 gap-6 w-max-full">
                 @foreach ($cart as $item)
+                @php
+                    $tmdbId = $item['custom'];
+                    $movieData=[];
+                    $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                        return $this->tmdbService->getMovieByID($tmdbId);
+                    });
+                    @endphp
                     <div class="font-base text-sm text-gray-700  bg-white rounded-lg shadow-lg p-6 transition-transform transform hover:scale-105 flex flex-col justify-between relative">
                         <div>
                             <h5>Ticket for the movie:</h5>
-                            <h3 class="text-xl font-bold text-gray-900 ">{{ $item['movie'] }}</h3>
+                            <h3 class="text-xl font-bold text-gray-900 ">{{ $movieData['title'] }}</h3>
                             <p class="text-lg text-gray-700 ">
                                 Theater: <strong>{{ $item['theater'] }}</strong>
                             </p>
                             <p class="text-lg text-gray-700 ">
-                                Screening: <strong>{{ $item['screeningId'] }} at {{ $item['hora'] }}</strong>
+                                Screening: <strong>{{ $item['date'] }} at {{ $item['hora'] }}</strong>
                             </p>
                             <p class="text-lg text-gray-700 ">
                                 Seat: <strong>{{ $item['seatId'] }}</strong>

@@ -130,6 +130,13 @@
 
             const movie = JSON.parse(event.target.getAttribute('data-movie'));
 
+        document.getElementById('modal-poster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        document.getElementById('modal-title').textContent = movie.title;
+        document.getElementById('modal-overview').textContent = movie.overview || "No synopsis available.";
+        document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
+        document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
+
+        document.getElementById('modal-rating').textContent = movie.vote_average ? `${movie.vote_average.toFixed(1)}/10` : "N/A";
             document.getElementById('modal-poster').src = movie.poster_path ?
                 `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'storage/posters/_no_poster_1.png';
             document.getElementById('modal-title').textContent = movie.title;
