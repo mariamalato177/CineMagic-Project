@@ -17,8 +17,8 @@
                 </h3>
             </div>
             <div class="flex justify-center">
-                <div
-                    class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
+                <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
+
 
                     <!-- Upcoming Movies Carousel -->
                     <div class="my-8">

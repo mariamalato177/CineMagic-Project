@@ -33,7 +33,9 @@
         </form>
     </div>
 </header>
-<div>
+<div class="flex justify-center">
+        <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
+
     <?php if(session('error')): ?>
     <div class="alert alert-danger"><?php echo e(session('error')); ?></div>
     <?php endif; ?>
@@ -56,6 +58,7 @@
                 </div>
             </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
         </div>
 
         <div class="mt-6">
