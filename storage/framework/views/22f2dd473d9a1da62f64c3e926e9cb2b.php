@@ -285,10 +285,10 @@
                                     <div class="pe-1">
                                         <?php if(Auth::user()->photoFullUrl): ?>
                                             <img src="<?php echo e(Auth::user()->photoFullUrl); ?>"
-                                                class="w-11 h-11 min-w-11 min-h-11 rounded-full">
+                                                class="w-11 h-11 min-w-11 min-h-11 rounded-full"
+                                                onError="this.onerror=null;this.src='<?php echo e(asset('storage/photos/no-photo-icon-22.png')); ?>';">
                                         <?php else: ?>
-                                            <span
-                                                class="w-11 h-11 min-w-11 min-h-11 flex items-center justify-center bg-gray-200 rounded-full">
+                                            <span class="w-11 h-11 min-w-11 min-h-11 flex items-center justify-center bg-gray-200 rounded-full">
                                                 <?php echo e(substr(Auth::user()->name, 0, 1)); ?>
 
                                             </span>

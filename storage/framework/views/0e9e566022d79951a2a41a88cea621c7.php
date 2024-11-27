@@ -4,7 +4,7 @@
 <div style="padding-left: 50px; padding-right: 50px;">
     <div class="bg-white rounded-lg shadow-lg p-6 mb-8 max-w-2xl mx-auto">
         <div class="flex items-center justify-center mb-4">
-            <img src="https://image.tmdb.org/t/p/w500<?php echo e($movie['poster_path']); ?>" 
+            <img src="<?php echo e($movie['poster_path'] ? 'https://image.tmdb.org/t/p/w500'.$movie['poster_path'] : asset('storage/posters/_no_poster_1.png')); ?>"
                  alt="<?php echo e($movie['title']); ?>" 
                  class="rounded-lg shadow-md w-48 md:w-64" 
                  style="border: 4px solid #e2e8f0;">
