@@ -159,6 +159,7 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     });
+
 </script>
 
 <?php $__env->stopSection(); ?>
