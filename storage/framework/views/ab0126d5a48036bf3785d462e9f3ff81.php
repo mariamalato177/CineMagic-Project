@@ -34,9 +34,9 @@
     </div>
 </header>
 <div>
-<?php if(!empty($error)): ?>
+    <?php if(!empty($error)): ?>
     <div class="alert alert-warning"><?php echo e($error); ?></div>
-<?php endif; ?>
+    <?php endif; ?>
 
     <div class="px-[50px]">
         <?php if(!empty($movies)): ?>
@@ -59,10 +59,53 @@
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
 
-        <div class="mt-6">
-            <?php echo e($movies->links()); ?>
+        <div class="flex justify-center items-center space-x-1 mt-6">
+            
+            <?php if($movies->onFirstPage()): ?>
+            <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-l cursor-not-allowed">&laquo;</span>
+            <?php else: ?>
+            <a href="<?php echo e($movies->previousPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-l hover:bg-gray-100">&laquo;</a>
+            <?php endif; ?>
 
+            
+            <?php
+            $currentPage = $movies->currentPage(); // Página atual
+            $lastPage = $movies->lastPage(); // Última página
+            $start = max(1, $currentPage - 5); // Começa 5 páginas antes
+            $end = min($lastPage, $currentPage + 6); // Vai até 6 páginas depois
+            ?>
+
+            
+            <?php if($start > 1): ?>
+            <a href="<?php echo e($movies->url(1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">1</a>
+            <?php if($start > 2): ?>
+            <span class="px-4 py-2 bg-white text-gray-400">...</span>
+            <?php endif; ?>
+            <?php endif; ?>
+
+            <?php for($page = $start; $page <= $end; $page++): ?>
+                <?php if($page==$currentPage): ?>
+                <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300"><?php echo e($page); ?></span>
+                <?php else: ?>
+                <a href="<?php echo e($movies->url($page)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"><?php echo e($page); ?></a>
+                <?php endif; ?>
+                <?php endfor; ?>
+
+                <?php if($end < $lastPage): ?>
+                    <?php if($end < $lastPage - 1): ?>
+                    <span class="px-4 py-2 bg-white text-gray-400">...</span>
+                    <?php endif; ?>
+                    <a href="<?php echo e($movies->url($lastPage)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"><?php echo e($lastPage); ?></a>
+                    <?php endif; ?>
+
+                    
+                    <?php if($movies->hasMorePages()): ?>
+                    <a href="<?php echo e($movies->nextPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-r hover:bg-gray-100">&raquo;</a>
+                    <?php else: ?>
+                    <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-r cursor-not-allowed">&raquo;</span>
+                    <?php endif; ?>
         </div>
+
 
         <?php else: ?>
         <div class="alert alert-warning">No movies found.</div>
@@ -178,5 +221,4 @@
 </script>
 
 <?php $__env->stopSection(); ?>
-
 <?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\projeto\resources\views/movies/index.blade.php ENDPATH**/ ?>

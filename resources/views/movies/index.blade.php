@@ -35,9 +35,9 @@
     </div>
 </header>
 <div>
-@if(!empty($error))
+    @if(!empty($error))
     <div class="alert alert-warning">{{ $error }}</div>
-@endif
+    @endif
 
     <div class="px-[50px]">
         @if(!empty($movies))
@@ -60,9 +60,53 @@
             @endforeach
         </div>
 
-        <div class="mt-6">
-            {{ $movies->links() }}
+        <div class="flex justify-center items-center space-x-1 mt-6">
+            {{-- Botão de voltar --}}
+            @if ($movies->onFirstPage())
+            <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-l cursor-not-allowed">&laquo;</span>
+            @else
+            <a href="{{ $movies->previousPageUrl() }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-l hover:bg-gray-100">&laquo;</a>
+            @endif
+
+            {{-- Lógica para exibir até 12 páginas no máximo --}}
+            @php
+            $currentPage = $movies->currentPage(); // Página atual
+            $lastPage = $movies->lastPage(); // Última página
+            $start = max(1, $currentPage - 5); // Começa 5 páginas antes
+            $end = min($lastPage, $currentPage + 6); // Vai até 6 páginas depois
+            @endphp
+
+            {{-- Mostrar as páginas --}}
+            @if ($start > 1)
+            <a href="{{ $movies->url(1) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">1</a>
+            @if ($start > 2)
+            <span class="px-4 py-2 bg-white text-gray-400">...</span>
+            @endif
+            @endif
+
+            @for ($page = $start; $page <= $end; $page++)
+                @if ($page==$currentPage)
+                <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300">{{ $page }}</span>
+                @else
+                <a href="{{ $movies->url($page) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">{{ $page }}</a>
+                @endif
+                @endfor
+
+                @if ($end < $lastPage)
+                    @if ($end < $lastPage - 1)
+                    <span class="px-4 py-2 bg-white text-gray-400">...</span>
+                    @endif
+                    <a href="{{ $movies->url($lastPage) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">{{ $lastPage }}</a>
+                    @endif
+
+                    {{-- Botão de avançar --}}
+                    @if ($movies->hasMorePages())
+                    <a href="{{ $movies->nextPageUrl() }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-r hover:bg-gray-100">&raquo;</a>
+                    @else
+                    <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-r cursor-not-allowed">&raquo;</span>
+                    @endif
         </div>
+
 
         @else
         <div class="alert alert-warning">No movies found.</div>
