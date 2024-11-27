@@ -7,14 +7,25 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 use Carbon\Carbon;
+use App\Services\TMDBService;
+use App\Models\Screening;
+
 
 
 class ScreeningsSeeder extends Seeder
 {
+    private TMDBService $tmdbService;
+
+    public function __construct(TMDBService $tmdbService)
+    {
+        $this->tmdbService = $tmdbService;
+
+    }
+
     private $numberOfYears = 2;
-    private $numberOfAvgSessionPerMovie = 24;
-    private $deltaSessionPerMovieDown = 20;
-    private $deltaSessionPerMovieUp = 50;
+    private $numberOfAvgSessionPerMovie = 7;
+    private $deltaSessionPerMovieDown = 10;
+    private $deltaSessionPerMovieUp = 25;
     private $numberOfDaysAfterToday = 10;
     private $seats = [];
     private $avgTaxaOcupacao = 20;
@@ -139,6 +150,52 @@ class ScreeningsSeeder extends Seeder
         $totalTicketsVendidos = DB::table('tickets')->count();
         $this->command->info("Total tickets sold = $totalTicketsVendidos");
         Storage::put('seed_info.log', $this->end_date->format('Y-m-d H:i:s'));
+
+        // Custom screenings for API Movies
+        $nowPlayingMovies = $this->tmdbService->getNowPlayingMovies();
+
+        $customScreenings = [];
+
+        $startTimes = [
+            '15:50:00',
+            '16:10:00', '16:20:00', '16:40:00',
+            '17:20:00', '17:30:00', '17:50:00',
+            '18:30:00', '18:40:00', '18:50:00',
+            '19:00:00','19:40:00', '19:50:00',
+            '20:50:00',
+            '21:20:00', '21:30:00', '21:40:00',
+            '22:00:00','22:50:00'
+        ];
+
+        foreach ($nowPlayingMovies as $movie) {
+            $movieId = 350;
+            $tmdbId = $movie['id'];
+
+
+            for ($i = 0; $i <= 5; $i++) {
+                $date = Carbon::now()->addDays($i)->format('Y-m-d');
+                $sessionsPerDay = rand(2, 3);
+                for ($j = 0; $j < $sessionsPerDay; $j++) {
+                    $startTime = $startTimes[array_rand($startTimes)];
+
+                    $customScreenings[] = [
+                        'movie_id' => $movieId,
+                        'theater_id' => rand(1, 8),
+                        'date' => $date,
+                        'start_time' => $startTime,
+                        'custom' => json_encode($tmdbId),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+        }
+
+        $chunkSize = 500;
+        foreach (array_chunk($customScreenings, $chunkSize) as $chunk) {
+            DB::table('screenings')->insert($chunk);
+        }
+
     }
 
     private function prepareIncremental($date)
@@ -228,7 +285,9 @@ class ScreeningsSeeder extends Seeder
         }
         foreach ($theatersMovies as $key => $theaterMovie) {
             if ($theaterMovie[1] <= 0) { // Screenings desse movie acabaram. Passa a outro movie
-                $totalScreening = $this->numberOfAvgSessionPerMovie - rand(1, $this->deltaSessionPerMovieDown) + rand(1, $this->deltaSessionPerMovieUp);
+                $totalScreening = $this->numberOfAvgSessionPerMovie
+                 - rand(1, $this->deltaSessionPerMovieDown)
+                 + rand(1, $this->deltaSessionPerMovieUp);
 
                 $removedMovie = array_shift($this->movies);
                 if (count($this->movies) == 0) {
