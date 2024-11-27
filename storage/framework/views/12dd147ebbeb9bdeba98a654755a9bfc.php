@@ -16,8 +16,6 @@
             </div>
             <div class="flex justify-center">
                 <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
-
-
                     <!-- Upcoming Movies Carousel -->
                     <div class="my-8">
                         <h2 class="text-2xl font-bold text-gray-900 mb-4">Upcoming Movies</h2>
@@ -51,7 +49,7 @@
                                                     x-text="new Date(movie.release_date).toLocaleDateString('en-GB').replace(/\//g, '-')">
                                                 </p>
                                                 <p class="text-sm text-gray-400"
-                                                    x-text="'Rating: ' + (movie.vote_average == 0 ? 'N/A' : movie.vote_average + '/10')">
+                                                    x-text="'Rating: ' + (movie.vote_average === 0 || !movie.vote_average ? 'N/A' : (movie.vote_average).toFixed(1) + '/10')">
                                                 </p>
                                             </div>
                                         </div>
@@ -105,7 +103,7 @@
                                                     x-text="new Date(movie.release_date).toLocaleDateString('en-GB').replace(/\//g, '-')">
                                                 </p>
                                                 <p class="text-sm text-gray-400"
-                                                    x-text="'Rating:' + movie.vote_average + '/10'"></p>
+                                                x-text="'Rating: ' + (movie.vote_average === 0 || !movie.vote_average ? 'N/A' : movie.vote_average.toFixed(1) + '/10')"></p>
                                             </div>
                                         </div>
                                     </div>
@@ -140,7 +138,7 @@
                                         );
                                     ?>
                                     <p class="text-sm text-gray-600"><?php echo e($releaseDate); ?></p>
-                                    <p class="text-sm text-gray-400"> Rating: <?php echo e($screening['vote_average']); ?>/10</p>
+                                    <p class="text-sm text-gray-400">Rating: <?php echo e($screening['vote_average'] == 0 ? 'N/A' : number_format($screening['vote_average'], 1) . '/10'); ?></p>
                                     <a href="#"
                                         class="mt-2 inline-block px-4 py-2 bg-coral text-white rounded-full hover:bg-orange-500 transition-colors">
                                         Buy Tickets
