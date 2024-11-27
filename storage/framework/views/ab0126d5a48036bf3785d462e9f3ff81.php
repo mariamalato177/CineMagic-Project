@@ -60,51 +60,62 @@
         </div>
 
         <div class="flex justify-center items-center space-x-1 mt-6">
-            
-            <?php if($movies->onFirstPage()): ?>
-            <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-l cursor-not-allowed">&laquo;</span>
-            <?php else: ?>
-            <a href="<?php echo e($movies->previousPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-l hover:bg-gray-100">&laquo;</a>
-            <?php endif; ?>
+    
+    <?php if($movies->onFirstPage()): ?>
+        <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-l cursor-not-allowed">&laquo;</span>
+    <?php else: ?>
+        <a href="<?php echo e($movies->previousPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-l hover:bg-gray-100">&laquo;</a>
+    <?php endif; ?>
 
-            
-            <?php
-            $currentPage = $movies->currentPage(); // Página atual
-            $lastPage = $movies->lastPage(); // Última página
-            $start = max(1, $currentPage - 5); // Começa 5 páginas antes
-            $end = min($lastPage, $currentPage + 6); // Vai até 6 páginas depois
-            ?>
+    
+    <?php
+        $currentPage = $movies->currentPage();
+        $lastPage = $movies->lastPage();
+        $start = max(1, $currentPage - 4); // Para dispositivos grandes, começa 4 páginas antes
+        $end = min($lastPage, $currentPage + 4); // Vai até 4 páginas depois
+    ?>
 
-            
-            <?php if($start > 1): ?>
+    
+    <div class="hidden lg:flex">
+        <?php if($start > 1): ?>
             <a href="<?php echo e($movies->url(1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">1</a>
             <?php if($start > 2): ?>
-            <span class="px-4 py-2 bg-white text-gray-400">...</span>
+                <span class="px-4 py-2 bg-white text-gray-400">...</span>
             <?php endif; ?>
-            <?php endif; ?>
+        <?php endif; ?>
 
-            <?php for($page = $start; $page <= $end; $page++): ?>
-                <?php if($page==$currentPage): ?>
+        <?php for($page = $start; $page <= $end; $page++): ?>
+            <?php if($page == $currentPage): ?>
                 <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300"><?php echo e($page); ?></span>
-                <?php else: ?>
+            <?php else: ?>
                 <a href="<?php echo e($movies->url($page)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"><?php echo e($page); ?></a>
-                <?php endif; ?>
-                <?php endfor; ?>
+            <?php endif; ?>
+        <?php endfor; ?>
 
-                <?php if($end < $lastPage): ?>
-                    <?php if($end < $lastPage - 1): ?>
-                    <span class="px-4 py-2 bg-white text-gray-400">...</span>
-                    <?php endif; ?>
-                    <a href="<?php echo e($movies->url($lastPage)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"><?php echo e($lastPage); ?></a>
-                    <?php endif; ?>
+        <?php if($end < $lastPage): ?>
+            <?php if($end < $lastPage - 1): ?>
+                <span class="px-4 py-2 bg-white text-gray-400">...</span>
+            <?php endif; ?>
+            <a href="<?php echo e($movies->url($lastPage)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"><?php echo e($lastPage); ?></a>
+        <?php endif; ?>
+    </div>
 
-                    
-                    <?php if($movies->hasMorePages()): ?>
-                    <a href="<?php echo e($movies->nextPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-r hover:bg-gray-100">&raquo;</a>
-                    <?php else: ?>
-                    <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-r cursor-not-allowed">&raquo;</span>
-                    <?php endif; ?>
-        </div>
+    
+    <div class="flex lg:hidden">
+        <a href="<?php echo e($movies->url($currentPage - 1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
+        <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300"><?php echo e($currentPage); ?></span>
+        <a href="<?php echo e($movies->url($currentPage + 1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
+    </div>
+
+    
+    <?php if($movies->hasMorePages()): ?>
+        <a href="<?php echo e($movies->nextPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-r hover:bg-gray-100">&raquo;</a>
+    <?php else: ?>
+        <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-r cursor-not-allowed">&raquo;</span>
+    <?php endif; ?>
+</div>
+
+
 
 
         <?php else: ?>

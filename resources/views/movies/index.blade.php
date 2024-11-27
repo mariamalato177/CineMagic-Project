@@ -68,45 +68,53 @@
             <a href="{{ $movies->previousPageUrl() }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-l hover:bg-gray-100">&laquo;</a>
             @endif
 
-            {{-- Lógica para exibir até 12 páginas no máximo --}}
+            {{-- Lógica para exibir páginas para dispositivos grandes (8 páginas) e pequenos (3 páginas) --}}
             @php
-            $currentPage = $movies->currentPage(); // Página atual
-            $lastPage = $movies->lastPage(); // Última página
-            $start = max(1, $currentPage - 5); // Começa 5 páginas antes
-            $end = min($lastPage, $currentPage + 6); // Vai até 6 páginas depois
+            $currentPage = $movies->currentPage();
+            $lastPage = $movies->lastPage();
+            $start = max(1, $currentPage - 4); // Para dispositivos grandes, começa 4 páginas antes
+            $end = min($lastPage, $currentPage + 4); // Vai até 4 páginas depois
             @endphp
 
-            {{-- Mostrar as páginas --}}
-            @if ($start > 1)
-            <a href="{{ $movies->url(1) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">1</a>
-            @if ($start > 2)
-            <span class="px-4 py-2 bg-white text-gray-400">...</span>
-            @endif
-            @endif
-
-            @for ($page = $start; $page <= $end; $page++)
-                @if ($page==$currentPage)
-                <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300">{{ $page }}</span>
-                @else
-                <a href="{{ $movies->url($page) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">{{ $page }}</a>
+            {{-- Mostrar até 8 páginas para dispositivos grandes --}}
+            <div class="hidden lg:flex">
+                @if ($start > 1)
+                <a href="{{ $movies->url(1) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">1</a>
+                @if ($start > 2)
+                <span class="px-4 py-2 bg-white text-gray-400">...</span>
                 @endif
-                @endfor
+                @endif
 
-                @if ($end < $lastPage)
-                    @if ($end < $lastPage - 1)
-                    <span class="px-4 py-2 bg-white text-gray-400">...</span>
-                    @endif
-                    <a href="{{ $movies->url($lastPage) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">{{ $lastPage }}</a>
-                    @endif
-
-                    {{-- Botão de avançar --}}
-                    @if ($movies->hasMorePages())
-                    <a href="{{ $movies->nextPageUrl() }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-r hover:bg-gray-100">&raquo;</a>
+                @for ($page = $start; $page <= $end; $page++)
+                    @if ($page==$currentPage)
+                    <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300">{{ $page }}</span>
                     @else
-                    <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-r cursor-not-allowed">&raquo;</span>
+                    <a href="{{ $movies->url($page) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">{{ $page }}</a>
                     @endif
-        </div>
+                    @endfor
 
+                    @if ($end < $lastPage)
+                        @if ($end < $lastPage - 1)
+                        <span class="px-4 py-2 bg-white text-gray-400">...</span>
+                        @endif
+                        <a href="{{ $movies->url($lastPage) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">{{ $lastPage }}</a>
+                        @endif
+            </div>
+
+            {{-- Mostrar até 3 páginas para dispositivos pequenos --}}
+            <div class="flex lg:hidden">
+                <a href="{{ $movies->url($currentPage - 1) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
+                <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300">{{ $currentPage }}</span>
+                <a href="{{ $movies->url($currentPage + 1) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
+            </div>
+
+            {{-- Botão de avançar --}}
+            @if ($movies->hasMorePages())
+            <a href="{{ $movies->nextPageUrl() }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-r hover:bg-gray-100">&raquo;</a>
+            @else
+            <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-r cursor-not-allowed">&raquo;</span>
+            @endif
+        </div>
 
         @else
         <div class="alert alert-warning">No movies found.</div>
