@@ -76,7 +76,7 @@
     <div id="modal"
         class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden transition-opacity duration-300">
         <div
-            class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-3xl w-full p-6 relative flex flex-col md:flex-row items-start">
+            class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-4xl w-full p-6 relative flex flex-col md:flex-row items-start">
             <button id="close-modal"
                 class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-4xl p-2">&times;</button>
 
@@ -99,7 +99,7 @@
                     <p id="modal-review" class="text-gray-300 text-sm italic"></p>
                 </div>
 
-                <div class="flex justify-start">
+                <div class="flex justify-start mt-4">
                     <a class="text-blue-500 font-bold cursor-pointer" id="modal-more-reviews" href="">View More
                         Reviews</a>
                 </div>
@@ -137,6 +137,11 @@
             document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
             document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date)
                 .getFullYear() : "N/A";
+        document.getElementById('modal-rating').textContent = movie.vote_average ? `${movie.vote_average.toFixed(1)}/10` : "N/A";
+
+        const trailerLink = document.getElementById('modal-trailer');
+        trailerLink.classList.add('hidden');
+
 
             const trailerLink = document.getElementById('modal-trailer');
             trailerLink.classList.add('hidden');
@@ -185,13 +190,12 @@
             modal.classList.add('flex');
         }
 
-        document.getElementById('close-modal').addEventListener('click', function() {
-            const modal = document.getElementById('modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        });
-    </script>
-
+    document.getElementById('close-modal').addEventListener('click', function() {
+        const modal = document.getElementById('modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    });
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/resources/views/movies/index.blade.php ENDPATH**/ ?>
