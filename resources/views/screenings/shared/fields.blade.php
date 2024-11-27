@@ -6,17 +6,17 @@
 <h2>
     {{ $mode == 'create' ? 'Create new screening for movie' : "Edit Screening of the movie \"{$screening->movieRef->title}\" at {$screening->theaterRef->name} on {$screening->date} {$screening->start_time}" }}
 </h2>
-
+{{--
     <x-field.input name="movie" label="Movie" width="md" readonly="$readonly"
         value="{{ old('movie', $screening->movieRef->title) }}" />
     <x-field.input name="theater" label="Theater" width="md" readonly="$readonly"
         value="{{ old('theater', $screening->theaterRef->name) }}" />
-
+ --}}
 <div>
     <label for="movie_id">Movie</label>
     <select name="movie_id" required>
         @foreach($movies as $movie)
-            <option value="{{ $movie->id }}">{{ $movie->title }}</option>
+            <option value="{{ $movie['id'] }}">{{ $movie['title'] }}</option>
         @endforeach
     </select>
 </div>
