@@ -5,11 +5,11 @@
     @endphp
 
     @foreach ($groupedScreenings as $tmdbId => $screeningsGroup)
-        <div class="mb-8">
-            @php
-                  // Get the movie data for the current tmdbId
-                $movie = $movie[$tmdbId] ?? null;
-            @endphp
+    <div class="mb-8">
+        @php
+            // Get the movie data for the current tmdbId
+            $movie = $movieData[$tmdbId] ?? null;
+        @endphp
 
             @if ($movie)
                 <h1 class="text-2xl font-bold mb-4 text-gray-900">

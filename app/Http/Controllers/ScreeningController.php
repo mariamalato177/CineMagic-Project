@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\TMDBService;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class ScreeningController extends Controller
 {
@@ -34,9 +35,11 @@ class ScreeningController extends Controller
 
         $searchQuery = $request->input('search');
         $movieQuery = $request->input('movie');
+        $selectedDate = $request->input('date');
 
         $screeningsQuery = Screening::query();
 
+        // Filter screenings based on selected movie and search query
         $screeningsQuery->whereNotNull('custom');
 
         if ($searchQuery) {
@@ -52,6 +55,12 @@ class ScreeningController extends Controller
             $screeningsQuery->whereBetween('date', [$today, $twoWeeksFromNow]);
         }
 
+        // If a date is selected, filter screenings by that date
+        if ($selectedDate) {
+            $screeningsQuery->whereDate('date', $selectedDate);
+        }
+
+        // Fetch the screenings with related movie and theater data
         $screenings = $screeningsQuery
             ->with('theaterRef', 'movieRef')
             ->orderBy('date')
@@ -59,17 +68,30 @@ class ScreeningController extends Controller
             ->paginate(70)
             ->withQueryString();
 
+        // Get all available screening dates
+        $availableDates = Screening::query()
+            ->whereNotNull('custom')
+            ->distinct()
+            ->pluck('date')
+            ->toArray();
 
+        // Movie data
         $movieData = [];
         foreach ($screenings as $screening) {
             $tmdbId = $screening->custom;
             if ($tmdbId) {
-                $movieData[$tmdbId] = $this->tmdbService->getMovieByID($tmdbId);
+                $movieData[$tmdbId] = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                    return $this->tmdbService->getMovieByID($tmdbId);
+                });
             }
         }
-        //dd($movieData);
-        return view('screenings.index', compact('screenings', 'movieData'));
+
+        return view('screenings.index', compact('screenings', 'movieData', 'selectedDate', 'availableDates'));
     }
+
+
+
+
 
 
 

@@ -173,8 +173,7 @@ class ScreeningsSeeder extends Seeder
 
 
             for ($i = 0; $i <= 5; $i++) {
-                $date = Carbon::now()->addDays($i)->toDateString();
-
+                $date = Carbon::now()->addDays($i)->format('Y-m-d');
                 $sessionsPerDay = rand(2, 3);
                 for ($j = 0; $j < $sessionsPerDay; $j++) {
                     $startTime = $startTimes[array_rand($startTimes)];
