@@ -46,6 +46,30 @@
 
     <div class="flex justify-center">
         <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
+            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create', App\Models\Screening::class)): ?>
+                <div class="flex items-center gap-4 mb-4 pb-5">
+                    <?php if (isset($component)) { $__componentOriginale67687e3e4e61f963b25a6bcf3983629 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale67687e3e4e61f963b25a6bcf3983629 = $attributes; } ?>
+<?php $component = App\View\Components\Button::resolve(['href' => ''.e(route('screenings.create')).'','text' => 'Create a new Screening'] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Button::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale67687e3e4e61f963b25a6bcf3983629)): ?>
+<?php $attributes = $__attributesOriginale67687e3e4e61f963b25a6bcf3983629; ?>
+<?php unset($__attributesOriginale67687e3e4e61f963b25a6bcf3983629); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale67687e3e4e61f963b25a6bcf3983629)): ?>
+<?php $component = $__componentOriginale67687e3e4e61f963b25a6bcf3983629; ?>
+<?php unset($__componentOriginale67687e3e4e61f963b25a6bcf3983629); ?>
+<?php endif; ?>
+                </div>
+            <?php endif; ?>
             <?php $__currentLoopData = $groupedScreenings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tmdbId => $screeningsGroup): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="mb-8">
                     <?php
