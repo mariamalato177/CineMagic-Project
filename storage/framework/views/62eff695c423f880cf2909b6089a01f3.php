@@ -3,6 +3,7 @@
 <?php $__env->startSection('main'); ?>
 <?php
 $user = auth()->user();
+
 ?>
 <div class="flex justify-center mt-10 space-x-8">
     <div class="w-full max-w-2xl p-8 bg-white shadow-md rounded-lg text-gray-900 ">
@@ -518,13 +519,20 @@ unset($__errorArgs, $__bag); ?>
         <div>
             <h3 class="mb-6 text-2xl font-bold">Shopping Cart Confirmation</h3>
             <?php $__currentLoopData = $cart; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php
+            $tmdbId = $item['custom'];
+                    $movieData=[];
+                    $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                        return $this->tmdbService->getMovieByID($tmdbId);
+                    });
+            ?>
             <div class="mb-6 p-4 bg-gray-100  rounded-lg">
                 <p><strong>Seat ID:</strong> <?php echo e($item['seatId']); ?></p>
                 <p><strong>Screening ID:</strong> <?php echo e($item['screeningId']); ?></p>
                 <p><strong>Price:</strong> <?php echo e($item['price']); ?>€</p>
-                <p><strong>Movie:</strong> <?php echo e($item['movie']); ?></p>
-                <p><strong>Hora:</strong> <?php echo e($item['hora']); ?></p>
-                <p><strong>Teatro:</strong> <?php echo e($item['theater']); ?></p>
+                <p><strong>Movie:</strong> <?php echo e($movieData['title']); ?></p>
+                <p><strong>Start Time:</strong> <?php echo e($item['hora']); ?></p>
+                <p><strong>Theater:</strong> <?php echo e($item['theater']); ?></p>
             </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>

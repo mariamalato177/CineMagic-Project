@@ -53,12 +53,21 @@
 
     <h2 style="font-size: 24px; font-weight: bold; color: #333;">Tickets</h2>
     <?php $__currentLoopData = $tickets; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ticket): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <?php
+        $tmdbId = $ticket->screeningRef->custom;
+                    $movieData=[];
+                    $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                        return $this->tmdbService->getMovieByID($tmdbId);
+                    });
+        ?>
         <div class="ticket-info">
             <div class="ticket-details">
                 <p>
                     <span class='label'>Ticket number:</span> <?php echo e($ticket->id); ?><br>
-                    <span class='label'>Screening:</span> <?php echo e($ticket->screeningRef->movieRef->title); ?> <?php echo e($ticket->screeningRef->start_time); ?><br>
-                    <span class='label'>Seat:</span> <?php echo e($ticket->seatRef->seatName); ?>  <?php echo e($ticket->screeningRef->theaterRef->name); ?> Theater <br>
+                    <span class='label'>Movie:</span> <?php echo e($movieData['title']); ?> <br>
+                    <span class='label'>Screening:</span><?php echo e($ticket->screeningRef->start_time); ?> at <?php echo e($ticket->screeningRef->date); ?>  <br>
+                    <span class='label'>Seat:</span> <?php echo e($ticket->seatRef->seatName); ?> <br>
+                    <span class='label'>Theater:</span> <?php echo e($ticket->screeningRef->theaterRef->name); ?> <br>
                     <span class='label'>Price:</span> <?php echo e($ticket->price); ?>€<br>
                 </p>
             </div>

@@ -30,7 +30,7 @@
                     <input type="date" id="endDate" name="endDate" value="{{ $endDate ?? '' }}" class="bg-white text-black p-2 rounded">
                 </div>
 
-                <div class="flex flex-col space-y-2">
+                <div class="flex flex-col space-y-2 w-60">
                     <label for="sortDate" class="text-black ">Sort by:</label>
                     <select id="sortDate" name="sortDate" class="bg-white text-black p-2 rounded w-full full">
                         <option value="desc" {{ $sortDate == 'desc' ? 'selected' : '' }}>Newest First</option>
@@ -46,9 +46,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($purchases as $purchase)
                 <div class="px-6 py-4 bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 flex flex-col justify-between relative">
-                    <h3 class="text-xl font-bold text-gray-900  truncate"> Date {{ $purchase->date }}</h3>
+                    <h3 class="text-xl font-bold text-gray-900  truncate"><strong> Date: </strong> {{ $purchase->date }}</h3>
                     <p><strong>Customer : </strong>{{ $purchase->customer_name }}</p>
-                    <p><strong>Id:</strong> {{ $purchase->id }}</p>
+                    <p><strong> Purchase Id:</strong> {{ $purchase->id }}</p>
                     @if ($purchase->receipt_pdf_filename)
                         <div class="flex items-center space-x-4">
                             <a href="{{ url('/pdf_purchases/' . $purchase->receipt_pdf_filename) }}" target="_blank" class="text-lg font-bold text-blue-500 hover:text-blue-700">

@@ -53,12 +53,21 @@
 
     <h2 style="font-size: 24px; font-weight: bold; color: #333;">Tickets</h2>
     @foreach($tickets as $ticket)
+        @php
+        $tmdbId = $ticket->screeningRef->custom;
+                    $movieData=[];
+                    $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                        return $this->tmdbService->getMovieByID($tmdbId);
+                    });
+        @endphp
         <div class="ticket-info">
             <div class="ticket-details">
                 <p>
                     <span class='label'>Ticket number:</span> {{ $ticket->id }}<br>
-                    <span class='label'>Screening:</span> {{ $ticket->screeningRef->movieRef->title }} {{ $ticket->screeningRef->start_time }}<br>
-                    <span class='label'>Seat:</span> {{ $ticket->seatRef->seatName }}  {{ $ticket->screeningRef->theaterRef->name }} Theater <br>
+                    <span class='label'>Movie:</span> {{ $movieData['title'] }} <br>
+                    <span class='label'>Screening:</span>{{ $ticket->screeningRef->start_time }} at {{ $ticket->screeningRef->date }}  <br>
+                    <span class='label'>Seat:</span> {{ $ticket->seatRef->seatName }} <br>
+                    <span class='label'>Theater:</span> {{ $ticket->screeningRef->theaterRef->name }} <br>
                     <span class='label'>Price:</span> {{ $ticket->price }}€<br>
                 </p>
             </div>
