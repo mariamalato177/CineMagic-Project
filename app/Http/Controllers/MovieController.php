@@ -16,99 +16,93 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class MovieController extends Controller
 {
     public function index(Request $request): View
-{
-    $page = max(1, min((int) $request->get('page', 1), 500));
-    $apiKey = env('TMDB_API_KEY');
-    $query = $request->get('query');
-    $genreFilter = $request->get('genre');
+    {
+        $page = max(1, min((int) $request->get('page', 1), 500));
+        $apiKey = env('TMDB_API_KEY');
+        $query = $request->get('query');
+        $genreFilter = $request->get('genre');
 
-    // Cache e carregar os gêneros primeiro
-    $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
-        $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
+
+        $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
+            $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
+                'api_key' => $apiKey,
+                'language' => 'en-US',
+            ]);
+            return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
+        });
+
+
+        $url = $query ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/discover/movie';
+        $params = [
             'api_key' => $apiKey,
             'language' => 'en-US',
-        ]);
-        return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
-    });
+            'page' => $page,
+        ];
 
-    // URL base para busca
-    $url = $query ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/discover/movie';
-    $params = [
-        'api_key' => $apiKey,
-        'language' => 'en-US',
-        'page' => $page,
-    ];
-
-    if ($query) {
-        $params['query'] = $query;
-    }
-    if ($genreFilter) {
-        $params['with_genres'] = $genreFilter;
-    }
-
-    // Fazer a requisição para a API
-    try {
-        $response = Http::get($url, $params);
-        if ($response->failed()) {
-            throw new \Exception('Failed to fetch movies from TMDB API.');
+        if ($query) {
+            $params['query'] = $query;
         }
-    } catch (\Exception $e) {
-        return view('movies.index')->with('error', 'Error: ' . $e->getMessage())
-            ->with('genres', $genres);
+        if ($genreFilter) {
+            $params['with_genres'] = $genreFilter;
+        }
+
+        try {
+            $response = Http::get($url, $params);
+            if ($response->failed()) {
+                throw new \Exception('Failed to fetch movies from TMDB API.');
+            }
+        } catch (\Exception $e) {
+            return view('movies.index')->with('error', 'Error: ' . $e->getMessage())
+                ->with('genres', $genres);
+        }
+
+        $moviesData = $response->json();
+        $movies = $moviesData['results'] ?? [];
+        $totalResults = $moviesData['total_results'] ?? 0;
+
+        if (empty($movies)) {
+            $emptyPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
+            return view('movies.index', [
+                'movies' => $emptyPaginator,
+                'genres' => $genres,
+                'error' => "No movies found for the given filters or search.",
+            ]);
+        }
+
+        foreach ($movies as &$movie) {
+            $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
+                ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
+                ->join(', ');
+        }
+
+        if ($query && $genreFilter) {
+            $movies = collect($movies)->filter(function ($movie) use ($query, $genreFilter) {
+                return stripos($movie['title'], $query) !== false &&
+                    in_array($genreFilter, $movie['genre_ids'] ?? []);
+            })->values();
+        }
+
+        $maxPages = min(500, (int) ceil($totalResults / 20));
+
+        if ($page > $maxPages) {
+            $moviesPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
+            return view('movies.index', [
+                'movies' => $moviesPaginator,
+                'genres' => $genres,
+                'error' => "The requested page number exceeds the maximum pages available.",
+            ]);
+        }
+
+        $moviesPaginator = new LengthAwarePaginator(
+            $movies,
+            min(500 * 20, $totalResults),
+            20,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('movies.index', ['movies' => $moviesPaginator, 'genres' => $genres]);
     }
-
-    // Processar os dados retornados
-    $moviesData = $response->json();
-    $movies = $moviesData['results'] ?? [];
-    $totalResults = $moviesData['total_results'] ?? 0;
-
-    // Verificar se não há filmes
-    if (empty($movies)) {
-        $emptyPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
-        return view('movies.index', [
-            'movies' => $emptyPaginator,
-            'genres' => $genres,
-            'error' => "No movies found for the given filters or search.",
-        ]);
-    }
-
-    // Adicionar nomes de gêneros aos filmes antes de filtrar
-    foreach ($movies as &$movie) {
-        $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
-            ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
-            ->join(', ');
-    }
-
-    // Filtrar os filmes por query e gênero
-    if ($query && $genreFilter) {
-        $movies = collect($movies)->filter(function ($movie) use ($query, $genreFilter) {
-            return stripos($movie['title'], $query) !== false &&
-                in_array($genreFilter, $movie['genre_ids'] ?? []);
-        })->values();
-    }
-
-    $maxPages = min(500, (int) ceil($totalResults / 20));
-
-    if ($page > $maxPages) {
-        $moviesPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
-        return view('movies.index', [
-            'movies' => $moviesPaginator,
-            'genres' => $genres,
-            'error' => "The requested page number exceeds the maximum pages available.",
-        ]);
-    }
-
-    // Paginar os filmes
-    $moviesPaginator = new LengthAwarePaginator(
-        $movies,
-        min(500 * 20, $totalResults),
-        20,
-        $page,
-        ['path' => $request->url(), 'query' => $request->query()]
-    );
-
-    return view('movies.index', ['movies' => $moviesPaginator, 'genres' => $genres]);
-}
 
 
     public function create(): View
@@ -122,7 +116,6 @@ class MovieController extends Controller
     {
         $apiKey = env('TMDB_API_KEY');
 
-        // Fetch and cache movie details, including genres
         $movie = cache()->remember("movie_$movieId", 60 * 60, function () use ($movieId, $apiKey) {
             $response = Http::get("https://api.themoviedb.org/3/movie/{$movieId}", [
                 'api_key' => $apiKey,
@@ -132,7 +125,6 @@ class MovieController extends Controller
             return $response->successful() ? $response->json() : [];
         });
 
-        // Fetch genres from cache (or from TMDB if not cached)
         $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
             $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
                 'api_key' => $apiKey,
@@ -141,12 +133,10 @@ class MovieController extends Controller
             return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
         });
 
-        // Map genre IDs to names
         $movie['genre_names'] = collect($movie['genres'] ?? [])
             ->map(fn($genre) => $genres->get($genre['id'])['name'] ?? 'Unknown genre')
             ->join(', ');
 
-        // Paginate reviews
         $page = request()->get('page', 1);
         $reviewsResponse = Http::get("https://api.themoviedb.org/3/movie/{$movieId}/reviews", [
             'api_key' => $apiKey,
@@ -161,7 +151,7 @@ class MovieController extends Controller
         $reviewsPaginator = new LengthAwarePaginator(
             $reviews,
             $totalReviews,
-            5, // Reviews per page
+            5, 
             $page,
             ['path' => request()->url(), 'query' => request()->query()]
         );
@@ -212,7 +202,6 @@ class MovieController extends Controller
             $file = $request->file('poster_filename');
             $filename = $file->store('posters', 'public');
             $data['poster_filename'] = basename($filename);
-            // Delete old poster if it exists
             if ($movie->poster_filename) {
                 Storage::disk('public')->delete('posters/' . $movie->poster_filename);
             }

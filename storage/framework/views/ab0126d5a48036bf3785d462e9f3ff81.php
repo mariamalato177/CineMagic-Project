@@ -59,177 +59,182 @@
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
 
-        <div class="flex justify-center items-center space-x-1 mt-6">
-    
-    <?php if($movies->onFirstPage()): ?>
-        <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-l cursor-not-allowed">&laquo;</span>
-    <?php else: ?>
-        <a href="<?php echo e($movies->previousPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-l hover:bg-gray-100">&laquo;</a>
-    <?php endif; ?>
-
-    
-    <?php
-        $currentPage = $movies->currentPage();
-        $lastPage = $movies->lastPage();
-        $start = max(1, $currentPage - 4); // Para dispositivos grandes, começa 4 páginas antes
-        $end = min($lastPage, $currentPage + 4); // Vai até 4 páginas depois
-    ?>
-
-    
-    <div class="hidden lg:flex">
-        <?php if($start > 1): ?>
-            <a href="<?php echo e($movies->url(1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">1</a>
-            <?php if($start > 2): ?>
-                <span class="px-4 py-2 bg-white text-gray-400">...</span>
-            <?php endif; ?>
-        <?php endif; ?>
-
-        <?php for($page = $start; $page <= $end; $page++): ?>
-            <?php if($page == $currentPage): ?>
-                <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300"><?php echo e($page); ?></span>
-            <?php else: ?>
-                <a href="<?php echo e($movies->url($page)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"><?php echo e($page); ?></a>
-            <?php endif; ?>
-        <?php endfor; ?>
-
-        <?php if($end < $lastPage): ?>
-            <?php if($end < $lastPage - 1): ?>
-                <span class="px-4 py-2 bg-white text-gray-400">...</span>
-            <?php endif; ?>
-            <a href="<?php echo e($movies->url($lastPage)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"><?php echo e($lastPage); ?></a>
-        <?php endif; ?>
-    </div>
-
-    
-    <div class="flex lg:hidden">
-        <a href="<?php echo e($movies->url($currentPage - 1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
-        <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300"><?php echo e($currentPage); ?></span>
-        <a href="<?php echo e($movies->url($currentPage + 1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
-    </div>
-
-    
-    <?php if($movies->hasMorePages()): ?>
-        <a href="<?php echo e($movies->nextPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-r hover:bg-gray-100">&raquo;</a>
-    <?php else: ?>
-        <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-r cursor-not-allowed">&raquo;</span>
-    <?php endif; ?>
-</div>
-
-
-
-
-        <?php else: ?>
-        <div class="alert alert-warning">No movies found.</div>
-        <?php endif; ?>
-    </div>
-
-    <!--Pop up of the details -->
-    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden transition-opacity duration-300">
-        <div class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-3xl w-full p-6 relative flex flex-col md:flex-row items-start">
-            <button id="close-modal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-4xl p-2">&times;</button>
-
-            <div class="w-full md:w-1/3">
-                <img id="modal-poster" class="rounded-lg shadow-md" src="" alt="Movie Poster">
+        <div class="flex flex-col items-center mt-6">
+            <div class="text-gray-700 mb-4">
+                <?php if($movies->total() > 0): ?>
+                Mostrando <?php echo e($movies->firstItem()); ?>–<?php echo e($movies->lastItem()); ?> de <?php echo e($movies->total()); ?> resultados
+                <?php endif; ?>
             </div>
 
-            <div class="flex-1 ml-0 md:ml-6 mt-4 md:mt-0">
-                <h2 id="modal-title" class="text-2xl font-semibold text-white mb-2"></h2>
-                <p id="modal-overview" class="text-gray-300 text-sm mb-4"></p>
+            <div class="flex justify-center items-center space-x-1 relative">
+                
+                <?php if($movies->onFirstPage()): ?>
+                <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-l cursor-not-allowed">&laquo;</span>
+                <?php else: ?>
+                <a href="<?php echo e($movies->previousPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-l hover:bg-gray-100">&laquo;</a>
+                <?php endif; ?>
 
-                <div class="mt-4 text-sm">
-                    <p><span class="font-semibold">Genre:</span> <span id="modal-genre" class="text-gray-400"></span></p>
-                    <p><span class="font-semibold">Release Year:</span> <span id="modal-year" class="text-gray-400"></span></p>
+                
+                <?php
+                $currentPage = $movies->currentPage();
+                $lastPage = $movies->lastPage();
+                $start = max(1, $currentPage - 4); // Para dispositivos grandes, começa 4 páginas antes
+                $end = min($lastPage, $currentPage + 4); // Vai até 4 páginas depois
+                ?>
+
+                
+                <div class="hidden lg:flex">
+                    <?php if($start > 1): ?>
+                    <a href="<?php echo e($movies->url(1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">1</a>
+                    <?php if($start > 2): ?>
+                    <span class="px-4 py-2 bg-white text-gray-400">...</span>
+                    <?php endif; ?>
+                    <?php endif; ?>
+
+                    <?php for($page = $start; $page <= $end; $page++): ?>
+                        <?php if($page==$currentPage): ?>
+                        <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300"><?php echo e($page); ?></span>
+                        <?php else: ?>
+                        <a href="<?php echo e($movies->url($page)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"><?php echo e($page); ?></a>
+                        <?php endif; ?>
+                        <?php endfor; ?>
+
+                        <?php if($end < $lastPage): ?>
+                            <?php if($end < $lastPage - 1): ?>
+                            <span class="px-4 py-2 bg-white text-gray-400">...</span>
+                            <?php endif; ?>
+                            <a href="<?php echo e($movies->url($lastPage)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"><?php echo e($lastPage); ?></a>
+                            <?php endif; ?>
                 </div>
 
-                <div class="mt-4">
-                    <h3 class="text-lg font-semibold text-white">Review:</h3>
-                    <p id="modal-review" class="text-gray-300 text-sm italic"></p>
+                
+                <div class="flex lg:hidden">
+                    <a href="<?php echo e($movies->url($currentPage - 1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
+                    <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300"><?php echo e($currentPage); ?></span>
+                    <a href="<?php echo e($movies->url($currentPage + 1)); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
                 </div>
 
-                <div class="flex justify-start">
-                    <a class="text-blue-500 font-bold cursor-pointer" id="modal-more-reviews" href="">View More Reviews</a>
+                
+                <?php if($movies->hasMorePages()): ?>
+                <a href="<?php echo e($movies->nextPageUrl()); ?>" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-r hover:bg-gray-100">&raquo;</a>
+                <?php else: ?>
+                <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-r cursor-not-allowed">&raquo;</span>
+                <?php endif; ?>
+            </div>
+
+            <?php else: ?>
+            <div class="alert alert-warning">No movies found.</div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+        <!--Pop up of the details -->
+        <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden transition-opacity duration-300">
+            <div class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-3xl w-full p-6 relative flex flex-col md:flex-row items-start">
+                <button id="close-modal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-4xl p-2">&times;</button>
+
+                <div class="w-full md:w-1/3">
+                    <img id="modal-poster" class="rounded-lg shadow-md" src="" alt="Movie Poster">
                 </div>
-                <div class="mt-4">
-                    <a id="modal-trailer" href="" target="_blank" class="text-blue-500 hover:text-blue-300">Watch Trailer</a>
+
+                <div class="flex-1 ml-0 md:ml-6 mt-4 md:mt-0">
+                    <h2 id="modal-title" class="text-2xl font-semibold text-white mb-2"></h2>
+                    <p id="modal-overview" class="text-gray-300 text-sm mb-4"></p>
+
+                    <div class="mt-4 text-sm">
+                        <p><span class="font-semibold">Genre:</span> <span id="modal-genre" class="text-gray-400"></span></p>
+                        <p><span class="font-semibold">Release Year:</span> <span id="modal-year" class="text-gray-400"></span></p>
+                    </div>
+
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold text-white">Review:</h3>
+                        <p id="modal-review" class="text-gray-300 text-sm italic"></p>
+                    </div>
+
+                    <div class="flex justify-start">
+                        <a class="text-blue-500 font-bold cursor-pointer" id="modal-more-reviews" href="">View More Reviews</a>
+                    </div>
+                    <div class="mt-4">
+                        <a id="modal-trailer" href="" target="_blank" class="text-blue-500 hover:text-blue-300">Watch Trailer</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<style>
-    .modal {
-        display: none;
-    }
-
-    .modal.open {
-        display: flex;
-    }
-</style>
-
-<script>
-    const reviewCache = {};
-
-    async function openModal(event) {
-        event.preventDefault();
-
-        const movie = JSON.parse(event.target.getAttribute('data-movie'));
-
-        document.getElementById('modal-poster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-        document.getElementById('modal-title').textContent = movie.title;
-        document.getElementById('modal-overview').textContent = movie.overview || "No synopsis available.";
-        document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
-        document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
-
-        const trailerLink = document.getElementById('modal-trailer');
-        trailerLink.classList.add('hidden');
-
-        const moreReviewsLink = document.getElementById('modal-more-reviews');
-        moreReviewsLink.href = `/movies/${movie.id}`;
-
-        try {
-            const response = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6`);
-            const data = await response.json();
-            const trailer = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
-
-            if (trailer) {
-                trailerLink.href = `https://www.youtube.com/watch?v=${trailer.key}`;
-                trailerLink.classList.remove('hidden');
-            }
-        } catch (error) {
-            console.error('Error fetching trailer:', error);
+    <style>
+        .modal {
+            display: none;
         }
 
-        if (reviewCache[movie.id]) {
-            document.getElementById('modal-review').textContent = reviewCache[movie.id];
-        } else {
+        .modal.open {
+            display: flex;
+        }
+    </style>
+
+    <script>
+        const reviewCache = {};
+
+        async function openModal(event) {
+            event.preventDefault();
+
+            const movie = JSON.parse(event.target.getAttribute('data-movie'));
+
+            document.getElementById('modal-poster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+            document.getElementById('modal-title').textContent = movie.title;
+            document.getElementById('modal-overview').textContent = movie.overview || "No synopsis available.";
+            document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
+            document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
+
+            const trailerLink = document.getElementById('modal-trailer');
+            trailerLink.classList.add('hidden');
+
+            const moreReviewsLink = document.getElementById('modal-more-reviews');
+            moreReviewsLink.href = `/movies/${movie.id}`;
+
             try {
-                const reviewResponse = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6&language=en-US&page=1`);
-                const reviewData = await reviewResponse.json();
-                const shortReview = reviewData.results
-                    .filter(review => review.content.length <= 300)
-                    .sort((a, b) => a.content.length - b.content.length)[0];
+                const response = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6`);
+                const data = await response.json();
+                const trailer = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
 
-                const reviewText = shortReview ? shortReview.content : "No short reviews available.";
-                reviewCache[movie.id] = reviewText;
-                document.getElementById('modal-review').textContent = reviewText;
+                if (trailer) {
+                    trailerLink.href = `https://www.youtube.com/watch?v=${trailer.key}`;
+                    trailerLink.classList.remove('hidden');
+                }
             } catch (error) {
-                console.error('Error fetching review:', error);
-                document.getElementById('modal-review').textContent = "Unable to fetch review.";
+                console.error('Error fetching trailer:', error);
             }
+
+            if (reviewCache[movie.id]) {
+                document.getElementById('modal-review').textContent = reviewCache[movie.id];
+            } else {
+                try {
+                    const reviewResponse = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6&language=en-US&page=1`);
+                    const reviewData = await reviewResponse.json();
+                    const shortReview = reviewData.results
+                        .filter(review => review.content.length <= 300)
+                        .sort((a, b) => a.content.length - b.content.length)[0];
+
+                    const reviewText = shortReview ? shortReview.content : "No short reviews available.";
+                    reviewCache[movie.id] = reviewText;
+                    document.getElementById('modal-review').textContent = reviewText;
+                } catch (error) {
+                    console.error('Error fetching review:', error);
+                    document.getElementById('modal-review').textContent = "Unable to fetch review.";
+                }
+            }
+
+            const modal = document.getElementById('modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
-        const modal = document.getElementById('modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
+        document.getElementById('close-modal').addEventListener('click', function() {
+            const modal = document.getElementById('modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        });
+    </script>
 
-    document.getElementById('close-modal').addEventListener('click', function() {
-        const modal = document.getElementById('modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    });
-</script>
-
-<?php $__env->stopSection(); ?>
+    <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\projeto\resources\views/movies/index.blade.php ENDPATH**/ ?>
