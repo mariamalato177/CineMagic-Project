@@ -17,11 +17,11 @@ class MovieController extends Controller
 {
     public function index(Request $request): View
     {
-        $page = max(1, min((int) $request->get('page', 1), 500));
+        $page = max(1, (int) $request->get('page', 1));
         $apiKey = env('TMDB_API_KEY');
         $query = $request->get('query');
         $genreFilter = $request->get('genre');
-
+        $perPage = 20;
 
         $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
             $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
@@ -31,12 +31,11 @@ class MovieController extends Controller
             return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
         });
 
-
         $url = $query ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/discover/movie';
         $params = [
             'api_key' => $apiKey,
             'language' => 'en-US',
-            'page' => $page,
+            'page' => 1, 
         ];
 
         if ($query) {
@@ -46,62 +45,69 @@ class MovieController extends Controller
             $params['with_genres'] = $genreFilter;
         }
 
-        try {
+
+        $allMovies = collect();
+        $totalResults = 0;
+
+
+        do {
             $response = Http::get($url, $params);
+
             if ($response->failed()) {
-                throw new \Exception('Failed to fetch movies from TMDB API.');
+                return view('movies.index')->with('error', 'Error: Failed to fetch movies from TMDB API.')
+                    ->with('genres', $genres);
             }
-        } catch (\Exception $e) {
-            return view('movies.index')->with('error', 'Error: ' . $e->getMessage())
-                ->with('genres', $genres);
-        }
 
-        $moviesData = $response->json();
-        $movies = $moviesData['results'] ?? [];
-        $totalResults = $moviesData['total_results'] ?? 0;
+            $moviesData = $response->json();
+            $movies = $moviesData['results'] ?? [];
+            $totalResults = $moviesData['total_results'] ?? 0;
 
-        if (empty($movies)) {
-            $emptyPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
-            return view('movies.index', [
-                'movies' => $emptyPaginator,
-                'genres' => $genres,
-                'error' => "No movies found for the given filters or search.",
-            ]);
-        }
+            $allMovies = $allMovies->merge($movies);
 
-        foreach ($movies as &$movie) {
+
+            $params['page']++;
+
+            
+            if ($params['page'] > 10) {
+                break;
+            }
+        } while ($params['page'] <= min(ceil($totalResults / $perPage), 500));
+
+
+        
+        $allMovies->transform(function ($movie) use ($genres) {
             $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
                 ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
                 ->join(', ');
-        }
+            return $movie;
+        });
 
         if ($query && $genreFilter) {
-            $movies = collect($movies)->filter(function ($movie) use ($query, $genreFilter) {
+            $allMovies = $allMovies->filter(function ($movie) use ($query, $genreFilter) {
                 return stripos($movie['title'], $query) !== false &&
                     in_array($genreFilter, $movie['genre_ids'] ?? []);
             })->values();
+        } elseif ($query) {
+            $allMovies = $allMovies->filter(fn($movie) => stripos($movie['title'], $query) !== false)->values();
+        } elseif ($genreFilter) {
+            $allMovies = $allMovies->filter(fn($movie) => in_array($genreFilter, $movie['genre_ids'] ?? []))->values();
         }
 
-        $maxPages = min(500, (int) ceil($totalResults / 20));
-
-        if ($page > $maxPages) {
-            $moviesPaginator = new LengthAwarePaginator([], 0, 20, $page, ['path' => $request->url(), 'query' => $request->query()]);
-            return view('movies.index', [
-                'movies' => $moviesPaginator,
-                'genres' => $genres,
-                'error' => "The requested page number exceeds the maximum pages available.",
-            ]);
-        }
+        $totalFilteredResults = $allMovies->count();
+        $paginatedMovies = $allMovies->forPage($page, $perPage);
 
         $moviesPaginator = new LengthAwarePaginator(
-            $movies,
-            min(500 * 20, $totalResults),
-            20,
+            $paginatedMovies,
+            $totalFilteredResults,
+            $perPage,
             $page,
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('movies.index', ['movies' => $moviesPaginator, 'genres' => $genres]);
+        return view('movies.index', [
+            'movies' => $moviesPaginator,
+            'genres' => $genres,
+        ]);
     }
 
 
@@ -151,7 +157,7 @@ class MovieController extends Controller
         $reviewsPaginator = new LengthAwarePaginator(
             $reviews,
             $totalReviews,
-            5, 
+            5,
             $page,
             ['path' => request()->url(), 'query' => request()->query()]
         );
