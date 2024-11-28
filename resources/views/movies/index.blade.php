@@ -48,7 +48,7 @@
                 <div class="card mb-4">
                     <img
                         class="rounded-lg shadow-md ease-in-out duration-300 hover:opacity-50 cursor-pointer"
-                        src="{{ $movie['poster_path'] ? 'https://image.tmdb.org/t/p/w500' . $movie['poster_path'] : asset('storage/posters/_no_poster_2.png') }}"
+                        src="{{ $movie['poster_path'] ? 'https://image.tmdb.org/t/p/w500' . $movie['poster_path'] : asset('storage/posters/_no_poster_1.png') }}"
                         alt="{{ $movie['title'] }}"
                         data-movie="{{ json_encode($movie) }}"
                         onclick="openModal(event)">
@@ -122,7 +122,7 @@
 
         const movie = JSON.parse(event.target.getAttribute('data-movie'));
 
-        document.getElementById('modal-poster').src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/storage/posters/_no_poster_2.png';
+        document.getElementById('modal-poster').src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/storage/posters/_no_poster_1.png';
         document.getElementById('modal-title').textContent = movie.title;
         document.getElementById('modal-overview').textContent = movie.overview || "No synopsis available.";
         document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
