@@ -29,12 +29,13 @@ class TMDBService
         $response = Http::get("{$this->baseUrl}/movie/popular", [
             'api_key' => $this->apiKey,
             'language' => 'en-US',
+            'region' => 'hr',
             'page' => 1
         ]);
 
         return $response->json();
     }
-    
+
     public function getNowPlayingMovies(){
         $response = Http::get("{$this->baseUrl}/movie/now_playing", [
             'api_key' => $this->apiKey,
@@ -58,6 +59,18 @@ class TMDBService
         }
 
         return $response->json();
+    }
+
+    public function getUpcomingMovies()
+    {
+        $response = Http::get("{$this->baseUrl}/movie/upcoming", [
+            'api_key' => $this->apiKey,
+            'language' => 'en-US',
+            'region' => 'hr',
+            'page' => 1,
+        ]);
+
+        return $response->json()['results'] ?? [];
     }
 
 

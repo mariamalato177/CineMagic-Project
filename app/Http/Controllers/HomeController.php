@@ -2,53 +2,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
+use App\Services\TMDBService;
 
 class HomeController extends Controller
 {
+    private TMDBService $tmdbService;
+
+    public function __construct(TMDBService $tmdbService)
+    {
+        $this->tmdbService = $tmdbService;
+    }
+
     public function index()
     {
-        // Buscar filmes em exibição ("Now Playing") da API TMDB para "Upcoming Screenings"
-        $upcomingScreeningsResponse = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'region' => 'hr',
-            'page' => 1,
-        ]);
+        // Use the service to fetch the data
+        $upcomingScreenings = $this->tmdbService->getNowPlayingMovies();
+        $nowPlayingMovies = $this->tmdbService->getNowPlayingMovies();
+        $upcomingMovies = $this->tmdbService->getUpcomingMovies();
 
-        // Verificar se a resposta foi bem-sucedida e extrair os filmes para "Upcoming Screenings"
-        $upcomingScreenings = $upcomingScreeningsResponse->successful() ? $upcomingScreeningsResponse->json()['results'] : [];
-
-        // Buscar filmes populares da API TMDB
-        $popularMoviesResponse = Http::get('https://api.themoviedb.org/3/movie/popular', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'region' => 'hr',
-            'page' => 1,
-        ]);
-
-        $upcomingMoviesResponse = Http::get('https://api.themoviedb.org/3/movie/upcoming', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'region' => 'hr',
-            'page' => 1,
-        ]);
-
-        // Buscar filmes em exibição ("Now Playing") da API TMDB
-        $nowPlayingResponse = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-             'region' => 'hr',
-            'page' => 1,
-        ]);
-
-        // Verificar se a resposta foi bem-sucedida e extrair os filmes
-        //$popularMovies = $popularMoviesResponse->successful() ? $popularMoviesResponse->json()['results'] : [];
-        $nowPlayingMovies = $nowPlayingResponse->successful() ? $nowPlayingResponse->json()['results'] : [];
-        $upcomingMovies = $upcomingMoviesResponse->successful() ? $upcomingMoviesResponse->json()['results'] : [];
-
-        // Passar as variáveis para a view
+        // Pass the data to the view
         return view('home', compact('upcomingScreenings', 'nowPlayingMovies', 'upcomingMovies'));
     }
 }
