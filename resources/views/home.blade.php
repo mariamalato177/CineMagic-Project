@@ -45,10 +45,10 @@
                     @endforeach
                 </div>
             </div>
+
             <!-- Now Playing Movies Carousel -->
             <div class="my-8 mb-12 relative">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Now Playing Movies</h2>
-
                 <div id="nowPlayingCarousel" class="flex overflow-x-auto scroll-smooth space-x-4">
                     @foreach ($nowPlayingMovies as $movie)
                         <div class="w-full sm:w-1/4 flex-shrink-0 pb-4">
@@ -73,54 +73,52 @@
             </div>
 
             <!-- Upcoming Screenings Section -->
-            <div class="my-8">
+            <div class="my-8 mb-12">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Upcoming Screenings</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     @foreach ($screeningsByMovie as $movieGroup)
-                        <div class="bg-white rounded-lg shadow-sm p-4">
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden pb-4">
                             <img src="https://image.tmdb.org/t/p/w500{{ $movieGroup['movie']['poster_path'] }}"
-                                alt="{{ $movieGroup['movie']['title'] }}"
-                                class="w-full h-auto object-contain rounded-lg mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900">{{ $movieGroup['movie']['title'] }}</h3>
-
-                            @php
-                                $date = \Carbon\Carbon::parse($movieGroup['screening']['date'])->format('d-m-Y');
-                            @endphp
-                            <p class="text-sm text-gray-600"><strong>Date:</strong> {{ $date }}</p>
-                            <p class="text-sm text-gray-600"><strong>Time:
-                                </strong>{{ $movieGroup['screening']['start_time'] }}</p>
-                            @if (!$movieGroup['screening']->isSoldOut($movieGroup['screening']))
-                                <div class="mt-4 flex justify-end">
-                                    <a href="{{ route('screenings.show', $movieGroup['screening']) }}"
-                                        class="px-4 py-2 bg-coral text-white rounded-full"
-                                        style=" color: white; transition: background-color 0.3s ease-in-out;">
-                                        @if (auth()->check() && auth()->user()->type !== 'C')
-                                            See info
-                                        @else
-                                            Buy Tickets
-                                        @endif
-                                    </a>
-                                </div>
-                            @else
-                                @if (auth()->check() && auth()->user()->type !== 'A')
-                                    <a href="{{ route('screenings.show', $movieGroup['screening']) }}" rel="noopener noreferrer"
-                                        class="px-2 py-1 font-semibold rounded-full bg-coral"
-                                        style="color: white; transition: background-color 0.3s ease-in-out;">
-                                        See Info
-                                    </a>
-                                    <div class="absolute top-2 right-2">
-                                        <span
-                                            class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
-                                            Out</span>
+                                alt="{{ $movieGroup['movie']['title'] }}">
+                            <div class="p-3">
+                                <h3 class="text-lg font-semibold text-gray-900">{{ $movieGroup['movie']['title'] }}</h3>
+                                @php
+                                    $date = \Carbon\Carbon::parse($movieGroup['screening']['date'])->format('d-m-Y');
+                                @endphp
+                                <p class="text-sm text-gray-600"><strong>Date:</strong> {{ $date }}</p>
+                                <p class="text-sm text-gray-600"><strong>Time:
+                                    </strong>{{ $movieGroup['screening']['start_time'] }}</p>
+                                @if (!$movieGroup['screening']->isSoldOut($movieGroup['screening']))
+                                    <div class="mt-4 flex justify-end">
+                                        <a href="{{ route('screenings.show', $movieGroup['screening']) }}"
+                                            class="px-4 py-2 bg-coral text-white rounded-full"
+                                            style=" color: white; transition: background-color 0.3s ease-in-out;">
+                                            @if (auth()->check() && auth()->user()->type !== 'C')
+                                                See info
+                                            @else
+                                                Buy Tickets
+                                            @endif
+                                        </a>
                                     </div>
+                                @else
+                                    @if (auth()->check() && auth()->user()->type !== 'A')
+                                        <a href="{{ route('screenings.show', $movieGroup['screening']) }}"
+                                            rel="noopener noreferrer" class="px-2 py-1 font-semibold rounded-full bg-coral"
+                                            style="color: white; transition: background-color 0.3s ease-in-out;">
+                                            See Info
+                                        </a>
+                                        <div class="absolute top-2 right-2">
+                                            <span
+                                                class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
+                                                Out</span>
+                                        </div>
+                                    @endif
                                 @endif
-                            @endif
+                            </div>
                         </div>
                     @endforeach
                 </div>
             </div>
         </div>
-    </div>
-    </div>
-    </main>
+    </div> <!-- Close main div -->
 @endsection
