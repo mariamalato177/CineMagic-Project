@@ -162,26 +162,6 @@
 <?php $component->withAttributes([]); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
-<?php if (isset($__attributesOriginal44f9c11916c14e492f114196bdefa85e)): ?>
-<?php $attributes = $__attributesOriginal44f9c11916c14e492f114196bdefa85e; ?>
-<?php unset($__attributesOriginal44f9c11916c14e492f114196bdefa85e); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal44f9c11916c14e492f114196bdefa85e)): ?>
-<?php $component = $__componentOriginal44f9c11916c14e492f114196bdefa85e; ?>
-<?php unset($__componentOriginal44f9c11916c14e492f114196bdefa85e); ?>
-<?php endif; ?>
-                                                                <?php if (isset($component)) { $__componentOriginald16d466b6de69a6c808277f1bfc3f4f2 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginald16d466b6de69a6c808277f1bfc3f4f2 = $attributes; } ?>
-<?php $component = App\View\Components\Table\IconDelete::resolve(['action' => ''.e(route('screenings.destroy', ['screening' => $screening])).''] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('table.icon-delete'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\App\View\Components\Table\IconDelete::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes([]); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
 <?php if (isset($__attributesOriginald16d466b6de69a6c808277f1bfc3f4f2)): ?>
 <?php $attributes = $__attributesOriginald16d466b6de69a6c808277f1bfc3f4f2; ?>
 <?php unset($__attributesOriginald16d466b6de69a6c808277f1bfc3f4f2); ?>
@@ -224,13 +204,16 @@
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
                             </div>
-                        </div>
-                    <?php else: ?>
-                        <p>No movie data available</p>
-                    <?php endif; ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
+    </div>
+<?php else: ?>
+    <p>No movie data available</p>
+    <?php endif; ?>
+    </div>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    </div>
     </div>
 
 
