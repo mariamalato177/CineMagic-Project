@@ -8,9 +8,10 @@
         </h2>
     </div>
 </header>
-    <div class="container mx-auto px-4 pt-16">
+<div class="flex justify-center">
+    <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
 
-
+    <div class="container mx-auto px-4 py-4 ">
         <?php if (isset($component)) { $__componentOriginalb596d52210e8ba4ef98a5af9cfe1fc78 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalb596d52210e8ba4ef98a5af9cfe1fc78 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.users.filter-card','data' => ['filterAction' => route('users.list'),'resetUrl' => route('users.list'),'searchName' => old('string', $filterByName),'class' => 'mb-6']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -137,6 +138,9 @@
             <?php echo e($users->links()); ?>
 
         </div>
+            </div>
+        </div>
+
     </div>
 <?php $__env->stopSection(); ?>
 

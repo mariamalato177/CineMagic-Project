@@ -1,16 +1,18 @@
-<?php $__env->startSection('header-title','Admins & Employees'); ?>
+<?php $__env->startSection('header-title', 'Admins & Employees'); ?>
 
 <?php $__env->startSection('main'); ?>
-<header class="bg-white  shadow">
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            <?php echo $__env->yieldContent('header-title'); ?>
-        </h2>
-    </div>
-</header>
-    <div class="container mx-auto px-4 pt-16">
-        <div class="flex items-center gap-4 mb-4">
-            <?php if (isset($component)) { $__componentOriginale67687e3e4e61f963b25a6bcf3983629 = $component; } ?>
+    <header class="bg-white  shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                <?php echo $__env->yieldContent('header-title'); ?>
+            </h2>
+        </div>
+    </header>
+    <div class="flex justify-center">
+        <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
+            <div class="container mx-auto px-4 pt-4">
+                <div class="flex items-center gap-4 mb-4">
+                    <?php if (isset($component)) { $__componentOriginale67687e3e4e61f963b25a6bcf3983629 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginale67687e3e4e61f963b25a6bcf3983629 = $attributes; } ?>
 <?php $component = App\View\Components\Button::resolve(['href' => ''.e(route('users.create')).'','text' => 'Create a new User'] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('button'); ?>
@@ -30,34 +32,36 @@
 <?php $component = $__componentOriginale67687e3e4e61f963b25a6bcf3983629; ?>
 <?php unset($__componentOriginale67687e3e4e61f963b25a6bcf3983629); ?>
 <?php endif; ?>
-        </div>
+                </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-8 mt-8">
-            <?php $__currentLoopData = $staffs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $staff): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="bg-white rounded-lg overflow-hidden shadow-lg flex flex-col">
-                    <div class="aspect-w-16 aspect-h-9">
-                        <img src="<?php echo e($staff->photoFullUrl); ?>" class="w-full h-full object-cover" alt="<?php echo e($staff->name); ?>">
-                    </div>
-                    <div class="flex flex-col justify-between flex-grow p-4">
-                        <div>
-                            <p class="text-black text-lg font-semibold"><?php echo e($staff->name); ?></p>
-                            <p class="text-gray-400"><?php echo e($staff->email); ?></p>
-                        </div>
-                        <div class="mt-auto">
-                            <?php if($staff->type === 'E'): ?>
-                                <p class="text-green-500 font-bold">Employee</p>
-                            <?php elseif($staff->type === 'A'): ?>
-                                <p class="text-blue-500 font-bold">Administrator</p>
-                            <?php endif; ?>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-8 mt-8">
+                    <?php $__currentLoopData = $staffs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $staff): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="bg-white rounded-lg overflow-hidden shadow-lg flex flex-col">
+                            <div class="aspect-w-16 aspect-h-9">
+                                <img src="<?php echo e($staff->photoFullUrl); ?>" class="w-full h-full object-cover"
+                                    alt="<?php echo e($staff->name); ?>">
+                            </div>
+                            <div class="flex flex-col justify-between flex-grow p-4">
+                                <div>
+                                    <p class="text-black text-lg font-semibold"><?php echo e($staff->name); ?></p>
+                                    <p class="text-gray-400"><?php echo e($staff->email); ?></p>
+                                </div>
+                                <div class="mt-auto">
+                                    <?php if($staff->type === 'E'): ?>
+                                        <p class="text-green-500 font-bold">Employee</p>
+                                    <?php elseif($staff->type === 'A'): ?>
+                                        <p class="text-blue-500 font-bold">Administrator</p>
+                                    <?php endif; ?>
 
-                        </div>
+                                </div>
 
-                        <?php if(!$staff->isBlocked($staff->id)): ?>
-                        <form method="POST" action="<?php echo e(route('users.block', ['user' => $staff->id])); ?>"
-                            onsubmit="return confirm('Are you sure you want to block this user?')" class="inline-block">
-                            <?php echo csrf_field(); ?>
-                            <?php echo method_field('PATCH'); ?>
-                            <?php if (isset($component)) { $__componentOriginale67687e3e4e61f963b25a6bcf3983629 = $component; } ?>
+                                <?php if(!$staff->isBlocked($staff->id)): ?>
+                                    <form method="POST" action="<?php echo e(route('users.block', ['user' => $staff->id])); ?>"
+                                        onsubmit="return confirm('Are you sure you want to block this user?')"
+                                        class="inline-block">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('PATCH'); ?>
+                                        <?php if (isset($component)) { $__componentOriginale67687e3e4e61f963b25a6bcf3983629 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginale67687e3e4e61f963b25a6bcf3983629 = $attributes; } ?>
 <?php $component = App\View\Components\Button::resolve(['element' => 'submit','type' => 'danger','text' => 'Block'] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('button'); ?>
@@ -77,13 +81,14 @@
 <?php $component = $__componentOriginale67687e3e4e61f963b25a6bcf3983629; ?>
 <?php unset($__componentOriginale67687e3e4e61f963b25a6bcf3983629); ?>
 <?php endif; ?>
-                        </form>
-                    <?php else: ?>
-                        <form method="POST" action="<?php echo e(route('users.unblock', ['user' => $staff->id])); ?>"
-                            onsubmit="return confirm('Are you sure you want to unblock this user?')" class="inline-block">
-                            <?php echo csrf_field(); ?>
-                            <?php echo method_field('PATCH'); ?>
-                            <?php if (isset($component)) { $__componentOriginale67687e3e4e61f963b25a6bcf3983629 = $component; } ?>
+                                    </form>
+                                <?php else: ?>
+                                    <form method="POST" action="<?php echo e(route('users.unblock', ['user' => $staff->id])); ?>"
+                                        onsubmit="return confirm('Are you sure you want to unblock this user?')"
+                                        class="inline-block">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('PATCH'); ?>
+                                        <?php if (isset($component)) { $__componentOriginale67687e3e4e61f963b25a6bcf3983629 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginale67687e3e4e61f963b25a6bcf3983629 = $attributes; } ?>
 <?php $component = App\View\Components\Button::resolve(['element' => 'submit','type' => 'success','text' => 'Unblock'] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('button'); ?>

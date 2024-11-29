@@ -48,6 +48,11 @@
 
     <div class="flex justify-center">
         <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
+            @can('create', App\Models\Screening::class)
+                <div class="flex items-center gap-4 mb-4 pb-5">
+                    <x-button href="{{ route('screenings.create') }}" text="Create a new Screening" />
+                </div>
+            @endcan
             @foreach ($groupedScreenings as $tmdbId => $screeningsGroup)
                 <div class="mb-8">
                     @php
