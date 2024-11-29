@@ -19,7 +19,7 @@
             @foreach ($users as $user)
                 <div class="bg-white rounded-lg overflow-hidden shadow-lg flex flex-col">
                     <div class="aspect-w-16 aspect-h-9">
-                        <img src="{{ $user->photoFullUrl ? $user->photoFullUrl : asset('storage/app/public/photos/anonymous.jpg')  }}" class="w-full h-full object-cover" alt="{{ $user->name }}">
+                        <img src="{{ $user->photoFullUrl ? $user->photoFullUrl : asset('storage/photos/no-photo-icon-22.png')  }}" class="w-full h-full object-cover" alt="{{ $user->name }}">
                     </div>
                     <div class="flex flex-col justify-between flex-grow p-4">
                         <div>

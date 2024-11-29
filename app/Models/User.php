@@ -61,7 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($this->photo_filename && Storage::exists("public/photos/{$this->photo_filename}")) {
             return asset("storage/photos/{$this->photo_filename}");
         } else {
-             return asset("storage/photos/anonymous.png");
+             return asset('storage/photos/no-photo-icon-22.png');
         }
     }
     public function getFileNameAttribute()
@@ -79,7 +79,7 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($this->imageExists) {
             return asset("storage/photos/{$this->photo_filename}");
         }
-        return asset("storage/photos/anonymous.png");
+        return asset('storage/photos/no-photo-icon-22.png');
     }
 
     public function customer(): HasOne

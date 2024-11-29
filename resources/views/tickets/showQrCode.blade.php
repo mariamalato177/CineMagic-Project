@@ -18,7 +18,7 @@
                 @if ($user)
                     <div class="flex items-center my-4">
                         <div class="w-16 h-16 rounded-full overflow-hidden">
-                            <img src="{{ $user->first()->photoFullUrl ? $user->first()->photoFullUrl : asset('storage/app/public/photos/anonymous.jpg') }}"
+                            <img src="{{ $user->first()->photoFullUrl ? $user->first()->photoFullUrl : asset('storage/photos/no-photo-icon-22.png') }}"
                                 class="w-full h-full object-cover" alt="{{ $user->first()->name }}">
                         </div>
                         <span class="text-lg font-bold ml-4">{{ $user?->first()->name }}</span>
