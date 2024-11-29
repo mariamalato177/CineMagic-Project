@@ -62,7 +62,7 @@
         <div class="flex flex-col items-center mt-6">
             <div class="text-gray-700 mb-4">
                 <?php if($movies->total() > 0): ?>
-                Mostrando <?php echo e($movies->firstItem()); ?>–<?php echo e($movies->lastItem()); ?> de <?php echo e($movies->total()); ?> resultados
+                Showing <?php echo e($movies->firstItem()); ?>–<?php echo e($movies->lastItem()); ?> of <?php echo e($movies->total()); ?> results
                 <?php endif; ?>
             </div>
 

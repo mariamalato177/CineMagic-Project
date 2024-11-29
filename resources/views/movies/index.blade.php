@@ -63,7 +63,7 @@
         <div class="flex flex-col items-center mt-6">
             <div class="text-gray-700 mb-4">
                 @if ($movies->total() > 0)
-                Mostrando {{ $movies->firstItem() }}–{{ $movies->lastItem() }} de {{ $movies->total() }} resultados
+                Showing {{ $movies->firstItem() }}–{{ $movies->lastItem() }} of {{ $movies->total() }} results
                 @endif
             </div>
 

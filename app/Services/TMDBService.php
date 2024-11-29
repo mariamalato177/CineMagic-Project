@@ -36,14 +36,33 @@ class TMDBService
     }
 
 
-    public function searchMovies($query)
+    public function searchMovies($query, $page)
     {
         $response = Http::get("{$this->baseUrl}/search/movie", [
             'api_key' => $this->apiKey,
             'query' => $query,
             'language' => 'pt-PT',
+            'page' => $page,
         ]);
 
+        if ($response->failed()) {
+            return null;
+        }
+
         return $response->json();
+    }
+
+    public function getGenres()
+    {
+        $response = Http::get("{$this->baseUrl}/genre/movie/list", [
+            'api_key' => $this->apiKey,
+            'language' => 'en-US',
+        ]);
+
+        if ($response->failed()) {
+            return [];
+        }
+
+        return collect($response->json()['genres'] ?? [])->keyBy('id');
     }
 }
