@@ -10,6 +10,9 @@
     @endphp
         <div class="bg-white  rounded-lg shadow-lg p-4 transition-transform transform hover:scale-105 flex relative">
             @if ($ticket->screeningRef)
+            @php
+                $date = \Carbon\Carbon::parse($ticket->screeningRef->start_time)->format('d-m-Y');
+            @endphp
                 <div class="w-3/4 pl-4 flex flex-col justify-between">
                     <div>
                         <h5>Ticket for the movie:</h5>
@@ -21,7 +24,7 @@
                         </p>
                         <p class="text-lg text-gray-700 ">
                             Screening:
-                            <strong>{{ $ticket->screeningRef->date . ' at ' . $ticket->screeningRef->start_time }}</strong>
+                            <strong>{{ $date . ' at ' . $ticket->screeningRef->start_time }}</strong>
                         </p>
                         <p class="text-lg text-gray-700">
                             Seat: <strong>{{ $ticket->seatRef->row . $ticket->seatRef->seat_number }}</strong>

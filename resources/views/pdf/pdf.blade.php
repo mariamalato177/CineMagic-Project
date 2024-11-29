@@ -59,13 +59,15 @@
                     $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
                         return $this->tmdbService->getMovieByID($tmdbId);
                     });
+
+        $date = \Carbon\Carbon::parse($ticket->screeningRef->start_time)->format('d-m-Y');
         @endphp
         <div class="ticket-info">
             <div class="ticket-details">
                 <p>
                     <span class='label'>Ticket number:</span> {{ $ticket->id }}<br>
                     <span class='label'>Movie:</span> {{ $movieData['title'] }} <br>
-                    <span class='label'>Screening:</span>{{ $ticket->screeningRef->start_time }} at {{ $ticket->screeningRef->date }}  <br>
+                    <span class='label'>Screening:</span>{{ $date  }} at {{ $ticket->screeningRef->start_time }} <br>
                     <span class='label'>Seat:</span> {{ $ticket->seatRef->seatName }} <br>
                     <span class='label'>Theater:</span> {{ $ticket->screeningRef->theaterRef->name }} <br>
                     <span class='label'>Price:</span> {{ $ticket->price }}€<br>
