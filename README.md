@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-# projectMovies
-=======
-<<<<<<< HEAD
-# projeto
-=======
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Movies Project <p align="start"><a href="https://laravel.com" target="_blank"><img src="resources/img/logotipo.png" width="150" alt="Cinemagic Logo"></a></p>
 
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
@@ -13,62 +7,74 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+### Description:
+- From last semester, the group had a project developed in Laravel using the Blade Framework. The project allows users to browse through a catalog of movies, check screenings, watch trailers, and securely purchase tickets online. It is built using Laravel as the backend framework and Blade for the frontend templating system.The system is backed by a database that manages movie information, session schedules, and ticket purchases, ensuring data consistency and easy retrieval.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- We took this project a step further by replacing the database-driven movie retrieval with data fetched from the **TMDB API**. The system now dynamically pulls movie details, including titles, descriptions, and trailers, directly from the API. We also created custom sessions for these movies, allowing users to view showtimes and purchase tickets as before.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Accesses: 
+ -  **Website :**   [localhost](http://localhost)
+ -  **DataBase :**  [localhost:8080](http://localhost:8080)
+ -  **TMDB API :**  https://developer.themoviedb.org/reference/intro/getting-started
+  
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+## How to run successfully the project:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Software Requirement:
+- Docker Desktop: https://www.docker.com/products/docker-desktop/
+- WSL:
+  - On CMD or Powershell in Windows, insert this:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+  ```
+  wsl --install
+  ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
+### Commands required in order to get the latest version of the project:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+In case of not having sail installed:
+- Open on IDE VsCode a new WSL (UBUNTU) terminal and run this [WSL terminal]:
+  
+    ```
+      ./vendor/bin/sail composer require laravel/sail --dev
+    ```
 
-### Premium Partners
+1. Get the newest version of the packages of the project [WSL terminal]:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+   ```
+   ./vendor/bin/sail composer update
+   ```
+2. Build the containers on Docker [WSL terminal]:
+   
+   ```
+   ./vendor/bin/sail up -d
+   ```
+3. Drop the tables and get the most recent version of DB [WSL terminal]:
 
-## Contributing
+   ```
+   ./vendor/bin/sail art migrate:fresh
+   ```
+   This command may possibly take some time:
+   ```
+   ./vendor/bin/sail art db:seed
+   ```
+4. Automatic live reload, required [PS terminal]: 
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    ```
+   npm run dev
+   ```
+ 
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Possible cases of event:
 
-## Security Vulnerabilities
+- Maria has a iOS system while the rest of the group have a Windows system. Came to our attention that the website can load faster on the iOS system while on Windows can take some time.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+## Authors:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
->>>>>>> 15dac95 (First Commit)
->>>>>>> 456fea3 (Initial Commit)
+- Alexandre Figueiredo
+- José Brites
+- Maria Malato
+
