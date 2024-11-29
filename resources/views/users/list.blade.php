@@ -10,12 +10,13 @@
         </h2>
     </div>
 </header>
-    <div class="container mx-auto px-4 pt-16">
+<div class="flex justify-center">
+    <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
 
-
+    <div class="container mx-auto px-4 py-4 ">
         <x-users.filter-card :filterAction="route('users.list')" :resetUrl="route('users.list')" :searchName="old('string', $filterByName)" class="mb-6" />
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-8 mt-8">
+         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-8 mt-8">
             @foreach ($users as $user)
                 <div class="bg-white rounded-lg overflow-hidden shadow-lg flex flex-col">
                     <div class="aspect-w-16 aspect-h-9">
@@ -58,9 +59,14 @@
                     </div>
                 </div>
             @endforeach
+
         </div>
         <div class="mt-8 flex justify-center">
             {{ $users->links() }}
         </div>
+            </div>
+        </div>
+
+
     </div>
 @endsection
