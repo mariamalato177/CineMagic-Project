@@ -5,6 +5,7 @@
 @section('main')
 @php
 $user = auth()->user();
+
 @endphp
 <div class="flex justify-center mt-10 space-x-8">
     <div class="w-full max-w-2xl p-8 bg-white shadow-md rounded-lg text-gray-900 ">
@@ -101,13 +102,22 @@ $user = auth()->user();
         <div>
             <h3 class="mb-6 text-2xl font-bold">Shopping Cart Confirmation</h3>
             @foreach ($cart as $item)
+            @php
+            $tmdbId = $item['custom'];
+                    $movieData=[];
+                    $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                        return $this->tmdbService->getMovieByID($tmdbId);
+                    });
+                    $date = \Carbon\Carbon::parse($item['date'])->format('d-m-Y');
+            @endphp
             <div class="mb-6 p-4 bg-gray-100  rounded-lg">
                 <p><strong>Seat ID:</strong> {{ $item['seatId'] }}</p>
                 <p><strong>Screening ID:</strong> {{ $item['screeningId'] }}</p>
                 <p><strong>Price:</strong> {{ $item['price'] }}€</p>
-                <p><strong>Movie:</strong> {{ $item['movie'] }}</p>
-                <p><strong>Hora:</strong> {{ $item['hora'] }}</p>
-                <p><strong>Teatro:</strong> {{ $item['theater'] }}</p>
+                <p><strong>Movie:</strong> {{ $movieData['title'] }}</p>
+                <p><strong>Date:</strong> {{ $date }}</p>
+                <p><strong>Start Time:</strong> {{ $item['hora'] }}</p>
+                <p><strong>Theater:</strong> {{ $item['theater'] }}</p>
             </div>
             @endforeach
         </div>

@@ -111,7 +111,10 @@
                                                 <?php $__currentLoopData = $theaterScreenings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $screening): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <!-- Individual Screening Card -->
                                                     <div class="bg-white shadow-md rounded-lg p-4">
-                                                        <p class="text-xl"><strong>Date:</strong> <?php echo e($screening->date); ?>
+                                                        <?php
+                                                        $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
+                                                         ?>
+                                                        <p class="text-xl"><strong>Date:</strong> <?php echo e($date); ?>
 
                                                         </p>
                                                         <p class="text-xl"><strong>Start Time:</strong>
@@ -159,6 +162,26 @@
 <?php $component->withAttributes([]); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
+<?php if (isset($__attributesOriginal44f9c11916c14e492f114196bdefa85e)): ?>
+<?php $attributes = $__attributesOriginal44f9c11916c14e492f114196bdefa85e; ?>
+<?php unset($__attributesOriginal44f9c11916c14e492f114196bdefa85e); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal44f9c11916c14e492f114196bdefa85e)): ?>
+<?php $component = $__componentOriginal44f9c11916c14e492f114196bdefa85e; ?>
+<?php unset($__componentOriginal44f9c11916c14e492f114196bdefa85e); ?>
+<?php endif; ?>
+                                                                <?php if (isset($component)) { $__componentOriginald16d466b6de69a6c808277f1bfc3f4f2 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginald16d466b6de69a6c808277f1bfc3f4f2 = $attributes; } ?>
+<?php $component = App\View\Components\Table\IconDelete::resolve(['action' => ''.e(route('screenings.destroy', ['screening' => $screening])).''] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('table.icon-delete'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Table\IconDelete::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
 <?php if (isset($__attributesOriginald16d466b6de69a6c808277f1bfc3f4f2)): ?>
 <?php $attributes = $__attributesOriginald16d466b6de69a6c808277f1bfc3f4f2; ?>
 <?php unset($__attributesOriginald16d466b6de69a6c808277f1bfc3f4f2); ?>
@@ -168,17 +191,34 @@
 <?php unset($__componentOriginald16d466b6de69a6c808277f1bfc3f4f2); ?>
 <?php endif; ?>
                                                             <?php else: ?>
-                                                                <?php if(!auth()->check() || (auth()->check() && !in_array(auth()->user()->type, ['E', 'A']))): ?>
+                                                                <?php if(!$screening->isSoldOut($screening)): ?>
                                                                     <div class="mt-4 flex justify-end">
-                                                                        <a href="#"
-                                                                            class="px-4 py-2 bg-coral text-white rounded-full">Buy
-                                                                            Tickets</a>
+                                                                        <a href="<?php echo e(route('screenings.show', $screening)); ?>"
+                                                                            class="px-4 py-2 bg-coral text-white rounded-full"
+                                                                            style=" color: white; transition: background-color 0.3s ease-in-out;">
+                                                                            <?php if(auth()->check() && auth()->user()->type !== 'C'): ?>
+                                                                                See info
+                                                                            <?php else: ?>
+                                                                                Buy Tickets
+                                                                            <?php endif; ?>
+                                                                        </a>
                                                                     </div>
+                                                                <?php else: ?>
+                                                                <?php if(auth()->check() && auth()->user()->type !== 'A'): ?>
+                                                                    <a href="<?php echo e(route('screenings.show', $screening)); ?>"
+                                                                    rel="noopener noreferrer"
+                                                                    class="px-2 py-1 font-semibold rounded-full bg-coral"
+                                                                    style="color: white; transition: background-color 0.3s ease-in-out;">
+                                                                    See Info
+                                                                </a>
+                                                                <div class="absolute top-2 right-2">
+                                                                    <span
+                                                                        class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
+                                                                        Out</span>
+                                                                </div>
                                                                 <?php endif; ?>
                                                             <?php endif; ?>
-                                                        </div>
-                                                    </div>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

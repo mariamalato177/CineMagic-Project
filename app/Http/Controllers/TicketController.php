@@ -45,7 +45,6 @@ class TicketController extends Controller
             ]);
         }
 
-        // Redirect to payment page (Assume you have a payment route)
         return redirect()->route('payment.index', ['screening' => $screening]);
     }
 

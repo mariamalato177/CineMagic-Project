@@ -93,7 +93,10 @@
                                                 @foreach ($theaterScreenings as $screening)
                                                     <!-- Individual Screening Card -->
                                                     <div class="bg-white shadow-md rounded-lg p-4">
-                                                        <p class="text-xl"><strong>Date:</strong> {{ $screening->date }}
+                                                        @php
+                                                        $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
+                                                         @endphp
+                                                        <p class="text-xl"><strong>Date:</strong> {{ $date }}
                                                         </p>
                                                         <p class="text-xl"><strong>Start Time:</strong>
                                                             {{ $screening->start_time }}</p>
@@ -113,29 +116,49 @@
                                                                 <x-table.icon-delete
                                                                     action="{{ route('screenings.destroy', ['screening' => $screening]) }}" />
                                                             @else
-                                                                @if (!auth()->check() || (auth()->check() && !in_array(auth()->user()->type, ['E', 'A'])))
+                                                                @if (!$screening->isSoldOut($screening))
                                                                     <div class="mt-4 flex justify-end">
-                                                                        <a href="#"
-                                                                            class="px-4 py-2 bg-coral text-white rounded-full">Buy
-                                                                            Tickets</a>
+                                                                        <a href="{{ route('screenings.show', $screening) }}"
+                                                                            class="px-4 py-2 bg-coral text-white rounded-full"
+                                                                            style=" color: white; transition: background-color 0.3s ease-in-out;">
+                                                                            @if (auth()->check() && auth()->user()->type !== 'C')
+                                                                                See info
+                                                                            @else
+                                                                                Buy Tickets
+                                                                            @endif
+                                                                        </a>
                                                                     </div>
+                                                                @else
+                                                                @if (auth()->check() && auth()->user()->type !== 'A')
+                                                                    <a href="{{ route('screenings.show', $screening) }}"
+                                                                    rel="noopener noreferrer"
+                                                                    class="px-2 py-1 font-semibold rounded-full bg-coral"
+                                                                    style="color: white; transition: background-color 0.3s ease-in-out;">
+                                                                    See Info
+                                                                </a>
+                                                                <div class="absolute top-2 right-2">
+                                                                    <span
+                                                                        class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
+                                                                        Out</span>
+                                                                </div>
                                                                 @endif
                                                             @endif
-                                                        </div>
-                                                    </div>
-                                                @endforeach
+                                                @endif
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
                             </div>
-                        </div>
-                    @else
-                        <p>No movie data available</p>
-                    @endif
+                    @endforeach
                 </div>
-            @endforeach
         </div>
+    </div>
+@else
+    <p>No movie data available</p>
+    @endif
+    </div>
+    @endforeach
+    </div>
     </div>
 
 

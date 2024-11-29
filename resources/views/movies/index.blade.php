@@ -66,6 +66,7 @@
             {{ $movies->links() }}
         </div>
 
+
         
     @endif
 
@@ -180,4 +181,3 @@
     });
 </script>
 @endsection
-

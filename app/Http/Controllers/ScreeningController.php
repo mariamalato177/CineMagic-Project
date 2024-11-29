@@ -161,19 +161,29 @@ class ScreeningController extends Controller
      * Display the specified resource.
      */
     public function show(Screening $screening): View
-    {
-        $theater = $screening->theaterRef;
-        $movie = $screening->movieRef;
-        $seats = $theater->seats;
+{
+    $theater = $screening->theaterRef;
+    $movie = $screening->movieRef;
+    $seats = $theater->seats;
 
+    $tmdbId = $screening->custom;
+    $movieData = null;
 
-        return view('screenings.show')->with([
-            'screening' => $screening,
-            'theater' => $theater,
-            'seats' => $seats,
-            'movie' => $movie,
-        ]);
+    if ($tmdbId) {
+        $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+            return $this->tmdbService->getMovieByID($tmdbId);
+        });
     }
+
+    return view('screenings.show')->with([
+        'screening' => $screening,
+        'theater' => $theater,
+        'seats' => $seats,
+        'movie' => $movie,
+        'movieData' => $movieData, 
+    ]);
+}
+
 
     public function isSoldOut(Screening $screening): bool
     {

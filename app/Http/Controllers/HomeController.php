@@ -2,53 +2,47 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\TMDBService;
+use App\Models\Screening;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
+    private TMDBService $tmdbService;
+
+    public function __construct(TMDBService $tmdbService)
+    {
+        $this->tmdbService = $tmdbService;
+    }
+
     public function index()
     {
-        // Buscar filmes em exibição ("Now Playing") da API TMDB para "Upcoming Screenings"
-        $upcomingScreeningsResponse = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'region' => 'hr',
-            'page' => 1,
-        ]);
+        $nowPlayingMovies = $this->tmdbService->getNowPlayingMovies();
+        $upcomingMovies = $this->tmdbService->getUpcomingMovies();
 
-        // Verificar se a resposta foi bem-sucedida e extrair os filmes para "Upcoming Screenings"
-        $upcomingScreenings = $upcomingScreeningsResponse->successful() ? $upcomingScreeningsResponse->json()['results'] : [];
 
-        // Buscar filmes populares da API TMDB
-        $popularMoviesResponse = Http::get('https://api.themoviedb.org/3/movie/popular', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'region' => 'hr',
-            'page' => 1,
-        ]);
+            $upcomingScreenings = Screening::whereDate('date', now()->toDateString())
+            ->where('custom', '!=', null)
+            ->orderBy('start_time', 'asc')
+            ->get()
+            ->groupBy('custom');
 
-        $upcomingMoviesResponse = Http::get('https://api.themoviedb.org/3/movie/upcoming', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-            'region' => 'hr',
-            'page' => 1,
-        ]);
+        $screeningsByMovie = [];
 
-        // Buscar filmes em exibição ("Now Playing") da API TMDB
-        $nowPlayingResponse = Http::get('https://api.themoviedb.org/3/movie/now_playing', [
-            'api_key' => env('TMDB_API_KEY'),
-            'language' => 'en-US',
-             'region' => 'hr',
-            'page' => 1,
-        ]);
+        foreach ($upcomingScreenings as $tmdbId => $screenings) {
+            $firstScreening = $screenings->first();
 
-        // Verificar se a resposta foi bem-sucedida e extrair os filmes
-        //$popularMovies = $popularMoviesResponse->successful() ? $popularMoviesResponse->json()['results'] : [];
-        $nowPlayingMovies = $nowPlayingResponse->successful() ? $nowPlayingResponse->json()['results'] : [];
-        $upcomingMovies = $upcomingMoviesResponse->successful() ? $upcomingMoviesResponse->json()['results'] : [];
+            $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                return $this->tmdbService->getMovieByID($tmdbId);
+            });
 
-        // Passar as variáveis para a view
-        return view('home', compact('upcomingScreenings', 'nowPlayingMovies', 'upcomingMovies'));
+            $screeningsByMovie[] = [
+                'movie' => $movieData,
+                'screening' => $firstScreening,
+            ];
+        }
+
+        return view('home', compact('upcomingScreenings', 'nowPlayingMovies', 'upcomingMovies', 'screeningsByMovie'));
     }
 }

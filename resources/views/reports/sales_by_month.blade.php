@@ -1,33 +1,43 @@
 @extends('layouts.main')
 
+@section('header-title', 'Sales by Month')
+
 @section('main')
-    <div>
-        <canvas id="salesChart"></canvas>
+
+    <header class="bg-white  shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h2 class="font-semibold text-xl text-gray-800  leading-tight">
+                @yield('header-title')
+            </h2>
+        </div>
+    </header>
+    <div class="flex justify-center">
+        <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
+            <canvas id="salesChart"></canvas>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Defining month names
-        var monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-                          "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
 
-        // Assuming $months contains month numbers (1 to 12)
         var months = {!! json_encode($months) !!};
 
-        // Mapping month numbers to month names
         var monthLabels = months.map(function(month) {
-            return monthNames[month - 1]; // Adjusting index to start from 0
+            return monthNames[month - 1];
         });
 
         var ctx = document.getElementById('salesChart').getContext('2d');
         var salesChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: monthLabels, // Using month names instead of numbers
+                labels: monthLabels,
                 datasets: [{
                     label: 'Total Sales',
                     data: {!! json_encode($totals) !!},
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)', // Yellow color with alpha transparency
-                    borderColor: 'rgba(255, 206, 86, 1)', // Yellow color
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
                     borderWidth: 1
                 }]
             },

@@ -73,37 +73,54 @@
             </div>
 
             <!-- Upcoming Screenings Section -->
-            <div class="my-8 mb-12">
+            <div class="my-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Upcoming Screenings</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach ($screeningsByMovie as $movieGroup)
+                        <div class="bg-white rounded-lg shadow-sm p-4">
+                            <img src="https://image.tmdb.org/t/p/w500{{ $movieGroup['movie']['poster_path'] }}"
+                                alt="{{ $movieGroup['movie']['title'] }}"
+                                class="w-full h-auto object-contain rounded-lg mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">{{ $movieGroup['movie']['title'] }}</h3>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    @foreach ($upcomingScreenings as $screening)
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden pb-4">
-                            <div class="relative pb-[150%]">
-                                <img src="https://image.tmdb.org/t/p/w500{{ $screening['poster_path'] }}"
-                                    alt="{{ $screening['title'] }}"
-                                    class="absolute top-0 left-0 w-full h-full object-cover rounded-t-lg">
-                            </div>
-                            <div class="p-4">
-                                <h3 class="text-lg font-semibold text-gray-900">{{ $screening['title'] }}</h3>
-                                <p class="text-sm text-gray-600">
-                                    {{ \Carbon\Carbon::parse($screening['release_date'])->format('d-m-Y') }}
-                                </p>
-                                <p class="text-sm text-gray-400">Rating:
-                                    {{ number_format($screening['vote_average'], 1) }}/10</p>
-                                <a href="#"
-                                    class="mt-2 inline-block px-4 py-2 bg-coral text-white rounded-full hover:bg-orange-500 transition-colors">
-                                    Buy Tickets
-                                </a>
-                            </div>
+                            @php
+                                $date = \Carbon\Carbon::parse($movieGroup['screening']['date'])->format('d-m-Y');
+                            @endphp
+                            <p class="text-sm text-gray-600"><strong>Date:</strong> {{ $date }}</p>
+                            <p class="text-sm text-gray-600"><strong>Time:
+                                </strong>{{ $movieGroup['screening']['start_time'] }}</p>
+                            @if (!$movieGroup['screening']->isSoldOut($movieGroup['screening']))
+                                <div class="mt-4 flex justify-end">
+                                    <a href="{{ route('screenings.show', $movieGroup['screening']) }}"
+                                        class="px-4 py-2 bg-coral text-white rounded-full"
+                                        style=" color: white; transition: background-color 0.3s ease-in-out;">
+                                        @if (auth()->check() && auth()->user()->type !== 'C')
+                                            See info
+                                        @else
+                                            Buy Tickets
+                                        @endif
+                                    </a>
+                                </div>
+                            @else
+                                @if (auth()->check() && auth()->user()->type !== 'A')
+                                    <a href="{{ route('screenings.show', $movieGroup['screening']) }}" rel="noopener noreferrer"
+                                        class="px-2 py-1 font-semibold rounded-full bg-coral"
+                                        style="color: white; transition: background-color 0.3s ease-in-out;">
+                                        See Info
+                                    </a>
+                                    <div class="absolute top-2 right-2">
+                                        <span
+                                            class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
+                                            Out</span>
+                                    </div>
+                                @endif
+                            @endif
                         </div>
                     @endforeach
                 </div>
             </div>
-
         </div>
     </div>
-
     </div>
     </main>
 @endsection
