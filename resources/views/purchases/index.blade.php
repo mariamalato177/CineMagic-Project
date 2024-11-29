@@ -23,7 +23,7 @@
                 <div class="flex flex-col space-y-2">
                     <label for="date" class="text-black">Select Date:</label>
                     <input type="date" name="date" id="date" class="bg-white text-black p-2 rounded"
-                        value="{{ $selectedDate ?? '' }}" min="{{ now()->format('Y-m-d') }}">
+                        value="{{ $date ?? '' }}">
                 </div>
                 <div class="flex flex-col space-y-2 w-60">
                     <label for="sortDate" class="text-black ">Sort by:</label>
@@ -33,8 +33,9 @@
                     </select>
                 </div>
 
-                <div class="flex pt-6">
+                <div class="flex pt-6 gap-4">
                     <button type="submit" class="bg-coral text-white px-6 py-2 rounded">Search</button>
+                    <a href="{{ route('purchases.index') }}" class="bg-gray-200 text-black px-6 py-3 rounded">Cancel</a>
                 </div>
             </form>
         </div>

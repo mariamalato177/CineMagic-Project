@@ -14,6 +14,7 @@ class PurchaseController extends Controller
         $date = $request->input('date');
         $sortDate = $request->input('sortDate', 'desc');
 
+
         $purchases = Purchase::whereHas('tickets.screeningRef', function ($query) {
             $query->whereNotNull('custom');
         })
