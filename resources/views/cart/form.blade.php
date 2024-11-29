@@ -108,12 +108,14 @@ $user = auth()->user();
                     $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
                         return $this->tmdbService->getMovieByID($tmdbId);
                     });
+                    $date = \Carbon\Carbon::parse($item['date'])->format('d-m-Y');
             @endphp
             <div class="mb-6 p-4 bg-gray-100  rounded-lg">
                 <p><strong>Seat ID:</strong> {{ $item['seatId'] }}</p>
                 <p><strong>Screening ID:</strong> {{ $item['screeningId'] }}</p>
                 <p><strong>Price:</strong> {{ $item['price'] }}€</p>
                 <p><strong>Movie:</strong> {{ $movieData['title'] }}</p>
+                <p><strong>Date:</strong> {{ $date }}</p>
                 <p><strong>Start Time:</strong> {{ $item['hora'] }}</p>
                 <p><strong>Theater:</strong> {{ $item['theater'] }}</p>
             </div>

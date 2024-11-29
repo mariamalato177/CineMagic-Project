@@ -1,7 +1,10 @@
 @extends('layouts.main')
+@php
+$date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
+@endphp
 
 @section('header-title', 'Select seat for screening "' . $movieData['title'] . '"' . ' at ' .
-    $screening->theaterRef->name . ' on ' . $screening->date . ' ' . $screening->start_time)
+    $screening->theaterRef->name . ' on ' . $date . ' at ' . $screening->start_time)
 
 @section('main')
 
@@ -34,9 +37,10 @@
     </header>
 
     <br>
-
+    <div class="flex justify-center">
+        <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
     <div class="flex justify-center mb-4">
-        <div class="w-full max-w-3xl h-12 bg-gray-300  rounded-md flex items-center justify-center">
+        <div class="w-full max-w-3xl h-12 bg-white border-2  rounded-md flex items-center justify-center">
             <span class="text-lg font-bold text-gray-800 ">Screen</span>
         </div>
     </div>
@@ -67,6 +71,8 @@
                 </div>
             @endforeach
         </div>
+    </div>
+    </div>
     </div>
 
     <script>

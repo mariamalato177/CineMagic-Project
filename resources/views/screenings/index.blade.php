@@ -88,7 +88,10 @@
                                                 @foreach ($theaterScreenings as $screening)
                                                     <!-- Individual Screening Card -->
                                                     <div class="bg-white shadow-md rounded-lg p-4">
-                                                        <p class="text-xl"><strong>Date:</strong> {{ $screening->date }}
+                                                        @php
+                                                        $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
+                                                         @endphp
+                                                        <p class="text-xl"><strong>Date:</strong> {{ $date }}
                                                         </p>
                                                         <p class="text-xl"><strong>Start Time:</strong>
                                                             {{ $screening->start_time }}</p>

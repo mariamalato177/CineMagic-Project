@@ -12,22 +12,17 @@
 <div class="flex justify-center">
     <div class="my-4 p-6 bg-white  overflow-hidden shadow-sm sm:rounded-lg text-gray-900  w-full max-w-6xl">
         <div class="bg-white rounded-lg p-4 mb-8">
-            <form action="<?php echo e(route('purchases.index')); ?>" method="GET" class="flex flex-wrap items-center space-y-4 md:space-y-0 md:space-x-4">
+            <form action="<?php echo e(route('purchases.index')); ?>" method="GET"
+            class="flex flex-wrap items-center space-y-4 md:space-y-0 md:space-x-4">
                 <div class="flex flex-col space-y-2">
                     <label for="search" class="text-black">Search by Purchase ID:</label>
                     <input type="text" id="search" name="search" value="<?php echo e($searchQuery ?? ''); ?>" placeholder="Enter Purchase ID" class="bg-white text-black p-2 rounded">
                 </div>
-
                 <div class="flex flex-col space-y-2">
-                    <label for="startDate" class="text-black ">Start Date:</label>
-                    <input type="date" id="startDate" name="startDate" value="<?php echo e($startDate ?? ''); ?>" class="bg-white text-black p-2 rounded">
+                    <label for="date" class="text-black">Select Date:</label>
+                    <input type="date" name="date" id="date" class="bg-white text-black p-2 rounded"
+                        value="<?php echo e($selectedDate ?? ''); ?>" min="<?php echo e(now()->format('Y-m-d')); ?>">
                 </div>
-
-                <div class="flex flex-col space-y-2">
-                    <label for="endDate" class="text-black ">End Date:</label>
-                    <input type="date" id="endDate" name="endDate" value="<?php echo e($endDate ?? ''); ?>" class="bg-white text-black p-2 rounded">
-                </div>
-
                 <div class="flex flex-col space-y-2 w-60">
                     <label for="sortDate" class="text-black ">Sort by:</label>
                     <select id="sortDate" name="sortDate" class="bg-white text-black p-2 rounded w-full full">
@@ -36,15 +31,18 @@
                     </select>
                 </div>
 
-                <div class="flex">
+                <div class="flex pt-6">
                     <button type="submit" class="bg-coral text-white px-6 py-2 rounded">Search</button>
                 </div>
             </form>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php $__currentLoopData = $purchases; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $purchase): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php
+             $date = \Carbon\Carbon::parse($purchase->date)->format('d-m-Y');
+            ?>
                 <div class="px-6 py-4 bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 flex flex-col justify-between relative">
-                    <h3 class="text-xl font-bold text-gray-900  truncate"><strong> Date: </strong> <?php echo e($purchase->date); ?></h3>
+                    <h3 class="text-xl font-bold text-gray-900  truncate"><strong> Date: </strong> <?php echo e($date); ?></h3>
                     <p><strong>Customer : </strong><?php echo e($purchase->customer_name); ?></p>
                     <p><strong> Purchase Id:</strong> <?php echo e($purchase->id); ?></p>
                     <?php if($purchase->receipt_pdf_filename): ?>

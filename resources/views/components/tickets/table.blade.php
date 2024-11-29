@@ -4,7 +4,8 @@
             $tmdbId = $ticket->screeningRef->custom;
                     $movieData=[];
                     $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
-                        return $this->tmdbService->getMovieByID($tmdbId);
+                        $tmdbService = app()->make(\App\Services\TmdbService::class);
+                        return $tmdbService->getMovieByID($tmdbId);
                     });
     @endphp
         <div class="bg-white  rounded-lg shadow-lg p-4 transition-transform transform hover:scale-105 flex relative">

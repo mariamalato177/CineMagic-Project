@@ -3,6 +3,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\TMDBService;
+use App\Models\Screening;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -15,12 +18,31 @@ class HomeController extends Controller
 
     public function index()
     {
-        // Use the service to fetch the data
-        $upcomingScreenings = $this->tmdbService->getNowPlayingMovies();
         $nowPlayingMovies = $this->tmdbService->getNowPlayingMovies();
         $upcomingMovies = $this->tmdbService->getUpcomingMovies();
 
-        // Pass the data to the view
-        return view('home', compact('upcomingScreenings', 'nowPlayingMovies', 'upcomingMovies'));
+
+            $upcomingScreenings = Screening::whereDate('date', now()->toDateString())
+            ->where('custom', '!=', null)
+            ->orderBy('start_time', 'asc')
+            ->get()
+            ->groupBy('custom');
+
+        $screeningsByMovie = [];
+
+        foreach ($upcomingScreenings as $tmdbId => $screenings) {
+            $firstScreening = $screenings->first();
+
+            $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                return $this->tmdbService->getMovieByID($tmdbId);
+            });
+
+            $screeningsByMovie[] = [
+                'movie' => $movieData,
+                'screening' => $firstScreening,
+            ];
+        }
+
+        return view('home', compact('upcomingScreenings', 'nowPlayingMovies', 'upcomingMovies', 'screeningsByMovie'));
     }
 }

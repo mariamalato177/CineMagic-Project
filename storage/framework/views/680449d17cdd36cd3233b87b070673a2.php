@@ -87,7 +87,10 @@
                                                 <?php $__currentLoopData = $theaterScreenings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $screening): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <!-- Individual Screening Card -->
                                                     <div class="bg-white shadow-md rounded-lg p-4">
-                                                        <p class="text-xl"><strong>Date:</strong> <?php echo e($screening->date); ?>
+                                                        <?php
+                                                        $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
+                                                         ?>
+                                                        <p class="text-xl"><strong>Date:</strong> <?php echo e($date); ?>
 
                                                         </p>
                                                         <p class="text-xl"><strong>Start Time:</strong>

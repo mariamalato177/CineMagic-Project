@@ -24,6 +24,7 @@
                     $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
                         return $this->tmdbService->getMovieByID($tmdbId);
                     });
+                    $date = \Carbon\Carbon::parse($item['date'])->format('d-m-Y');
                     ?>
                     <div class="font-base text-sm text-gray-700  bg-white rounded-lg shadow-lg p-6 transition-transform transform hover:scale-105 flex flex-col justify-between relative">
                         <div>
@@ -33,7 +34,7 @@
                                 Theater: <strong><?php echo e($item['theater']); ?></strong>
                             </p>
                             <p class="text-lg text-gray-700 ">
-                                Screening: <strong><?php echo e($item['date']); ?> at <?php echo e($item['hora']); ?></strong>
+                                Screening: <strong><?php echo e($date); ?> at <?php echo e($item['hora']); ?></strong>
                             </p>
                             <p class="text-lg text-gray-700 ">
                                 Seat: <strong><?php echo e($item['seatId']); ?></strong>
