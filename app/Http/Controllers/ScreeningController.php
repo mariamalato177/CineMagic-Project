@@ -64,6 +64,11 @@ class ScreeningController extends Controller
             ->paginate(70)
             ->withQueryString();
 
+
+        $screenings = $screenings->filter(function ($screening) {
+            return !$screening->hasPassed();
+        });
+
         $availableDates = Screening::query()
             ->whereNotNull('custom')
             ->distinct()
@@ -110,7 +115,7 @@ class ScreeningController extends Controller
             'theater_id' => 'required|exists:theaters,id',
         ]);
 
-        $movieId = 350; 
+        $movieId = 350;
         $tmdbMovieId = $validated['movie_id'];
         $theaterId = $validated['theater_id'];
         $dates = $validated['dates'];
