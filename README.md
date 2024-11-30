@@ -28,7 +28,8 @@
 ```
 wsl --install
 ```
-
+- Add an .env file in the root of the project with the code in the .env.example
+  
 
 ### Commands required in order to get the latest version of the project:
 
