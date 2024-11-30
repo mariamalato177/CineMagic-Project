@@ -82,7 +82,7 @@ npm run dev
 
 - Maria has a iOS system while the rest of the group have a Windows system. Came to our attention that the website can load faster on the iOS system while on Windows can take some time.
 - Attached here is the video of the perfomance of the website on iOS system:
-  - *****por video
+  - https://tvzhr-my.sharepoint.com/:f:/g/personal/mmalato_tvz_hr/EoYUWPAG3HNAnb49cnOVzUEBtXboeFqMYQxNq2NpH47aug?e=0zX12R
 
 ## User Roles:
 
