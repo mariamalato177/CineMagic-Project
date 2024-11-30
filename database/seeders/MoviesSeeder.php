@@ -27,10 +27,25 @@ class MoviesSeeder extends Seeder
                 $movies[] = $newMovie;
             }
         }
+
         $this->command->info("Save all movies in block on the database");
         $this->saveNoPosterImages();
 
         DB::table('movies')->insert($movies);
+
+        DB::table('movies')->insert([
+            'title' => 'Movie Title',
+            'genre_code' => 'ACTION',
+            'year' => '2024',
+            'poster_filename' => null,
+            'synopsis' => 'A custom movie synopsis.',
+            'trailer_url' => 'https://example.com/trailer',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+
+
         // Next, let's copy the posters images
         $this->command->info("Copying poster images");
         $movies = DB::table('movies')->get();

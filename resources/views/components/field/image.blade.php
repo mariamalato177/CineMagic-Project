@@ -39,7 +39,7 @@
 @endphp
 <div {{ $attributes }}>
     <div class="flex-col">
-        <div class="block font-medium text-sm text-gray-700 dark:text-gray-300 mt-6">
+        <div class="block font-medium text-sm text-gray-700 mt-6">
             {{ $label }}
         </div>
         <img class="{{$widthClass}} {{$maxHeightClass}} aspect-auto"
@@ -58,13 +58,13 @@
                             rounded-md
                             font-medium text-sm tracking-widest
                             focus:outline-none focus:ring-2
-                            focus:ring-indigo-500 dark:focus:ring-indigo-400
+                            focus:ring-indigo-500
                             focus:ring-offset-2 transition ease-in-out duration-150
-                            text-white dark:text-gray-900
-                            bg-gray-800 dark:bg-gray-200
-                            hover:bg-gray-900 dark:hover:bg-gray-100
-                            focus:bg-gray-900 dark:focus:bg-gray-100
-                            active:bg-gray-950 dark:active:bg-gray-50
+                            text-white
+                            bg-gray-800
+                            hover:bg-gray-900
+                            focus:bg-gray-900
+                            active:bg-gray-950
                             cursor-pointer"
                         >Choose file</label>
                         <label id="id_{{ $name }}_selected_file"

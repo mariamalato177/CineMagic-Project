@@ -50,7 +50,16 @@ class PdfController extends Controller
 
     public function myPdf()
     {
-        $purchases = Purchase::where('customer_id', auth()->user()->id)->orderBy('created_at', 'desc')->get();
+        $purchases = Purchase::whereHas('tickets', function ($query) {
+            $query->whereHas('screeningRef', function ($query) {
+                $query->whereNotNull('custom');
+            });
+        })
+        ->where('customer_id', optional(auth()->user())->id)
+        ->orderBy('created_at', 'desc')
+        ->distinct()
+        ->get();
+
 
         return view('pdf.myPdf')->with('purchases', $purchases);
     }

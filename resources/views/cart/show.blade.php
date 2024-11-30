@@ -3,35 +3,45 @@
 @section('header-title', 'Shopping Cart')
 
 @section('main')
-<header class="bg-white dark:bg-gray-900 shadow">
+
+
+<header class="bg-white  shadow">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800  leading-tight">
             @yield('header-title')
         </h2>
     </div>
 </header>
 
 <div class="flex justify-center">
-    <div class="my-4 p-6 bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg text-gray-900 dark:text-gray-50">
+    <div class="my-4 p-6 bg-white  overflow-hidden shadow-sm sm:rounded-lg text-gray-900 ">
         @empty($cart)
             <h3 class="text-xl w-96 text-center">Cart is Empty</h3>
         @else
             <div class="grid grid-cols-1 gap-6 w-max-full">
                 @foreach ($cart as $item)
-                    <div class="font-base text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-transform transform hover:scale-105 flex flex-col justify-between relative">
+                @php
+                    $tmdbId = $item['custom'];
+                    $movieData=[];
+                    $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                        return $this->tmdbService->getMovieByID($tmdbId);
+                    });
+                    $date = \Carbon\Carbon::parse($item['date'])->format('d-m-Y');
+                    @endphp
+                    <div class="font-base text-sm text-gray-700  bg-white rounded-lg shadow-lg p-6 transition-transform transform hover:scale-105 flex flex-col justify-between relative">
                         <div>
                             <h5>Ticket for the movie:</h5>
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-50">{{ $item['movie'] }}</h3>
-                            <p class="text-lg text-gray-700 dark:text-gray-300">
+                            <h3 class="text-xl font-bold text-gray-900 ">{{ $movieData['title'] }}</h3>
+                            <p class="text-lg text-gray-700 ">
                                 Theater: <strong>{{ $item['theater'] }}</strong>
                             </p>
-                            <p class="text-lg text-gray-700 dark:text-gray-300">
-                                Screening: <strong>{{ $item['screeningId'] }} at {{ $item['hora'] }}</strong>
+                            <p class="text-lg text-gray-700 ">
+                                Screening: <strong>{{ $date }} at {{ $item['hora'] }}</strong>
                             </p>
-                            <p class="text-lg text-gray-700 dark:text-gray-300">
+                            <p class="text-lg text-gray-700 ">
                                 Seat: <strong>{{ $item['seatId'] }}</strong>
                             </p>
-                            <p class="text-lg text-gray-700 dark:text-gray-300">
+                            <p class="text-lg text-gray-700 ">
                                 Price: <strong>{{ $item['price'] }} €</strong>
                             </p>
                         </div>

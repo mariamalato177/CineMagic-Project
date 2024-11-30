@@ -3,10 +3,10 @@
 @section('header-title', 'Theater' . ' ' . $theater->name)
 
 @section('main')
-<header class="bg-white dark:bg-gray-900 shadow flex justify-center">
+<header class="bg-white  shadow flex justify-center">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center">
         <div class="flex flex-col lg:flex-row items-center w-full">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight text-center lg:text-left lg:mr-4">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight text-center lg:text-left lg:mr-4">
                 @yield('header-title')
             </h2>
             @if ($theater->imageExists)
@@ -22,8 +22,8 @@
 
     <br>
     <div class="flex justify-center mb-4">
-        <div class="w-full max-w-3xl h-12 bg-gray-300 dark:bg-gray-700 rounded-md flex items-center justify-center">
-            <span class="text-lg font-bold text-gray-800 dark:text-gray-200">Screen</span>
+        <div class="w-full max-w-3xl h-12 bg-gray-300  rounded-md flex items-center justify-center">
+            <span class="text-lg font-bold text-gray-800 ">Screen</span>
         </div>
     </div>
     <br>

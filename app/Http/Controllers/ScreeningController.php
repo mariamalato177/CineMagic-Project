@@ -12,25 +12,38 @@ use App\Models\Ticket;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Services\TMDBService;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class ScreeningController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private TMDBService $tmdbService;
+
+    public function __construct(TMDBService $tmdbService)
+    {
+        $this->tmdbService = $tmdbService;
+
+    }
+
     public function index(Request $request): View
     {
+        $apiKey = env('TMDB_API_KEY');
+
         $today = Carbon::today();
         $twoWeeksFromNow = Carbon::today()->addWeeks(2);
 
         $searchQuery = $request->input('search');
         $movieQuery = $request->input('movie');
+        $selectedDate = $request->input('date');
 
         $screeningsQuery = Screening::query();
+        $screeningsQuery->whereNotNull('custom');
+
         if ($searchQuery) {
             $screeningsQuery = Screening::where('id', $searchQuery);
         }
-        if($movieQuery) {
+        if ($movieQuery) {
             $screeningsQuery = Screening::whereHas('movieRef', function ($query) use ($movieQuery) {
                 $query->where('title', 'like', "%$movieQuery%");
             });
@@ -40,27 +53,47 @@ class ScreeningController extends Controller
             $screeningsQuery->whereBetween('date', [$today, $twoWeeksFromNow]);
         }
 
+        if ($selectedDate) {
+            $screeningsQuery->whereDate('date', $selectedDate);
+        }
 
         $screenings = $screeningsQuery
-            ->with('movieRef', 'theaterRef')
+            ->with('theaterRef', 'movieRef')
             ->orderBy('date')
             ->orderBy('start_time')
             ->paginate(70)
             ->withQueryString();
 
-        return view('screenings.index', compact('screenings',));
-    }
+        $availableDates = Screening::query()
+            ->whereNotNull('custom')
+            ->distinct()
+            ->pluck('date')
+            ->toArray();
 
+        // Movie data
+        $movieData = [];
+        foreach ($screenings as $screening) {
+            $tmdbId = $screening->custom;
+            if ($tmdbId) {
+                $movieData[$tmdbId] = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                    return $this->tmdbService->getMovieByID($tmdbId);
+                });
+            }
+        }
+
+        return view('screenings.index', compact('screenings', 'movieData', 'selectedDate', 'availableDates'));
+    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create(): View
     {
+        $movies = $this->tmdbService->getNowPlayingMovies();
+        $theaters = \App\Models\Theater::all();
         $screening = new Screening();
 
-        return view('screenings.create')
-            ->with('screening', $screening);
+        return view('screenings.create', compact('screening', 'movies', 'theaters'));
     }
 
     /**
@@ -73,13 +106,13 @@ class ScreeningController extends Controller
             'dates.*' => 'date',
             'times' => 'required|array',
             'times.*' => 'date_format:H:i',
-            'movie_id' => 'required|exists:movies,id',
+            'movie_id' => 'required|integer',
             'theater_id' => 'required|exists:theaters,id',
         ]);
 
-
-        $movieId = $request->input('movie_id');
-        $theaterId = $request->input('theater_id');
+        $movieId = 350; 
+        $tmdbMovieId = $validated['movie_id'];
+        $theaterId = $validated['theater_id'];
         $dates = $validated['dates'];
         $times = $validated['times'];
 
@@ -90,6 +123,7 @@ class ScreeningController extends Controller
                     'theater_id' => $theaterId,
                     'start_time' => $time,
                     'date' => $date,
+                    'custom' => $tmdbMovieId,
                 ]);
             }
         }
@@ -115,19 +149,29 @@ class ScreeningController extends Controller
      * Display the specified resource.
      */
     public function show(Screening $screening): View
-    {
-        $theater = $screening->theaterRef;
-        $movie = $screening->movieRef;
-        $seats = $theater->seats;
+{
+    $theater = $screening->theaterRef;
+    $movie = $screening->movieRef;
+    $seats = $theater->seats;
 
+    $tmdbId = $screening->custom;
+    $movieData = null;
 
-        return view('screenings.show')->with([
-            'screening' => $screening,
-            'theater' => $theater,
-            'seats' => $seats,
-            'movie' => $movie,
-        ]);
+    if ($tmdbId) {
+        $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+            return $this->tmdbService->getMovieByID($tmdbId);
+        });
     }
+
+    return view('screenings.show')->with([
+        'screening' => $screening,
+        'theater' => $theater,
+        'seats' => $seats,
+        'movie' => $movie,
+        'movieData' => $movieData,
+    ]);
+}
+
 
     public function isSoldOut(Screening $screening): bool
     {

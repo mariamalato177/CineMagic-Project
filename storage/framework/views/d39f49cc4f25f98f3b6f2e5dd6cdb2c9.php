@@ -18,7 +18,7 @@
     <div class="min-h-screen bg-cover bg-center bg-gray-200">
 
         <!-- Navigation Menu -->
-        <nav class="bg-white dark:bg-gray-900 border-b border-coral-100 dark:border-gray-800">
+        <nav class="bg-white border-b border-coral-100 ">
             <!-- Navigation Menu Full Container -->
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!-- Logo + Menu Items + Hamburger -->
@@ -27,7 +27,7 @@
                     <div class="shrink-0 -ms-4">
                         <a href="<?php echo e(route('home')); ?>">
                             <div
-                                class="h-20 w-40 bg-cover bg-[url('../img/logotipo.png')] dark:bg-[url('../img/logotipo.png')]">
+                                class="h-20 w-40 bg-cover bg-[url('../img/logotipo.png')] ">
                             </div>
                         </a>
                     </div>
@@ -78,9 +78,11 @@
 <?php unset($__componentOriginal8ffb92400f9024f5b5068d82c70e677b); ?>
 <?php endif; ?>
 
+
+                        <!-- Menu Item: Theaters -->
                         <?php if (isset($component)) { $__componentOriginal8ffb92400f9024f5b5068d82c70e677b = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal8ffb92400f9024f5b5068d82c70e677b = $attributes; } ?>
-<?php $component = App\View\Components\Menus\MenuItem::resolve(['content' => 'Theaters','href' => ''.e(route('theaters.index')).'','selected' => '0'] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = App\View\Components\Menus\MenuItem::resolve(['content' => 'Theaters','href' => ''.e(route('theaters.index')).'','selected' => ''.e(Route::currentRouteName() == 'theaters.index').''] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('menus.menu-item'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
@@ -98,7 +100,6 @@
 <?php $component = $__componentOriginal8ffb92400f9024f5b5068d82c70e677b; ?>
 <?php unset($__componentOriginal8ffb92400f9024f5b5068d82c70e677b); ?>
 <?php endif; ?>
-
 
                         <?php if(auth()->guard()->check()): ?>
                             <?php if(Auth::user()->type == 'A'): ?>
@@ -284,10 +285,10 @@
                                     <div class="pe-1">
                                         <?php if(Auth::user()->photoFullUrl): ?>
                                             <img src="<?php echo e(Auth::user()->photoFullUrl); ?>"
-                                                class="w-11 h-11 min-w-11 min-h-11 rounded-full">
+                                                class="w-11 h-11 min-w-11 min-h-11 rounded-full"
+                                                onError="this.onerror=null;this.src='<?php echo e(asset('storage/photos/no-photo-icon-22.png')); ?>';">
                                         <?php else: ?>
-                                            <span
-                                                class="w-11 h-11 min-w-11 min-h-11 flex items-center justify-center bg-gray-200 rounded-full">
+                                            <span class="w-11 h-11 min-w-11 min-h-11 flex items-center justify-center bg-gray-200 rounded-full">
                                                 <?php echo e(substr(Auth::user()->name, 0, 1)); ?>
 
                                             </span>
@@ -355,12 +356,12 @@
                                 </form>
                                 <a class="px-3 py-4 border-b-2 border-transparent
                                         text-sm font-medium leading-5 inline-flex h-auto
-                                        text-gray-500 dark:text-gray-400
-                                        hover:text-gray-700 dark:hover:text-gray-300
-                                        hover:bg-gray-100 dark:hover:bg-gray-800
+                                        text-gray-500
+                                        hover:text-gray-700
+                                        hover:bg-gray-100
                                         focus:outline-none
-                                        focus:text-gray-700 dark:focus:text-gray-300
-                                        focus:bg-gray-100 dark:focus:bg-gray-800"
+                                        focus:text-gray-700
+                                        focus:bg-gray-100 "
                                     href="#"
                                     onclick="event.preventDefault();
                                     document.getElementById('form_to_logout_from_menu').submit();">
@@ -422,7 +423,7 @@
                         <?php endif; ?>
                     </div>
                     <!-- Hamburger -->
-                    <div class="absolute right-0 top-0 flex sm:hidden pt-3 pe-3 text-black dark:text-gray-50">
+                    <div class="absolute right-0 top-0 flex sm:hidden pt-3 pe-3 text-black ">
                         <button id="hamburger_btn">
                             <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path id="hamburger_btn_open" stroke-linecap="round" stroke-linejoin="round"

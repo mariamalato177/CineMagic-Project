@@ -5,12 +5,13 @@
 @section('main')
 @php
 $user = auth()->user();
+
 @endphp
 <div class="flex justify-center mt-10 space-x-8">
-    <div class="w-full max-w-2xl p-8 bg-white dark:bg-gray-900 shadow-md rounded-lg text-gray-900 dark:text-gray-50">
+    <div class="w-full max-w-2xl p-8 bg-white shadow-md rounded-lg text-gray-900 ">
         <h3 class="mb-6 text-2xl font-bold">Customer Information</h3>
         <div class="flex justify-center mt-2">
-            <div class="w-full max-w-2xl p-8 bg-white dark:bg-gray-900 shadow-md rounded-lg text-gray-900 dark:text-gray-50">
+            <div class="w-full max-w-2xl p-8 bg-white  shadow-md rounded-lg text-gray-900 ">
                 <form action="{{ route('cart.confirm') }}" method="POST" id="checkoutForm">
                     @csrf
                     <div class="mb-4">
@@ -52,7 +53,6 @@ $user = auth()->user();
                         @enderror
                     </div>
 
-                    {{-- Additional Inputs based on Payment Type --}}
                     <div id="visaInputs" class="mb-4" style="display: none;">
                         <x-input-label for="card_number" :value="__('Card Number')" />
                         <x-text-input id="payment_reference" name="card_number" type="text" class="mt-1 block w-full"
@@ -94,20 +94,29 @@ $user = auth()->user();
         </div>
     </div>
 
-    <div class="w-full max-w-4xl p-8 bg-white dark:bg-gray-900 shadow-md rounded-lg text-gray-900 dark:text-gray-50">
+    <div class="w-full max-w-4xl p-8 bg-white  shadow-md rounded-lg text-gray-900 ">
         @empty($cart)
         <h3 class="text-2xl text-center">Cart is Empty</h3>
         @else
         <div>
             <h3 class="mb-6 text-2xl font-bold">Shopping Cart Confirmation</h3>
             @foreach ($cart as $item)
-            <div class="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            @php
+            $tmdbId = $item['custom'];
+                    $movieData=[];
+                    $movieData = Cache::remember("movie_{$tmdbId}", 3600, function () use ($tmdbId) {
+                        return $this->tmdbService->getMovieByID($tmdbId);
+                    });
+                    $date = \Carbon\Carbon::parse($item['date'])->format('d-m-Y');
+            @endphp
+            <div class="mb-6 p-4 bg-gray-100  rounded-lg">
                 <p><strong>Seat ID:</strong> {{ $item['seatId'] }}</p>
                 <p><strong>Screening ID:</strong> {{ $item['screeningId'] }}</p>
                 <p><strong>Price:</strong> {{ $item['price'] }}€</p>
-                <p><strong>Movie:</strong> {{ $item['movie'] }}</p>
-                <p><strong>Hora:</strong> {{ $item['hora'] }}</p>
-                <p><strong>Teatro:</strong> {{ $item['theater'] }}</p>
+                <p><strong>Movie:</strong> {{ $movieData['title'] }}</p>
+                <p><strong>Date:</strong> {{ $date }}</p>
+                <p><strong>Start Time:</strong> {{ $item['hora'] }}</p>
+                <p><strong>Theater:</strong> {{ $item['theater'] }}</p>
             </div>
             @endforeach
         </div>

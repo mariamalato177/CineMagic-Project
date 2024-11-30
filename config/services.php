@@ -31,4 +31,12 @@ return [
         ],
     ],
 
+    'tmdb' => [
+    'api_key' => '00ba7a7ea04d04cfb14ee146d36ec4e6',
+    'access_token' => 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwMGJhN2E3ZWEwNGQwNGNmYjE0ZWUxNDZkMzZlYzRlNiIsIm5iZiI6MTcyOTI3MjkzNS45NTc2NjQsInN1YiI6IjY3MTI5Yjg5MTZjYWE4YjBmMDljNWUxYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0QnjhyTk9bET_klpkqA9mNwalx6drdWpfsE-yDc1SqI',
+    'base_url' => 'https://api.themoviedb.org/3/',
+],
+
+
+
 ];

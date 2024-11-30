@@ -1,22 +1,25 @@
 @extends('layouts.main')
+@php
+$date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
+@endphp
 
-@section('header-title', 'Select seat for screening "' . $screening->movieRef->title . '"' . ' at ' .
-    $screening->theaterRef->name . ' on ' . $screening->date . ' ' . $screening->start_time)
+@section('header-title', 'Select seat for screening "' . $movieData['title'] . '"' . ' at ' .
+    $screening->theaterRef->name . ' on ' . $date . ' at ' . $screening->start_time)
 
 @section('main')
 
-    <header class="bg-white dark:bg-gray-900 shadow">
+    <header class="bg-white  shadow">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800  leading-tight">
                 @yield('header-title')
             </h2>
             <div class="flex flex-col sm:flex-row justify-between space-y-3 sm:space-y-0 sm:space-x-3">
                 <div class="grow flex flex-col space-y-2">
                     <div class="flex flex-col sm:flex-row sm:space-x-3">
                         <label for="selected-seats"
-                            class="pt-2 block text-m font-medium text-gray-700 dark:text-gray-300">Seats</label>
+                            class="pt-2 block text-m font-medium text-gray-700 ">Seats</label>
                         <input type="text" id="selected-seats" name="selected-seats" readonly
-                            class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md py-2 px-3 mt-1 block w-20 m:text-m sm:leading-5 text-gray-900 dark:text-gray-300"
+                            class="bg-white  border border-gray-300  rounded-md py-2 px-3 mt-1 block w-20 m:text-m sm:leading-5 text-gray-900 "
                             value="0">
                     </div>
 
@@ -34,10 +37,11 @@
     </header>
 
     <br>
-
+    <div class="flex justify-center">
+        <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
     <div class="flex justify-center mb-4">
-        <div class="w-full max-w-3xl h-12 bg-gray-300 dark:bg-gray-700 rounded-md flex items-center justify-center">
-            <span class="text-lg font-bold text-gray-800 dark:text-gray-200">Screen</span>
+        <div class="w-full max-w-3xl h-12 bg-white border-2  rounded-md flex items-center justify-center">
+            <span class="text-lg font-bold text-gray-800 ">Screen</span>
         </div>
     </div>
     <br>
@@ -68,6 +72,8 @@
             @endforeach
         </div>
     </div>
+    </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -85,7 +91,7 @@
                         return;
                     }
 
-                    // Toggle selection state
+                    
                     @if (auth()->check())
                         @if (auth()->user()->type == 'A' || auth()->user()->type == 'E')
                             return;
@@ -99,7 +105,6 @@
                         seat.querySelector('path').style.fill = 'green';
                     }
 
-                    // Update the display of the number of selected seats
                     selectedSeatsDisplay.value = selectedSeats.length;
                 });
             });
@@ -107,11 +112,10 @@
             addToCartForm.addEventListener('submit', function(event) {
                 if (selectedSeats.length === 0) {
                     alert('Please select at least one seat to add to cart.');
-                    event.preventDefault(); // Prevent form submission
+                    event.preventDefault();
                     return;
                 }
 
-                // Create hidden input to send selected seats data
                 const seatsInput = document.createElement('input');
                 seatsInput.type = 'hidden';
                 seatsInput.name = 'selected_seats';

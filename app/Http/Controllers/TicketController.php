@@ -25,8 +25,7 @@ class TicketController extends Controller
 
     public function purchase(Request $request, Screening $screening)
     {
-        // Handle seat selection and redirect to payment
-        // Validate selected seats
+        
         $validated = $request->validate([
             'seats' => 'required|array|min:1',
             'seats.*' => 'exists:seats,id'
@@ -38,14 +37,13 @@ class TicketController extends Controller
                 'screening_id' => $screening->id,
                 'seat_id' => $seatId,
                 'movie_id' => $screening->movie_id,
-                'purchase_id' => null, // Replace with actual purchase logic
-                'price' => 10.00, // Replace with dynamic pricing
-                'qrcode_url' => null, // Generate QR code if needed
+                'purchase_id' => null,
+                'price' => 10.00,
+                'qrcode_url' => null,
                 'status' => 'reserved',
             ]);
         }
 
-        // Redirect to payment page (Assume you have a payment route)
         return redirect()->route('payment.index', ['screening' => $screening]);
     }
 

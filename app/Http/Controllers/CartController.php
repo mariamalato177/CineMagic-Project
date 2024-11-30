@@ -24,6 +24,7 @@ class CartController extends Controller
 
     public function show(): View
     {
+
         $cart = session('cart', null);
         return view('cart.show', compact('cart'));
     }
@@ -50,6 +51,8 @@ class CartController extends Controller
                     'seatId' => $seatId,
                     'screeningId' => $screeningId,
                     'price' => $price,
+                    'date' => Screening::find($screeningId)->date,
+                    'custom' => Screening::find($screeningId)->custom,
                     'movie' => Movie::find(Screening::find($screeningId)->movie_id)->title,
                     'hora' => Screening::find($screeningId)->start_time,
                     'theater' => Theater::find(Screening::find($screeningId)->theater_id)->name,
@@ -83,7 +86,7 @@ class CartController extends Controller
     public function confirm(CartConfirmationFormRequest $request): RedirectResponse
     {
         $cart = session('cart', null);
-        
+
         if (empty($cart)) {
             return back()
                ->with('alert-type', 'danger')

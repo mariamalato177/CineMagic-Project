@@ -46,6 +46,7 @@
         <ul>
             <li> <a href="{{ route('movies.index') }}">Movies</a> </li>
             <li> <a href="{{ route('screenings.index') }}">Screenings</a> </li>
+            <li> <a href="{{ route('theaters.index') }}">Theaters</a> </li>
             <li> <a href="{{ route('cart.index') }}">Cart</a> </li>
             <li> <a href="{{ route('reports.index') }}">Statistics</a> </li>
         </ul>
