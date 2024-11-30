@@ -76,4 +76,4 @@ if ($statusCode > 400) {
     <?php $__env->endSlot(); ?>
 
 <?php echo $__env->renderComponent(); ?>
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/request.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/request.blade.php ENDPATH**/ ?>

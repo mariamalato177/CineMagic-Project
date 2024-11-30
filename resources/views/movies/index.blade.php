@@ -62,48 +62,108 @@
         </div>
         </div>
 
-        <div class="mt-6">
-            {{ $movies->links() }}
+        <div class="flex flex-col items-center mt-6">
+            <div class="text-gray-700 mb-4">
+                @if ($movies->total() > 0)
+                Showing {{ $movies->firstItem() }}–{{ $movies->lastItem() }} of {{ $movies->total() }} results
+                @endif
+            </div>
+
+            <div class="flex justify-center items-center space-x-1 relative">
+                {{-- Botão de voltar --}}
+                @if ($movies->onFirstPage())
+                <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-l cursor-not-allowed">&laquo;</span>
+                @else
+                <a href="{{ $movies->previousPageUrl() }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-l hover:bg-gray-100">&laquo;</a>
+                @endif
+
+                {{-- Lógica para exibir páginas para dispositivos grandes (8 páginas) e pequenos (3 páginas) --}}
+                @php
+                $currentPage = $movies->currentPage();
+                $lastPage = $movies->lastPage();
+                $start = max(1, $currentPage - 4); // Para dispositivos grandes, começa 4 páginas antes
+                $end = min($lastPage, $currentPage + 4); // Vai até 4 páginas depois
+                @endphp
+
+                {{-- Mostrar até 8 páginas para dispositivos grandes --}}
+                <div class="hidden lg:flex">
+                    @if ($start > 1)
+                    <a href="{{ $movies->url(1) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">1</a>
+                    @if ($start > 2)
+                    <span class="px-4 py-2 bg-white text-gray-400">...</span>
+                    @endif
+                    @endif
+
+                    @for ($page = $start; $page <= $end; $page++)
+                        @if ($page==$currentPage)
+                        <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300">{{ $page }}</span>
+                        @else
+                        <a href="{{ $movies->url($page) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">{{ $page }}</a>
+                        @endif
+                        @endfor
+
+                        @if ($end < $lastPage)
+                            @if ($end < $lastPage - 1)
+                            <span class="px-4 py-2 bg-white text-gray-400">...</span>
+                            @endif
+                            <a href="{{ $movies->url($lastPage) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">{{ $lastPage }}</a>
+                            @endif
+                </div>
+
+                {{-- Mostrar até 3 páginas para dispositivos pequenos --}}
+                <div class="flex lg:hidden">
+                    <a href="{{ $movies->url($currentPage - 1) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
+                    <span class="px-4 py-2 bg-gray-800 text-white font-bold border border-gray-300">{{ $currentPage }}</span>
+                    <a href="{{ $movies->url($currentPage + 1) }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">...</a>
+                </div>
+
+                {{-- Botão de avançar --}}
+                @if ($movies->hasMorePages())
+                <a href="{{ $movies->nextPageUrl() }}" class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-r hover:bg-gray-100">&raquo;</a>
+                @else
+                <span class="px-4 py-2 bg-white text-gray-400 border border-gray-300 rounded-r cursor-not-allowed">&raquo;</span>
+                @endif
+            </div>
+
+            @else
+            <div class="alert alert-warning">No movies found.</div>
+            @endif
         </div>
+    </div>
 
+        <!--Pop up of the details -->
+        <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden transition-opacity duration-300">
+            <div class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-3xl w-full p-6 relative flex flex-col md:flex-row items-start">
+                <button id="close-modal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-4xl p-2">&times;</button>
 
-        
-    @endif
-
-    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden">
-        <div class="relative bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-4xl w-full p-6">
-            <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-300 text-4xl">&times;</button>
-            <div class="flex flex-col md:flex-row items-start">
                 <div class="w-full md:w-1/3">
                     <img id="modal-poster" class="rounded-lg shadow-md" src="" alt="Movie Poster">
                 </div>
-                <div class="flex-1 md:ml-6 mt-4 md:mt-0">
-                    <h2 id="modal-title" class="text-2xl font-semibold text-white mb-4 mt-2">Movie Title</h2>
-                    <p id="modal-overview" class="text-gray-300 text-sm mb-4">Movie synopsis goes here...</p>
+
+                <div class="flex-1 ml-0 md:ml-6 mt-4 md:mt-0">
+                    <h2 id="modal-title" class="text-2xl font-semibold text-white mb-2"></h2>
+                    <p id="modal-overview" class="text-gray-300 text-sm mb-4"></p>
+
                     <div class="mt-4 text-sm">
-                        <p><span class="font-semibold">Genre:</span> <span id="modal-genre" class="text-gray-400">Genre Name</span></p>
-                        <p><span class="font-semibold">Release Year:</span> <span id="modal-year" class="text-gray-400">Year</span></p>
-                        <p><span class="font-semibold">Rating:</span> <span id="modal-rating" class="text-gray-400">N/A</span></p>
+                        <p><span class="font-semibold">Genre:</span> <span id="modal-genre" class="text-gray-400"></span></p>
+                        <p><span class="font-semibold">Release Year:</span> <span id="modal-year" class="text-gray-400"></span></p>
                     </div>
+
                     <div class="mt-4">
                         <h3 class="text-lg font-semibold text-white">Review:</h3>
-                        <p id="modal-review" class="text-gray-300 text-sm italic">Review content here...</p>
+                        <p id="modal-review" class="text-gray-300 text-sm italic"></p>
                     </div>
-                    <div class="flex justify-start mt-4">
-                        <a id="modal-more-reviews" href="#" class="text-blue-500 font-bold cursor-pointer">
-                            View More Reviews
-                        </a>
+
+                    <div class="flex justify-start">
+                        <a class="text-blue-500 font-bold cursor-pointer" id="modal-more-reviews" href="">View More Reviews</a>
                     </div>
                     <div class="mt-4">
-                        <a id="modal-trailer" href="#" target="_blank" class="text-blue-500 hover:text-blue-300">
-                            Watch Trailer
-                        </a>
+                        <a id="modal-trailer" href="" target="_blank" class="text-blue-500 hover:text-blue-300">Watch Trailer</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 <style>
     .modal {
@@ -150,34 +210,35 @@
             console.error('Error fetching trailer:', error);
         }
 
-        if (reviewCache[movie.id]) {
-            document.getElementById('modal-review').textContent = reviewCache[movie.id];
-        } else {
-            try {
-                const reviewResponse = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6&language=en-US&page=1`);
-                const reviewData = await reviewResponse.json();
-                const shortReview = reviewData.results
-                    .filter(review => review.content.length <= 300)
-                    .sort((a, b) => a.content.length - b.content.length)[0];
+            if (reviewCache[movie.id]) {
+                document.getElementById('modal-review').textContent = reviewCache[movie.id];
+            } else {
+                try {
+                    const reviewResponse = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6&language=en-US&page=1`);
+                    const reviewData = await reviewResponse.json();
+                    const shortReview = reviewData.results
+                        .filter(review => review.content.length <= 300)
+                        .sort((a, b) => a.content.length - b.content.length)[0];
 
-                const reviewText = shortReview ? shortReview.content : "No short reviews available.";
-                reviewCache[movie.id] = reviewText;
-                document.getElementById('modal-review').textContent = reviewText;
-            } catch (error) {
-                console.error('Error fetching review:', error);
-                document.getElementById('modal-review').textContent = "Unable to fetch review.";
+                    const reviewText = shortReview ? shortReview.content : "No short reviews available.";
+                    reviewCache[movie.id] = reviewText;
+                    document.getElementById('modal-review').textContent = reviewText;
+                } catch (error) {
+                    console.error('Error fetching review:', error);
+                    document.getElementById('modal-review').textContent = "Unable to fetch review.";
+                }
             }
+
+            const modal = document.getElementById('modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
-        const modal = document.getElementById('modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
+        document.getElementById('close-modal').addEventListener('click', function() {
+            const modal = document.getElementById('modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        });
+    </script>
 
-    document.getElementById('close-modal').addEventListener('click', function() {
-        const modal = document.getElementById('modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    });
-</script>
-@endsection
+    @endsection

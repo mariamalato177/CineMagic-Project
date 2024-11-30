@@ -19,7 +19,7 @@ foreach ($entries as $entry) {
 <?php $__env->startComponent('telescope-toolbar::item', ['name' => 'queries', 'link' => true]); ?>
 
     <?php $__env->slot('icon'); ?>
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('cache') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('cache') . '.svg'); ?>
 
         <span class="sf-toolbar-value"><?php echo e($calls); ?></span>
 
@@ -57,4 +57,4 @@ foreach ($entries as $entry) {
 
     <?php $__env->endSlot(); ?>
 
-<?php echo $__env->renderComponent(); ?><?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/cache.blade.php ENDPATH**/ ?>
+<?php echo $__env->renderComponent(); ?><?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/cache.blade.php ENDPATH**/ ?>

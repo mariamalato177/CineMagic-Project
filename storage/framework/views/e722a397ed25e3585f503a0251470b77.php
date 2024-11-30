@@ -2,7 +2,7 @@
 
     <?php $__env->slot('icon'); ?>
 
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('ajax') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('ajax') . '.svg'); ?>
 
         <span class="sf-toolbar-value sf-toolbar-ajax-request-counter">0</span>
 
@@ -34,4 +34,4 @@
 
     <?php $__env->endSlot(); ?>
 <?php echo $__env->renderComponent(); ?>
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/ajax.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/ajax.blade.php ENDPATH**/ ?>

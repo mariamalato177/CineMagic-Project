@@ -10,7 +10,7 @@ $varCloner = new \Symfony\Component\VarDumper\Cloner\VarCloner();
 <?php $__env->startComponent('telescope-toolbar::item', ['name' => 'dump', 'link' => false]); ?>
 
     <?php $__env->slot('icon'); ?>
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('session') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('session') . '.svg'); ?>
         <span class="sf-toolbar-value sf-toolbar-info-piece-additional">Session</span>
     <?php $__env->endSlot(); ?>
 
@@ -31,4 +31,4 @@ $varCloner = new \Symfony\Component\VarDumper\Cloner\VarCloner();
     <?php $__env->endSlot(); ?>
 
 <?php echo $__env->renderComponent(); ?>
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/session.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/session.blade.php ENDPATH**/ ?>

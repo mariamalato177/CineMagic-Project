@@ -2,7 +2,7 @@
 
     <?php $__env->slot('icon'); ?>
 
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('laravel') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('laravel') . '.svg'); ?>
 
         <span class="sf-toolbar-value"><?php echo e(app()->version()); ?></span>
 
@@ -34,4 +34,4 @@
 
     <?php $__env->endSlot(); ?>
 <?php echo $__env->renderComponent(); ?>
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/config.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/config.blade.php ENDPATH**/ ?>

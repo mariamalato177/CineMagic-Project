@@ -26,7 +26,7 @@ if ($num_queries > 0 && $num_duplicated > $num_queries *.75) {
 <?php $__env->startComponent('telescope-toolbar::item', ['name' => 'queries', 'link' => '#queries', 'status' => $statusColor, 'additional_classes' => 'sf-toolbar-block-fullwidth']); ?>
 
     <?php $__env->slot('icon'); ?>
-        <?php echo file_get_contents('/var/www/html/vendor/fruitcake/laravel-telescope-toolbar/resources/icons/' . basename('queries') . '.svg'); ?>
+        <?php echo file_get_contents('C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\resources\icons/' . basename('queries') . '.svg'); ?>
 
         <span class="sf-toolbar-value"><?php echo e($num_queries); ?></span>
 
@@ -70,4 +70,4 @@ if ($num_queries > 0 && $num_duplicated > $num_queries *.75) {
     <?php $__env->endSlot(); ?>
 
 <?php echo $__env->renderComponent(); ?>
-<?php /**PATH /var/www/html/vendor/fruitcake/laravel-telescope-toolbar/src/../resources/views/collectors/queries.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\projeto\vendor\fruitcake\laravel-telescope-toolbar\src/../resources/views/collectors/queries.blade.php ENDPATH**/ ?>
