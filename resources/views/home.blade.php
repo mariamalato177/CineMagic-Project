@@ -32,13 +32,13 @@
                                         alt="{{ $movie['title'] }}"
                                         class="absolute top-0 left-0 w-full h-full object-cover rounded-t-lg">
                                 </div>
-                                <div class="p-4">
+                                <div class="h-36 p-4 flex flex-col justify-center items-start">
                                     <h3 class="text-lg font-semibold text-gray-900">{{ $movie['title'] }}</h3>
                                     <p class="text-sm text-gray-600">
-                                        {{ \Carbon\Carbon::parse($movie['release_date'])->format('d-m-Y') }}
+                                       Release Date: {{ \Carbon\Carbon::parse($movie['release_date'])->format('d-m-Y') }}
                                     </p>
                                     <p class="text-sm text-gray-400">Rating:
-                                        {{ number_format($movie['vote_average'], 1) }}/10</p>
+                                        {{ $movie['vote_average'] == 0 ? 'N/A' : number_format($movie['vote_average'], 1) }}{{ $movie['vote_average'] == 0 ? '' : '/10' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                                         {{ \Carbon\Carbon::parse($movie['release_date'])->format('d-m-Y') }}
                                     </p>
                                     <p class="text-sm text-gray-400">Rating:
-                                        {{ number_format($movie['vote_average'], 1) }}/10</p>
+                                        {{ $movie['vote_average'] == 0 ? 'N/A' : number_format($movie['vote_average'], 1) }}{{ $movie['vote_average'] == 0 ? '' : '/10' }}</p>
                                 </div>
                             </div>
                         </div>
