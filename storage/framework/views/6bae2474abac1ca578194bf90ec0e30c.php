@@ -46,6 +46,7 @@
             <div class="col-md-3">
                 <div class="card mb-4">
                     <img
+                        style="height: 354.99px"
                         class="rounded-lg shadow-md ease-in-out duration-300 hover:opacity-50 cursor-pointer"
                         src="<?php echo e($movie['poster_path'] ? 'https://image.tmdb.org/t/p/w500' . $movie['poster_path'] : asset('storage/posters/_no_poster_1.png')); ?>"
                         alt="<?php echo e($movie['title']); ?>"
