@@ -93,7 +93,7 @@
                                         <a href="{{ route('screenings.show', $movieGroup['screening']) }}"
                                             class="px-4 py-2 bg-coral text-white rounded-full"
                                             style=" color: white; transition: background-color 0.3s ease-in-out;">
-                                            @if (auth()->check() && auth()->user()->type !== 'C')
+                                            @if (auth()->check() && auth()->user()->type !== 'C' || $movieGroup['screening']['start_time'] < now())
                                                 See info
                                             @else
                                                 Buy Tickets
@@ -120,5 +120,5 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 @endsection
