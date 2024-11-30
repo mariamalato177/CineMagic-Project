@@ -25,51 +25,64 @@
 - Docker Desktop: https://www.docker.com/products/docker-desktop/
 - WSL:
   - On CMD or Powershell in Windows, insert this:
-
-  ```
-  wsl --install
-  ```
+```
+wsl --install
+```
 
 
 ### Commands required in order to get the latest version of the project:
 
-In case of not having sail installed:
-- Open on IDE VsCode a new WSL (UBUNTU) terminal and run this [WSL terminal]:
+Open on IDE VsCode a new WSL (UBUNTU) terminal, check if it is on the project's directory and execute this [WSL terminal]:
   
+```
+  ./vendor/bin/sail build --no-cache
+```
+- If it is not on the project's directory:
     ```
-      ./vendor/bin/sail composer require laravel/sail --dev
+    cd /mnt/c/Users/ *directory of the project*
     ```
-
-1. Get the newest version of the packages of the project [WSL terminal]:
-
-   ```
-   ./vendor/bin/sail composer update
-   ```
-2. Build the containers on Docker [WSL terminal]:
+1. Build the containers on Docker [WSL terminal]:
    
-   ```
-   ./vendor/bin/sail up -d
-   ```
+```
+./vendor/bin/sail up -d
+```
+- It may take some time, desired output: 
+    <em>
+    <p>[+] Running 3/3 </p>
+    <p> ✔ Container projeto-adminer-1       Running                                         0.0s </p>
+    <p> ✔ Container projeto-mysql-1         Running                                         0.0s </p>
+    <p> ✔ Container projeto-laravel.test-1  Running                                         0.0s</p>
+    </em>
+    
+2. Get the newest version of the packages of the project [WSL terminal]:
+
+```
+./vendor/bin/sail composer update 
+```
+
 3. Drop the tables and get the most recent version of DB [WSL terminal]:
 
-   ```
-   ./vendor/bin/sail art migrate:fresh
-   ```
-   This command may possibly take some time:
-   ```
-   ./vendor/bin/sail art db:seed
-   ```
+```
+./vendor/bin/sail art migrate:fresh
+```
+   This next command may possibly take some time [WSL terminal]:
+   <p>It will asked the language of the movies, press 0 (USA English).</p>
+
+```
+./vendor/bin/sail art db:seed
+```
+
 4. Automatic live reload, required [PS terminal]: 
-
-    ```
-   npm run dev
-   ```
+```
+npm run dev
+```
  
-
 
 ## Possible cases of event:
 
 - Maria has a iOS system while the rest of the group have a Windows system. Came to our attention that the website can load faster on the iOS system while on Windows can take some time.
+- Attached here is the video of the perfomance of the website on iOS system:
+  - *****por video
 
 
 ## Authors:
