@@ -11,17 +11,17 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Services\TmdbService;
+use Illuminate\Support\Facades\Cache;
+use App\Services\TMDBService;
 
 class MovieController extends Controller
 {
-    protected $tmdbService;
+    protected TMDBService $tmdbService;
 
-    public function __construct(TmdbService $tmdbService)
+    public function __construct(TMDBService $tmdbService)
     {
-        $this->tmdbService = $tmdbService; 
+        $this->tmdbService = $tmdbService;
     }
 
     public function index(Request $request)
@@ -30,28 +30,30 @@ class MovieController extends Controller
         $query = $request->get('query');
         $genreFilter = $request->get('genre');
         $page = max(1, (int) $request->get('page', 1));
-        $moviesPerPage = 20;
 
-        $genres = Cache::remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
-            return $this->tmdbService->getGenres();
-        });
+        // Cache dos gêneros
+        $genres = $this->tmdbService->getGenres();
+
 
         if ($query && $genreFilter) {
-            $movies = $this->fetchAndFilterMovies($query, $genreFilter, $apiKey, $genres, $page, $moviesPerPage);
+            // Obter e filtrar filmes de múltiplas páginas da API
+            $movies = $this->fetchAndFilterMovies($query, $genreFilter, $apiKey, $genres);
 
+            // Adicionar nomes dos gêneros aos filmes
             foreach ($movies as &$movie) {
                 $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
                     ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
                     ->join(', ');
             }
 
-            $cacheKey = 'movies_query_' . md5($query . $genreFilter . $page);
-            $totalResults = $movies->count();
+            // Paginação com base nos filmes filtrados
+            $moviesPerPage = 20; // Filmes por página
+            $totalResults = $movies->count(); // Total de filmes filtrados
             $moviesForCurrentPage = $movies->slice(($page - 1) * $moviesPerPage, $moviesPerPage);
 
             $moviesPaginator = new LengthAwarePaginator(
                 $moviesForCurrentPage->values(),
-                min($totalResults, 20 * 500),
+                min($totalResults, 20 * 500), // Limitar a 500 páginas no máximo
                 $moviesPerPage,
                 $page,
                 ['path' => $request->url(), 'query' => $request->query()]
@@ -63,11 +65,12 @@ class MovieController extends Controller
             ]);
         }
 
+        // Lógica padrão (apenas pesquisa ou apenas filtro)
         $url = $query ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/discover/movie';
         $params = [
             'api_key' => $apiKey,
             'language' => 'en-US',
-            'page' => min($page, 500),
+            'page' => min($page, 500), // Limitar a 500 páginas no máximo
         ];
         if ($query) {
             $params['query'] = $query;
@@ -79,15 +82,17 @@ class MovieController extends Controller
         $response = Http::get($url, $params);
         $movies = $response->json()['results'] ?? [];
 
+        // Adicionar nomes dos gêneros aos filmes
         foreach ($movies as &$movie) {
             $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
                 ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
                 ->join(', ');
         }
 
+        // Paginação padrão
         $moviesPaginator = new LengthAwarePaginator(
             $movies,
-            min($response->json()['total_results'] ?? 0, 20 * 500),
+            min($response->json()['total_results'] ?? 0, 20 * 500), // Limitar a 500 páginas no máximo
             20,
             $page,
             ['path' => $request->url(), 'query' => $request->query()]
@@ -99,59 +104,54 @@ class MovieController extends Controller
         ]);
     }
 
-    private function fetchAndFilterMovies($query, $genreFilter, $apiKey, $genres, $currentPage, $moviesPerPage)
+    /**
+     * Buscar e filtrar filmes de múltiplas páginas da API.
+     */
+    private function fetchAndFilterMovies($query, $genreFilter, $apiKey, $genres)
     {
-        $movies = collect();
-        $page = 1;
-        $totalFiltered = 0;
+        $cacheKey = "movies_search_{$query}_genre_{$genreFilter}";
+        $cacheDuration = 60 * 10; // Cache de 10 minutos
 
-        while ($page <= 500) {
-            $response = Http::get('https://api.themoviedb.org/3/search/movie', [
-                'api_key' => $apiKey,
-                'language' => 'en-US',
-                'query' => $query,
-                'page' => $page,
-            ]);
+        return Cache::remember($cacheKey, $cacheDuration, function () use ($query, $genreFilter, $apiKey, $genres) {
+            $movies = collect();
+            $page = 1;
+            $maxPages = 10; // Limitar a 10 páginas
+            $moviesPerPage = 20; // Filmes por página
+            $maxResults = $moviesPerPage * $maxPages; // Total de resultados desejados
 
-            if ($response->failed()) {
-                break;
+            while ($movies->count() < $maxResults && $page <= 500) { // Continuar até atingir o máximo de páginas
+                $moviesData = $this->tmdbService->searchMovies($query, $page); // Usando o serviço para buscar filmes
+
+                if (empty($moviesData['results'])) {
+                    break; // Interromper se não houver resultados ou em caso de falha
+                }
+
+                $results = collect($moviesData['results']);
+
+
+                // Filtrar filmes pelo gênero e adicionar nomes dos gêneros
+                $filtered = collect($results)->filter(function ($movie) use ($genreFilter) {
+                    return in_array($genreFilter, $movie['genre_ids'] ?? []);
+                })->map(function ($movie) use ($genres) {
+                    // Adicionar nomes dos gêneros aos filmes
+                    $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
+                        ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
+                        ->join(', ');
+                    return $movie;
+                });
+
+                $movies = $movies->merge($filtered);
+
+                // Parar se não houver mais páginas disponíveis na API
+                if ($page >= ($moviesData['total_pages'] ?? 0)) {
+                    break;
+                }
+                $page++;
             }
 
-            $results = $response->json()['results'] ?? [];
-
-            foreach ($results as &$movie) {
-                $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
-                    ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
-                    ->join(', ');
-            }
-
-            $filtered = collect($results)->filter(function ($movie) use ($genreFilter) {
-                return in_array($genreFilter, $movie['genre_ids'] ?? []);
-            });
-
-            $movies = $movies->merge($filtered);
-            $totalFiltered += $filtered->count();
-
-            if ($movies->count() >= $currentPage * $moviesPerPage) {
-                break;
-            }
-
-            if ($page >= ($response->json()['total_pages'] ?? 0)) {
-                break;
-            }
-
-            $page++;
-        }
-
-        return $movies;
-
-        $offset = ($currentPage - 1) * $moviesPerPage;
-        $moviesForCurrentPage = $movies->slice($offset, $moviesPerPage);
-
-        return [
-            'total' => $totalFiltered,
-            'data' => $moviesForCurrentPage,
-        ];
+            // Retornar no máximo o número permitido de filmes
+            return $movies->take($maxResults);
+        });
     }
 
     public function create(): View
@@ -165,6 +165,7 @@ class MovieController extends Controller
     {
         $apiKey = env('TMDB_API_KEY');
 
+        // Fetch and cache movie details, including genres
         $movie = cache()->remember("movie_$movieId", 60 * 60, function () use ($movieId, $apiKey) {
             $response = Http::get("https://api.themoviedb.org/3/movie/{$movieId}", [
                 'api_key' => $apiKey,
@@ -174,12 +175,21 @@ class MovieController extends Controller
             return $response->successful() ? $response->json() : [];
         });
 
-        $genres = $this->getGenres();
+        // Fetch genres from cache (or from TMDB if not cached)
+        $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
+            $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
+                'api_key' => $apiKey,
+                'language' => 'en-US',
+            ]);
+            return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
+        });
 
+        // Map genre IDs to names
         $movie['genre_names'] = collect($movie['genres'] ?? [])
             ->map(fn($genre) => $genres->get($genre['id'])['name'] ?? 'Unknown genre')
             ->join(', ');
 
+        // Paginate reviews
         $page = request()->get('page', 1);
         $reviewsResponse = Http::get("https://api.themoviedb.org/3/movie/{$movieId}/reviews", [
             'api_key' => $apiKey,
@@ -194,7 +204,7 @@ class MovieController extends Controller
         $reviewsPaginator = new LengthAwarePaginator(
             $reviews,
             $totalReviews,
-            5,
+            5, // Reviews per page
             $page,
             ['path' => request()->url(), 'query' => request()->query()]
         );
@@ -204,6 +214,8 @@ class MovieController extends Controller
             'reviews' => $reviewsPaginator,
         ]);
     }
+
+
 
     public function showScreenings(Movie $movie): View
     {
@@ -243,6 +255,7 @@ class MovieController extends Controller
             $file = $request->file('poster_filename');
             $filename = $file->store('posters', 'public');
             $data['poster_filename'] = basename($filename);
+            // Delete old poster if it exists
             if ($movie->poster_filename) {
                 Storage::disk('public')->delete('posters/' . $movie->poster_filename);
             }
