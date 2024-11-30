@@ -33,7 +33,7 @@
 <?php unset($__componentOriginalb596d52210e8ba4ef98a5af9cfe1fc78); ?>
 <?php endif; ?>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-8 mt-8">
+         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-8 mt-8">
             <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="bg-white rounded-lg overflow-hidden shadow-lg flex flex-col">
                     <div class="aspect-w-16 aspect-h-9">
@@ -133,6 +133,7 @@
                     </div>
                 </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
         </div>
         <div class="mt-8 flex justify-center">
             <?php echo e($users->links()); ?>
@@ -140,6 +141,7 @@
         </div>
             </div>
         </div>
+
 
     </div>
 <?php $__env->stopSection(); ?>

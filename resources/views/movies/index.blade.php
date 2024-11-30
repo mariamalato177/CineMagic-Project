@@ -133,7 +133,7 @@
 
         <!--Pop up of the details -->
         <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden transition-opacity duration-300">
-            <div class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-3xl w-full p-6 relative flex flex-col md:flex-row items-start">
+            <div class="bg-gray-900 text-gray-100 rounded-lg shadow-lg max-w-4xl w-full p-6 relative flex flex-col md:flex-row items-start">
                 <button id="close-modal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-4xl p-2">&times;</button>
 
                 <div class="w-full md:w-1/3">
@@ -147,6 +147,7 @@
                     <div class="mt-4 text-sm">
                         <p><span class="font-semibold">Genre:</span> <span id="modal-genre" class="text-gray-400"></span></p>
                         <p><span class="font-semibold">Release Year:</span> <span id="modal-year" class="text-gray-400"></span></p>
+                        <p><span class="font-semibold">Rating:</span> <span id="modal-rating" class="text-gray-400">N/A</span></p>
                     </div>
 
                     <div class="mt-4">
@@ -165,50 +166,50 @@
         </div>
     </div>
 
-<style>
-    .modal {
-        display: none;
-    }
-
-    .modal.open {
-        display: flex;
-    }
-</style>
-
-<script>
-    const reviewCache = {};
-
-    async function openModal(event) {
-        event.preventDefault();
-
-        const movie = JSON.parse(event.target.getAttribute('data-movie'));
-
-        document.getElementById('modal-poster').src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/storage/posters/_no_poster_1.png';
-        document.getElementById('modal-title').textContent = movie.title;
-        document.getElementById('modal-overview').textContent = movie.overview || "No synopsis available.";
-        document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
-        document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
-
-        document.getElementById('modal-rating').textContent = movie.vote_average ? `${movie.vote_average.toFixed(1)}/10` : "N/A";
-
-        const trailerLink = document.getElementById('modal-trailer');
-        trailerLink.classList.add('hidden');
-
-        const moreReviewsLink = document.getElementById('modal-more-reviews');
-        moreReviewsLink.href = `/movies/${movie.id}`;
-
-        try {
-            const response = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6`);
-            const data = await response.json();
-            const trailer = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
-
-            if (trailer) {
-                trailerLink.href = `https://www.youtube.com/watch?v=${trailer.key}`;
-                trailerLink.classList.remove('hidden');
-            }
-        } catch (error) {
-            console.error('Error fetching trailer:', error);
+    <style>
+        .modal {
+            display: none;
         }
+
+        .modal.open {
+            display: flex;
+        }
+    </style>
+
+    <script>
+        const reviewCache = {};
+
+        async function openModal(event) {
+
+            event.preventDefault();
+
+            const movie = JSON.parse(event.target.getAttribute('data-movie'));
+
+            document.getElementById('modal-poster').src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/storage/posters/_no_poster_1.png';
+            document.getElementById('modal-title').textContent = movie.title;
+            document.getElementById('modal-overview').textContent = movie.overview || "No synopsis available.";
+            document.getElementById('modal-genre').textContent = movie.genre_names || "Unknown genre";
+            document.getElementById('modal-year').textContent = movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A";
+            document.getElementById('modal-rating').textContent = movie.vote_average ? `${movie.vote_average.toFixed(1)}/10` : "N/A";
+
+            const trailerLink = document.getElementById('modal-trailer');
+            trailerLink.classList.add('hidden');
+
+            const moreReviewsLink = document.getElementById('modal-more-reviews');
+            moreReviewsLink.href = `/movies/${movie.id}`;
+
+            try {
+                const response = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=00ba7a7ea04d04cfb14ee146d36ec4e6`);
+                const data = await response.json();
+                const trailer = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+
+                if (trailer) {
+                    trailerLink.href = `https://www.youtube.com/watch?v=${trailer.key}`;
+                    trailerLink.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error fetching trailer:', error);
+            }
 
             if (reviewCache[movie.id]) {
                 document.getElementById('modal-review').textContent = reviewCache[movie.id];

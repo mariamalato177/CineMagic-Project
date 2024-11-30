@@ -108,10 +108,10 @@
 <?php $component = $__componentOriginale67687e3e4e61f963b25a6bcf3983629; ?>
 <?php unset($__componentOriginale67687e3e4e61f963b25a6bcf3983629); ?>
 <?php endif; ?>
-                        </form>
-                    <?php endif; ?>
-                    <div class="flex items-center space-x-2 mt-2">
-                        <?php if (isset($component)) { $__componentOriginalcc31472b4e152dcab763e53caf44e732 = $component; } ?>
+                                    </form>
+                                <?php endif; ?>
+                                <div class="flex items-center space-x-2 mt-2">
+                                    <?php if (isset($component)) { $__componentOriginalcc31472b4e152dcab763e53caf44e732 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalcc31472b4e152dcab763e53caf44e732 = $attributes; } ?>
 <?php $component = App\View\Components\Table\IconShow::resolve(['href' => ''.e(route('users.show', ['user' => $staff])).''] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('table.icon-show'); ?>
@@ -131,7 +131,7 @@
 <?php $component = $__componentOriginalcc31472b4e152dcab763e53caf44e732; ?>
 <?php unset($__componentOriginalcc31472b4e152dcab763e53caf44e732); ?>
 <?php endif; ?>
-                        <?php if (isset($component)) { $__componentOriginal44f9c11916c14e492f114196bdefa85e = $component; } ?>
+                                    <?php if (isset($component)) { $__componentOriginal44f9c11916c14e492f114196bdefa85e = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal44f9c11916c14e492f114196bdefa85e = $attributes; } ?>
 <?php $component = App\View\Components\Table\IconEdit::resolve(['href' => ''.e(route('users.edit', ['user' => $staff])).''] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('table.icon-edit'); ?>
@@ -151,7 +151,7 @@
 <?php $component = $__componentOriginal44f9c11916c14e492f114196bdefa85e; ?>
 <?php unset($__componentOriginal44f9c11916c14e492f114196bdefa85e); ?>
 <?php endif; ?>
-                        <?php if (isset($component)) { $__componentOriginald16d466b6de69a6c808277f1bfc3f4f2 = $component; } ?>
+                                    <?php if (isset($component)) { $__componentOriginald16d466b6de69a6c808277f1bfc3f4f2 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald16d466b6de69a6c808277f1bfc3f4f2 = $attributes; } ?>
 <?php $component = App\View\Components\Table\IconDelete::resolve(['action' => ''.e(route('users.destroy', ['user' => $staff])).''] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('table.icon-delete'); ?>
@@ -171,17 +171,19 @@
 <?php $component = $__componentOriginald16d466b6de69a6c808277f1bfc3f4f2; ?>
 <?php unset($__componentOriginald16d466b6de69a6c808277f1bfc3f4f2); ?>
 <?php endif; ?>
-                    </div>
+                                </div>
 
 
-                    </div>
+                            </div>
+                        </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
 
-        <div class="mt-8 flex justify-center">
-            <?php echo e($staffs->links()); ?>
+                <div class="mt-8 flex justify-center">
+                    <?php echo e($staffs->links()); ?>
 
+                </div>
+            </div>
         </div>
     </div>
 <?php $__env->stopSection(); ?>
