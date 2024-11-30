@@ -84,6 +84,29 @@ npm run dev
 - Attached here is the video of the perfomance of the website on iOS system:
   - *****por video
 
+## User Roles:
+
+- Admins
+  - Cannot buy tickets to screenings;
+  - Can edit screenings, theaters, genres, profile;
+  - Can see all users;
+  - Can create new screenings,theaters,genres, employee & admins;
+  - Can see the statistics for occupancy rate and most sales.
+
+- Employees
+  - Can see and validate/invalidate tickets;
+  - Can see the screenings details and see tickets for each screenings;
+  - Cannot edit profile, only admins can.
+    
+- Customers
+  - Can buy tickets for screeenings;
+  - Get an extra discount on tickets because they are users of the application.
+  - Can edit profile;
+  - Can see purchases.
+    
+- Guests
+  - Can buy tickets for screenings.
+  - Can see movies, screenings, theaters.
 
 ## Authors:
 
