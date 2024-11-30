@@ -31,29 +31,25 @@ class MovieController extends Controller
         $genreFilter = $request->get('genre');
         $page = max(1, (int) $request->get('page', 1));
 
-        // Cache dos gêneros
         $genres = $this->tmdbService->getGenres();
 
 
         if ($query && $genreFilter) {
-            // Obter e filtrar filmes de múltiplas páginas da API
             $movies = $this->fetchAndFilterMovies($query, $genreFilter, $apiKey, $genres);
 
-            // Adicionar nomes dos gêneros aos filmes
             foreach ($movies as &$movie) {
                 $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
                     ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
                     ->join(', ');
             }
 
-            // Paginação com base nos filmes filtrados
-            $moviesPerPage = 20; // Filmes por página
-            $totalResults = $movies->count(); // Total de filmes filtrados
+            $moviesPerPage = 20;
+            $totalResults = $movies->count();
             $moviesForCurrentPage = $movies->slice(($page - 1) * $moviesPerPage, $moviesPerPage);
 
             $moviesPaginator = new LengthAwarePaginator(
                 $moviesForCurrentPage->values(),
-                min($totalResults, 20 * 500), // Limitar a 500 páginas no máximo
+                min($totalResults, 20 * 500),
                 $moviesPerPage,
                 $page,
                 ['path' => $request->url(), 'query' => $request->query()]
@@ -65,12 +61,11 @@ class MovieController extends Controller
             ]);
         }
 
-        // Lógica padrão (apenas pesquisa ou apenas filtro)
         $url = $query ? 'https://api.themoviedb.org/3/search/movie' : 'https://api.themoviedb.org/3/discover/movie';
         $params = [
             'api_key' => $apiKey,
             'language' => 'en-US',
-            'page' => min($page, 500), // Limitar a 500 páginas no máximo
+            'page' => min($page, 500),
         ];
         if ($query) {
             $params['query'] = $query;
@@ -82,17 +77,15 @@ class MovieController extends Controller
         $response = Http::get($url, $params);
         $movies = $response->json()['results'] ?? [];
 
-        // Adicionar nomes dos gêneros aos filmes
         foreach ($movies as &$movie) {
             $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
                 ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
                 ->join(', ');
         }
 
-        // Paginação padrão
         $moviesPaginator = new LengthAwarePaginator(
             $movies,
-            min($response->json()['total_results'] ?? 0, 20 * 500), // Limitar a 500 páginas no máximo
+            min($response->json()['total_results'] ?? 0, 20 * 500),
             20,
             $page,
             ['path' => $request->url(), 'query' => $request->query()]
@@ -109,50 +102,41 @@ class MovieController extends Controller
      */
     private function fetchAndFilterMovies($query, $genreFilter, $apiKey, $genres)
     {
-        $cacheKey = "movies_search_{$query}_genre_{$genreFilter}";
-        $cacheDuration = 60 * 10; // Cache de 10 minutos
+        $movies = collect();
+        $page = 1;
+        $maxPages = 40;
+        $moviesPerPage = 20;
+        $maxResults = $moviesPerPage * $maxPages;
 
-        return Cache::remember($cacheKey, $cacheDuration, function () use ($query, $genreFilter, $apiKey, $genres) {
-            $movies = collect();
-            $page = 1;
-            $maxPages = 10; // Limitar a 10 páginas
-            $moviesPerPage = 20; // Filmes por página
-            $maxResults = $moviesPerPage * $maxPages; // Total de resultados desejados
+        while ($movies->count() < $maxResults && $page <= $maxPages) {
+            $moviesData = $this->tmdbService->searchMovies($query, $page);
 
-            while ($movies->count() < $maxResults && $page <= 500) { // Continuar até atingir o máximo de páginas
-                $moviesData = $this->tmdbService->searchMovies($query, $page); // Usando o serviço para buscar filmes
-
-                if (empty($moviesData['results'])) {
-                    break; // Interromper se não houver resultados ou em caso de falha
-                }
-
-                $results = collect($moviesData['results']);
-
-
-                // Filtrar filmes pelo gênero e adicionar nomes dos gêneros
-                $filtered = collect($results)->filter(function ($movie) use ($genreFilter) {
-                    return in_array($genreFilter, $movie['genre_ids'] ?? []);
-                })->map(function ($movie) use ($genres) {
-                    // Adicionar nomes dos gêneros aos filmes
-                    $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
-                        ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
-                        ->join(', ');
-                    return $movie;
-                });
-
-                $movies = $movies->merge($filtered);
-
-                // Parar se não houver mais páginas disponíveis na API
-                if ($page >= ($moviesData['total_pages'] ?? 0)) {
-                    break;
-                }
-                $page++;
+            if (empty($moviesData['results'])) {
+                break;
             }
 
-            // Retornar no máximo o número permitido de filmes
-            return $movies->take($maxResults);
-        });
+            $results = collect($moviesData['results']);
+
+            $filtered = $results->filter(function ($movie) use ($genreFilter) {
+                return in_array($genreFilter, $movie['genre_ids'] ?? []);
+            })->map(function ($movie) use ($genres) {
+                $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
+                    ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
+                    ->join(', ');
+                return $movie;
+            });
+
+            $movies = $movies->merge($filtered);
+
+            if ($page >= ($moviesData['total_pages'] ?? 0)) {
+                break;
+            }
+            $page++;
+        }
+
+        return $movies->take($maxResults);
     }
+
 
     public function create(): View
     {
@@ -165,7 +149,6 @@ class MovieController extends Controller
     {
         $apiKey = env('TMDB_API_KEY');
 
-        // Fetch and cache movie details, including genres
         $movie = cache()->remember("movie_$movieId", 60 * 60, function () use ($movieId, $apiKey) {
             $response = Http::get("https://api.themoviedb.org/3/movie/{$movieId}", [
                 'api_key' => $apiKey,
@@ -175,7 +158,6 @@ class MovieController extends Controller
             return $response->successful() ? $response->json() : [];
         });
 
-        // Fetch genres from cache (or from TMDB if not cached)
         $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
             $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
                 'api_key' => $apiKey,
@@ -204,7 +186,7 @@ class MovieController extends Controller
         $reviewsPaginator = new LengthAwarePaginator(
             $reviews,
             $totalReviews,
-            5, // Reviews per page
+            5, 
             $page,
             ['path' => request()->url(), 'query' => request()->query()]
         );
