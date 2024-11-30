@@ -64,7 +64,6 @@
                             Movie: {{ $movie['title'] ?? 'Unknown Title' }}
                         </h1>
                         <div class="flex flex-col md:flex-row items-start">
-                            <!-- Poster Section -->
                             <div class="w-full md:w-1/4 flex justify-center items-center mb-4 md:mb-0">
                                 <a href="#">
                                     <img src="{{ $movie['poster_path'] ? 'https://image.tmdb.org/t/p/w500' . $movie['poster_path'] : asset('storage/posters/_no_poster_2.png') }}"
@@ -72,8 +71,6 @@
                                         class="w-80 h-auto object-contain rounded-lg">
                                 </a>
                             </div>
-
-                            <!-- Screenings Section -->
                             <div class="w-full md:w-3/4 md:pl-4">
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @php
@@ -84,18 +81,18 @@
                                             });
                                     @endphp
                                     @foreach ($sortedTheaters as $theaterName => $theaterScreenings)
-                                        <!-- Theater Box -->
                                         <div
                                             class="bg-gray-100 shadow-lg rounded-md p-4 flex flex-col justify-between h-full">
                                             <h2 class="text-xl font-semibold mb-2 text-gray-900">Theater:
                                                 {{ $theaterName }}</h2>
                                             <div class="space-y-4 flex-grow">
                                                 @foreach ($theaterScreenings as $screening)
-                                                    <!-- Individual Screening Card -->
                                                     <div class="bg-white shadow-md rounded-lg p-4">
                                                         @php
-                                                        $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
-                                                         @endphp
+                                                            $date = \Carbon\Carbon::parse($screening->date)->format(
+                                                                'd-m-Y',
+                                                            );
+                                                        @endphp
                                                         <p class="text-xl"><strong>Date:</strong> {{ $date }}
                                                         </p>
                                                         <p class="text-xl"><strong>Start Time:</strong>
@@ -129,36 +126,36 @@
                                                                         </a>
                                                                     </div>
                                                                 @else
-                                                                @if (auth()->check() && auth()->user()->type !== 'A')
-                                                                    <a href="{{ route('screenings.show', $screening) }}"
-                                                                    rel="noopener noreferrer"
-                                                                    class="px-2 py-1 font-semibold rounded-full bg-coral"
-                                                                    style="color: white; transition: background-color 0.3s ease-in-out;">
-                                                                    See Info
-                                                                </a>
-                                                                <div class="absolute top-2 right-2">
-                                                                    <span
-                                                                        class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
-                                                                        Out</span>
-                                                                </div>
+                                                                    @if (auth()->check() && auth()->user()->type !== 'A')
+                                                                        <a href="{{ route('screenings.show', $screening) }}"
+                                                                            rel="noopener noreferrer"
+                                                                            class="px-2 py-1 font-semibold rounded-full bg-coral"
+                                                                            style="color: white; transition: background-color 0.3s ease-in-out;">
+                                                                            See Info
+                                                                        </a>
+                                                                        <div class="absolute top-2 right-2">
+                                                                            <span
+                                                                                class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
+                                                                                Out</span>
+                                                                        </div>
+                                                                    @endif
                                                                 @endif
                                                             @endif
-                                                @endif
+                                                        </div>
+                                                    </div>
+                                                @endforeach
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
                             </div>
-                    @endforeach
+                        </div>
+                    @else
+                        <p>No movie data available</p>
+                    @endif
                 </div>
+            @endforeach
         </div>
-    </div>
-@else
-    <p>No movie data available</p>
-    @endif
-    </div>
-    @endforeach
-    </div>
     </div>
 
 

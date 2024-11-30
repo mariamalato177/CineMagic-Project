@@ -38,8 +38,6 @@ class ScreeningController extends Controller
         $selectedDate = $request->input('date');
 
         $screeningsQuery = Screening::query();
-
-        // Filter screenings based on selected movie and search query
         $screeningsQuery->whereNotNull('custom');
 
         if ($searchQuery) {
@@ -55,12 +53,10 @@ class ScreeningController extends Controller
             $screeningsQuery->whereBetween('date', [$today, $twoWeeksFromNow]);
         }
 
-        // If a date is selected, filter screenings by that date
         if ($selectedDate) {
             $screeningsQuery->whereDate('date', $selectedDate);
         }
 
-        // Fetch the screenings with related movie and theater data
         $screenings = $screeningsQuery
             ->with('theaterRef', 'movieRef')
             ->orderBy('date')
@@ -68,7 +64,6 @@ class ScreeningController extends Controller
             ->paginate(70)
             ->withQueryString();
 
-        // Get all available screening dates
         $availableDates = Screening::query()
             ->whereNotNull('custom')
             ->distinct()
@@ -88,13 +83,6 @@ class ScreeningController extends Controller
 
         return view('screenings.index', compact('screenings', 'movieData', 'selectedDate', 'availableDates'));
     }
-
-
-
-
-
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -122,7 +110,7 @@ class ScreeningController extends Controller
             'theater_id' => 'required|exists:theaters,id',
         ]);
 
-        $movieId = 350; // The placeholder movie ID
+        $movieId = 350; 
         $tmdbMovieId = $validated['movie_id'];
         $theaterId = $validated['theater_id'];
         $dates = $validated['dates'];
@@ -131,11 +119,11 @@ class ScreeningController extends Controller
         foreach ($dates as $date) {
             foreach ($times as $time) {
                 Screening::create([
-                    'movie_id' => $movieId,  // Placeholder movie ID
+                    'movie_id' => $movieId,
                     'theater_id' => $theaterId,
                     'start_time' => $time,
                     'date' => $date,
-                    'custom' => $tmdbMovieId,  // Store the TMDB movie ID in the custom column
+                    'custom' => $tmdbMovieId,
                 ]);
             }
         }
@@ -180,7 +168,7 @@ class ScreeningController extends Controller
         'theater' => $theater,
         'seats' => $seats,
         'movie' => $movie,
-        'movieData' => $movieData, 
+        'movieData' => $movieData,
     ]);
 }
 

@@ -91,7 +91,7 @@ $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
                         return;
                     }
 
-                    // Toggle selection state
+                    
                     @if (auth()->check())
                         @if (auth()->user()->type == 'A' || auth()->user()->type == 'E')
                             return;
@@ -105,7 +105,6 @@ $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
                         seat.querySelector('path').style.fill = 'green';
                     }
 
-                    // Update the display of the number of selected seats
                     selectedSeatsDisplay.value = selectedSeats.length;
                 });
             });
@@ -113,11 +112,10 @@ $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
             addToCartForm.addEventListener('submit', function(event) {
                 if (selectedSeats.length === 0) {
                     alert('Please select at least one seat to add to cart.');
-                    event.preventDefault(); // Prevent form submission
+                    event.preventDefault();
                     return;
                 }
 
-                // Create hidden input to send selected seats data
                 const seatsInput = document.createElement('input');
                 seatsInput.type = 'hidden';
                 seatsInput.name = 'selected_seats';

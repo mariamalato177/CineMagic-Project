@@ -53,7 +53,6 @@ $user = auth()->user();
                         @enderror
                     </div>
 
-                    {{-- Additional Inputs based on Payment Type --}}
                     <div id="visaInputs" class="mb-4" style="display: none;">
                         <x-input-label for="card_number" :value="__('Card Number')" />
                         <x-text-input id="payment_reference" name="card_number" type="text" class="mt-1 block w-full"

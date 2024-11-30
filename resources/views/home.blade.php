@@ -120,5 +120,5 @@
                 </div>
             </div>
         </div>
-    </div> <!-- Close main div -->
+    </div> 
 @endsection
