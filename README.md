@@ -82,6 +82,10 @@ npm run dev
 ## Possible cases of event:
 
 - Maria has a iOS system while the rest of the group have a Windows system. Came to our attention that the website can load faster on the iOS system while on Windows can take some time.
+- On users page, if the user doesn't have image and it is not loading a default one please execute this command [WSL Terminal]:
+  ```
+  ./vendor/bin/sail art optimize:clear
+  ```
 - Attached here is the video of the perfomance of the website on iOS system:
   - https://tvzhr-my.sharepoint.com/:f:/g/personal/mmalato_tvz_hr/EoYUWPAG3HNAnb49cnOVzUEBtXboeFqMYQxNq2NpH47aug?e=0zX12R
 
