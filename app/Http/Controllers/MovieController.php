@@ -13,15 +13,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Services\TMDBService;
+use App\Services\TmdbService;
 
 class MovieController extends Controller
 {
-    private $tmdbService;
+    protected $tmdbService;
 
-    public function __construct(TMDBService $tmdbService)
+    public function __construct(TmdbService $tmdbService)
     {
-        $this->tmdbService = $tmdbService;
+        $this->tmdbService = $tmdbService; 
     }
 
     public function index(Request $request)
@@ -32,25 +32,22 @@ class MovieController extends Controller
         $page = max(1, (int) $request->get('page', 1));
         $moviesPerPage = 20;
 
-        $genres = Cache::remember('tmdb_genres', 60 * 60, function () {
+        $genres = Cache::remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
             return $this->tmdbService->getGenres();
         });
 
         if ($query && $genreFilter) {
             $movies = $this->fetchAndFilterMovies($query, $genreFilter, $apiKey, $genres, $page, $moviesPerPage);
 
-            foreach ($movies['data'] as &$movie) {
-                if (isset($movie['genre_ids']) && is_array($movie['genre_ids'])) {
-                    $movie['genre_names'] = collect($movie['genre_ids'])
-                        ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
-                        ->join(', ');
-                } else {
-                    $movie['genre_names'] = 'Unknown genre';
-                }
+            foreach ($movies as &$movie) {
+                $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
+                    ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
+                    ->join(', ');
             }
 
-            $totalResults = $movies['total'];
-            $moviesForCurrentPage = $movies['data'];
+            $cacheKey = 'movies_query_' . md5($query . $genreFilter . $page);
+            $totalResults = $movies->count();
+            $moviesForCurrentPage = $movies->slice(($page - 1) * $moviesPerPage, $moviesPerPage);
 
             $moviesPaginator = new LengthAwarePaginator(
                 $moviesForCurrentPage->values(),
@@ -109,22 +106,28 @@ class MovieController extends Controller
         $totalFiltered = 0;
 
         while ($page <= 500) {
-            $response = $this->tmdbService->searchMovies($query, $page);
-            $results = $response['results'] ?? [];
+            $response = Http::get('https://api.themoviedb.org/3/search/movie', [
+                'api_key' => $apiKey,
+                'language' => 'en-US',
+                'query' => $query,
+                'page' => $page,
+            ]);
+
+            if ($response->failed()) {
+                break;
+            }
+
+            $results = $response->json()['results'] ?? [];
+
+            foreach ($results as &$movie) {
+                $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
+                    ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
+                    ->join(', ');
+            }
 
             $filtered = collect($results)->filter(function ($movie) use ($genreFilter) {
                 return in_array($genreFilter, $movie['genre_ids'] ?? []);
             });
-
-            foreach ($filtered as &$movie) {
-                $movie['genre_names'] = collect($movie['genre_ids'] ?? [])
-                    ->map(fn($genreId) => $genres->get($genreId)['name'] ?? 'Unknown genre')
-                    ->join(', ');
-
-                if (empty($movie['genre_names'])) {
-                    $movie['genre_names'] = 'Unknown genre';
-                }
-            }
 
             $movies = $movies->merge($filtered);
             $totalFiltered += $filtered->count();
@@ -133,12 +136,14 @@ class MovieController extends Controller
                 break;
             }
 
-            if ($page >= ($response['total_pages'] ?? 0)) {
+            if ($page >= ($response->json()['total_pages'] ?? 0)) {
                 break;
             }
 
             $page++;
         }
+
+        return $movies;
 
         $offset = ($currentPage - 1) * $moviesPerPage;
         $moviesForCurrentPage = $movies->slice($offset, $moviesPerPage);
@@ -169,13 +174,7 @@ class MovieController extends Controller
             return $response->successful() ? $response->json() : [];
         });
 
-        $genres = cache()->remember('tmdb_genres', 60 * 60, function () use ($apiKey) {
-            $genresResponse = Http::get("https://api.themoviedb.org/3/genre/movie/list", [
-                'api_key' => $apiKey,
-                'language' => 'en-US',
-            ]);
-            return collect($genresResponse->json()['genres'] ?? [])->keyBy('id');
-        });
+        $genres = $this->getGenres();
 
         $movie['genre_names'] = collect($movie['genres'] ?? [])
             ->map(fn($genre) => $genres->get($genre['id'])['name'] ?? 'Unknown genre')
@@ -259,16 +258,44 @@ class MovieController extends Controller
 
     public function destroy(Movie $movie): RedirectResponse
     {
-        $title = $movie->title;
+        try {
+            $url = route('movies.show', ['movie' => $movie]);
+            $totalScreenings = DB::scalar(
+                'select count(*) from screenings where movie_id = ?',
+                [$movie->id]
+            );
+            if ($totalScreenings == 0) {
+                $movie->delete();
+                $alertType = 'success';
+                $alertMsg = "Movie ({$movie->title}) has been deleted successfully!";
+            } else {
+                $alertType = 'warning';
+                $screeningsStr = match (true) {
+                    $totalScreenings <= 0 => "",
+                    $totalScreenings == 1 => "it already includes 1 session",
+                    $totalScreenings > 1 => "it already includes $totalScreenings Screenings",
+                };
+                $justification = $screeningsStr;
+                $alertMsg = "movie <a href='$url'><u>{$movie->title}</u></a> ({$movie->title}) cannot be deleted because $justification.";
+            }
+        } catch (\Exception $error) {
+            $alertType = 'danger';
+            $alertMsg = "It was not possible to delete the movie
+                            <a href='$url'><u>{$movie->name}</u></a> ({$movie->title})
+                            because there was an error with the operation!";
+        }
+        return redirect()->back()
+            ->with('alert-type', $alertType)
+            ->with('alert-msg', $alertMsg);
+    }
+
+    public function deletePoster(Movie $movie): RedirectResponse
+    {
         if ($movie->poster_filename) {
             Storage::disk('public')->delete('posters/' . $movie->poster_filename);
+            $movie->poster_filename = null;
+            $movie->save();
         }
-        $movie->delete();
-        $htmlMessage = "Movie <u>{$title}</u> has been deleted successfully!";
-        return redirect()->route('movies.index')
-            ->with('alert-type', 'success')
-            ->with('alert-msg', $htmlMessage);
+        return redirect()->route('movies.management', $movie);
     }
 }
-
-

@@ -177,6 +177,7 @@
         const reviewCache = {};
 
         async function openModal(event) {
+
             event.preventDefault();
 
             const movie = JSON.parse(event.target.getAttribute('data-movie'));
