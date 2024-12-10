@@ -23,13 +23,15 @@ $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
                             value="0">
                     </div>
 
-                    @if (!auth()->check() || auth()->user()->type == 'C')
+                    @if ((!auth()->check() || auth()->user()->type == 'C'))
                         <form id="addToCartForm" method="POST"
                             action="{{ route('cart.add', ['screeningId' => $screening->id]) }}">
                             @csrf
                             <input type="hidden" name="selected_seats" id="selected_seats">
                             <x-button element="submit" text="Add to cart" type="dark" />
                         </form>
+                        @else
+                        <span>Can not buy tickets for this screening</span>
                     @endif
                 </div>
             </div>
@@ -37,15 +39,12 @@ $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
     </header>
 
     <br>
-    <div class="flex justify-center">
-        <div class="my-4 p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg text-gray-900 w-full max-w-[90%] mx-auto">
     <div class="flex justify-center mb-4">
         <div class="w-full max-w-3xl h-12 bg-white border-2  rounded-md flex items-center justify-center">
             <span class="text-lg font-bold text-gray-800 ">Screen</span>
         </div>
     </div>
-    <br>
-    <br>
+
     <div class="flex justify-center">
         <div class="grid gap-6">
             @foreach ($seats->groupBy('row') as $row => $seatsByRow)
@@ -72,8 +71,7 @@ $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
             @endforeach
         </div>
     </div>
-    </div>
-    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -91,7 +89,7 @@ $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
                         return;
                     }
 
-                    
+
                     @if (auth()->check())
                         @if (auth()->user()->type == 'A' || auth()->user()->type == 'E')
                             return;

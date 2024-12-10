@@ -81,72 +81,75 @@
                                             });
                                     @endphp
                                     @foreach ($sortedTheaters as $theaterName => $theaterScreenings)
-                                        <div
-                                            class="bg-gray-100 shadow-lg rounded-md p-4 flex flex-col justify-between h-full">
-                                            <h2 class="text-xl font-semibold mb-2 text-gray-900">Theater:
-                                                {{ $theaterName }}</h2>
-                                            <div class="space-y-4 flex-grow">
-                                                @foreach ($theaterScreenings as $screening)
-                                                    <div class="bg-white shadow-md rounded-lg p-4">
-                                                        @php
-                                                            $date = \Carbon\Carbon::parse($screening->date)->format(
-                                                                'd-m-Y',
-                                                            );
-                                                        @endphp
-                                                        <p class="text-xl"><strong>Date:</strong> {{ $date }}
-                                                        </p>
-                                                        <p class="text-xl"><strong>Start Time:</strong>
-                                                            {{ $screening->start_time }}</p>
-                                                        <div class="mt-4 flex justify-end items-center space-x-2">
-                                                            @if (auth()->check() && auth()->user()->type === 'A')
-                                                                <a class="px-2 py-1 bg-yellow-400 text-white text-sm font-semibold rounded-full inline-flex items-center"
-                                                                    href="{{ route('screenings.showTickets', ['screening' => $screening]) }}">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                                        class="w-4 h-4 mr-2" viewBox="0 0 24 24"
-                                                                        fill="currentColor">
-                                                                        <path
-                                                                            d="M20 3H4c-1.1 0-2 .9-2 2v3.5c1.11 0 2 .89 2 2s-.89 2-2 2V19c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-3.5c-1.11 0-2-.89-2-2s.89-2 2-2V5c0-1.1-.9-2-2-2zm-5 10H9v-2h6v2zm0-4H9V7h6v2z" />
-                                                                    </svg>
-                                                                </a>
+                                    <div class="bg-gray-100 shadow-lg rounded-md p-4 flex flex-col justify-between h-full">
+                                        <h2 class="text-xl font-semibold mb-2 text-gray-900">Theater: {{ $theaterName }}</h2>
+                                        <div class="space-y-4 flex-grow">
+                                            @foreach ($theaterScreenings as $screening)
+                                                <div class="bg-white shadow-md rounded-lg p-4">
+                                                    @php
+                                                        $date = \Carbon\Carbon::parse($screening->date)->format('d-m-Y');
+                                                        $screeningStartTime = \Carbon\Carbon::parse($screening->start_time);
+                                                    @endphp
+                                                    <p class="text-xl"><strong>Date:</strong> {{ $date }}</p>
+                                                    <p class="text-xl"><strong>Start Time:</strong> {{ $screening->start_time }}</p>
+                                                    <div class="mt-4 flex justify-end items-center space-x-2">
+                                                        @if ($screening->hasPassed())
+                                                            <div class="mt-4 flex justify-end">
+                                                                <span class="px-4 py-2 bg-red-500 text-white rounded-full"
+                                                                    style=" color: white; transition: background-color 0.3s ease-in-out;">
+                                                                    Session Started
+                                                                </span>
+                                                            </div>
+                                                        @elseif (auth()->check() && auth()->user()->type !== 'C')
+                                                            <a class="px-2 py-1 bg-yellow-400 text-white text-sm font-semibold rounded-full inline-flex items-center"
+                                                                href="{{ route('screenings.showTickets', ['screening' => $screening]) }}">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                                                    <path
+                                                                        d="M20 3H4c-1.1 0-2 .9-2 2v3.5c1.11 0 2 .89 2 2s-.89 2-2 2V19c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-3.5c-1.11 0-2-.89-2-2s.89-2 2-2V5c0-1.1-.9-2-2-2zm-5 10H9v-2h6v2zm0-4H9V7h6v2z" />
+                                                                </svg>
+                                                            </a>
+                                                            @if (auth()->check() && auth()->user()->type == 'A')
                                                                 <x-table.icon-edit
                                                                     href="{{ route('screenings.edit', ['screening' => $screening]) }}" />
                                                                 <x-table.icon-delete
                                                                     action="{{ route('screenings.destroy', ['screening' => $screening]) }}" />
+                                                            @endif
+                                                        @else
+                                                            @if (!$screening->isSoldOut($screening))
+                                                                <div class="mt-4 flex justify-end">
+                                                                    <a href="{{ route('screenings.show', $screening) }}"
+                                                                        class="px-4 py-2 bg-coral text-white rounded-full"
+                                                                        style=" color: white; transition: background-color 0.3s ease-in-out;">
+                                                                        @if (auth()->check() && auth()->user()->type !== 'C')
+                                                                            See info
+                                                                        @else
+                                                                            Buy Tickets
+                                                                        @endif
+                                                                    </a>
+                                                                </div>
                                                             @else
-                                                                @if (!$screening->isSoldOut($screening))
-                                                                    <div class="mt-4 flex justify-end">
-                                                                        <a href="{{ route('screenings.show', $screening) }}"
-                                                                            class="px-4 py-2 bg-coral text-white rounded-full"
-                                                                            style=" color: white; transition: background-color 0.3s ease-in-out;">
-                                                                            @if (auth()->check() && auth()->user()->type !== 'C')
-                                                                                See info
-                                                                            @else
-                                                                                Buy Tickets
-                                                                            @endif
-                                                                        </a>
+                                                                @if (auth()->check() && auth()->user()->type !== 'A')
+                                                                    <a href="{{ route('screenings.show', $screening) }}"
+                                                                        rel="noopener noreferrer"
+                                                                        class="px-2 py-1 font-semibold rounded-full bg-coral"
+                                                                        style="color: white; transition: background-color 0.3s ease-in-out;">
+                                                                        See Info
+                                                                    </a>
+
+                                                                    <div class="absolute top-2 right-2">
+                                                                        <span class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
+                                                                            Out</span>
                                                                     </div>
-                                                                @else
-                                                                    @if (auth()->check() && auth()->user()->type !== 'A')
-                                                                        <a href="{{ route('screenings.show', $screening) }}"
-                                                                            rel="noopener noreferrer"
-                                                                            class="px-2 py-1 font-semibold rounded-full bg-coral"
-                                                                            style="color: white; transition: background-color 0.3s ease-in-out;">
-                                                                            See Info
-                                                                        </a>
-                                                                        <div class="absolute top-2 right-2">
-                                                                            <span
-                                                                                class="px-2 py-1 bg-red-500 text-white text-xl font-semibold rounded-full">Sold
-                                                                                Out</span>
-                                                                        </div>
-                                                                    @endif
                                                                 @endif
                                                             @endif
-                                                        </div>
+                                                        @endif
                                                     </div>
-                                                @endforeach
-                                            </div>
+                                                </div>
+                                            @endforeach
                                         </div>
-                                    @endforeach
+                                    </div>
+                                @endforeach
+
                                 </div>
                             </div>
                         </div>
