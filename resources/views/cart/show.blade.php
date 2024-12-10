@@ -59,10 +59,14 @@
             <div class="mt-12 flex justify-between space-x-12 items-end">
                 <div>
                     <h3 class="mb-4 text-xl">Shopping Cart Confirmation</h3>
+                    @if (auth()->check() && auth()->user()->type !== 'C')
+                        <p>As a {{ auth()->user()->type === 'A' ? 'Admin' : 'Employee' }} you can't buy tickets.</p>
+                    @else
                     <form action="{{ route('cart.form') }}" method="get">
                         @csrf
                         <x-button element="submit" type="dark" text="Confirm" class="mt-4"/>
                     </form>
+                    @endif
                 </div>
                 <div>
                     <form action="{{ route('cart.destroy') }}" method="post">
